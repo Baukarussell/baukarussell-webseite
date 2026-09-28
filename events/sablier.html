@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baukarussell meets Sablier – Baukarussell</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --gold: #b8945f; --gold-light: #d4b483; --dark: #1a1a1a; --cream: #faf8f5; --text: #333; }
+  body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--cream); line-height: 1.6; }
+  h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; font-weight: 400; }
+  
+  nav {
+    position: fixed; top: 0; width: 100%; padding: 20px 80px;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 1000; background: rgba(250, 248, 245, 0.98);
+    backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .logo-text { font-family: 'Cormorant Garamond', serif; text-decoration: none; line-height: 1; }
+  .logo-main { display: block; font-size: 32px; font-weight: 500; letter-spacing: 0.1em; color: var(--dark); text-transform: uppercase; line-height: 1; margin-bottom: 3px; }
+  .logo-sub { display: block; font-size: 9px; letter-spacing: 0.3em; color: var(--dark); text-transform: uppercase; padding-left: 8px; }
+  .logo-sub::before { content: '─── '; font-size: 8px; }
+  .logo-sub::after { content: ' ───'; font-size: 8px; }
+  .back-link { color: var(--dark); text-decoration: none; font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 500; display: flex; align-items: center; gap: 10px; transition: all 0.3s; }
+  .back-link:hover { color: var(--gold); }
+  .back-link::before { content: '←'; font-size: 18px; }
+  
+  .event-hero { margin-top: 90px; width: 100%; height: 65vh; overflow: hidden; position: relative; }
+  .event-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .event-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 40%, rgba(0,0,0,0.75)); }
+  .event-hero-title { position: absolute; bottom: 50px; left: 80px; right: 80px; z-index: 2; color: white; }
+  .event-hero-meta { font-size: 12px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 12px; }
+  .event-hero-name { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4.5vw, 64px); color: white; letter-spacing: 0.03em; line-height: 1.1; }
+  
+  .event-content { max-width: 800px; margin: 0 auto; padding: 90px 60px 60px; }
+  
+  .event-intro-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(26px, 3vw, 38px);
+    color: var(--dark);
+    text-align: center;
+    margin-bottom: 45px;
+    letter-spacing: 0.03em;
+    line-height: 1.3;
+    font-style: normal;
+    font-weight: 400;
+  }
+  .event-intro-title::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 1px;
+    background: var(--gold);
+    margin: 25px auto 0;
+  }
+  
+  .event-text p { 
+    font-size: 16px; 
+    line-height: 1.9; 
+    color: #444; 
+    margin-bottom: 22px;
+    text-align: justify;
+    hyphens: auto;
+  }
+  .event-text p:last-child { margin-bottom: 0; }
+  
+  .partners-section {
+    background: white;
+    padding: 80px 60px;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+  }
+  .partners-header { text-align: center; margin-bottom: 50px; }
+  .partners-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(24px, 2.6vw, 34px); color: var(--dark); margin-bottom: 0; letter-spacing: 0.03em; line-height: 1.3; }
+  .partners-title::after { content: ''; display: block; width: 50px; height: 1px; background: var(--gold); margin: 22px auto 0; }
+  
+  .partners-list { max-width: 750px; margin: 0 auto; }
+  .partner-row { display: grid; grid-template-columns: 130px 1fr auto; gap: 25px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid #f0f0f0; transition: all 0.3s ease; }
+  .partner-row:first-child { border-top: 1px solid #f0f0f0; }
+  .partner-row:hover { padding-left: 10px; background: rgba(184, 148, 95, 0.03); }
+  .partner-role { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  .partner-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--dark); letter-spacing: 0.02em; }
+  .partner-contact { font-size: 12px; color: #bbb; letter-spacing: 0.05em; text-align: right; white-space: nowrap; }
+  
+  .gallery-section { padding: 90px 60px; max-width: 1400px; margin: 0 auto; }
+  .gallery-title { text-align: center; font-family: 'Cormorant Garamond', serif; font-size: clamp(26px, 3vw, 38px); color: var(--dark); margin-bottom: 12px; letter-spacing: 0.05em; }
+  .gallery-sub { text-align: center; color: var(--gold); font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; margin-bottom: 50px; }
+  .gallery-title::after { content: ''; display: block; width: 50px; height: 1px; background: var(--gold); margin: 22px auto 0; }
+  
+  .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  .gallery-item { aspect-ratio: 4/3; overflow: hidden; cursor: pointer; position: relative; }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+  .gallery-item:hover img { transform: scale(1.08); }
+  .gallery-item::after { content: '🔍'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 30px; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+  .gallery-item:hover::after { opacity: 1; }
+  
+  .event-nav {
+    background: var(--dark);
+    color: white;
+    padding: 50px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+  .event-nav-btn {
+    color: white;
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .event-nav-btn:hover { color: var(--gold); border-color: var(--gold); }
+  .event-nav-btn.disabled { opacity: 0.3; pointer-events: none; }
+  .event-nav-center {
+    color: white;
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    letter-spacing: 0.1em;
+    transition: all 0.3s;
+    text-align: center;
+  }
+  .event-nav-center:hover { color: var(--gold); }
+  .event-nav-center small { display: block; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 5px; font-family: 'Inter', sans-serif; }
+  
+  footer { background: #111; color: white; padding: 50px 40px 30px; text-align: center; }
+  .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 26px; letter-spacing: 0.2em; color: white; margin-bottom: 6px; font-weight: 500; }
+  .footer-sub { font-size: 10px; letter-spacing: 0.4em; color: var(--gold-light); text-transform: uppercase; margin-bottom: 30px; }
+  .footer-links { display: flex; justify-content: center; gap: 40px; margin-bottom: 30px; flex-wrap: wrap; }
+  .footer-links a { color: white; text-decoration: none; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.7; transition: all 0.3s; }
+  .footer-links a:hover { opacity: 1; color: var(--gold); }
+  .footer-social { display: flex; justify-content: center; gap: 15px; margin: 30px 0 35px; padding-top: 30px; border-top: 1px solid #333; }
+  .footer-social a { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border: 1px solid rgba(255,255,255,0.2); color: white; transition: all 0.3s ease; }
+  .footer-social a:hover { border-color: var(--gold); background: var(--gold); color: white; transform: translateY(-3px); }
+  .footer-social svg { width: 17px; height: 17px; fill: currentColor; }
+  .footer-copy { font-size: 10px; color: #666; letter-spacing: 0.1em; padding-top: 25px; border-top: 1px solid #333; }
+  
+  .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; padding: 40px; }
+  .lightbox.active { display: flex; }
+  .lightbox img { max-width: 90%; max-height: 85vh; object-fit: contain; }
+  .lightbox-close { position: absolute; top: 30px; right: 40px; color: white; font-size: 40px; cursor: pointer; background: none; border: none; transition: color 0.3s; }
+  .lightbox-close:hover { color: var(--gold); }
+  .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); color: white; font-size: 50px; cursor: pointer; background: none; border: none; padding: 20px; transition: color 0.3s; }
+  .lightbox-nav:hover { color: var(--gold); }
+  .lightbox-prev { left: 20px; }
+  .lightbox-next { right: 20px; }
+  .lightbox-counter { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); color: white; font-size: 14px; letter-spacing: 0.3em; }
+  
+  .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: var(--dark); color: white; border: 1px solid var(--dark); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 999; opacity: 0; visibility: hidden; transition: all 0.4s ease; font-size: 22px; }
+  .back-to-top.visible { opacity: 1; visibility: visible; }
+  .back-to-top:hover { background: var(--gold); border-color: var(--gold); transform: translateY(-4px); }
+  
+  @media (max-width: 900px) {
+    nav { padding: 12px 25px; }
+    .logo-main { font-size: 22px; }
+    .logo-sub { font-size: 8px; }
+    .back-link { font-size: 11px; }
+    .event-hero { margin-top: 75px; height: 50vh; }
+    .event-hero-title { bottom: 25px; left: 25px; right: 25px; }
+    .event-content { padding: 50px 25px 40px; }
+    .event-text p { text-align: left; }
+    .partners-section { padding: 50px 25px; }
+    .partner-row { grid-template-columns: 1fr; gap: 6px; padding: 15px 0; }
+    .partner-contact { text-align: left; }
+    .gallery-section { padding: 50px 25px; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .event-nav { padding: 35px 25px; flex-direction: column; }
+    .event-nav-btn { width: 100%; justify-content: center; }
+    .lightbox { padding: 20px; }
+    .lightbox-nav { font-size: 35px; padding: 10px; }
+    .back-to-top { bottom: 20px; right: 20px; width: 44px; height: 44px; font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html" class="logo-text">
+    <span class="logo-main">BAUKARUSSELL</span>
+    <span class="logo-sub">Networking à la carte</span>
+  </a>
+  <a href="../events.html" class="back-link">Zurück zu Events</a>
+</nav>
+<section class="event-hero">
+  <img src="sablier/titel.jpg" alt="Baukarussell meets Sablier">
+  <div class="event-hero-title">
+    <div class="event-hero-meta">03. September 2026</div>
+    <h1 class="event-hero-name">Baukarussell meets Sablier</h1>
+  </div>
+</section>
+
+<section class="event-content">
+  <h2 class="event-intro-title">Ein Abend voller Begegnungen, Austausch und Inspiration</h2>
+  
+  <div class="event-text">
+    <p>Was für ein besonderer Abend im Sablier.</p>
+    <p>Unser Networking Event stand ganz im Zeichen von persönlichen Begegnungen, inspirierendem Austausch und neuen Kontakten. Gemeinsam mit unseren Partnern, Kunden und Gästen durften wir einen Abend erleben, der von guter Stimmung, spannenden Gesprächen und vielen wertvollen Begegnungen geprägt war.</p>
+    <p>Schon beim Apéro sorgten ein stilvolles Ambiente, köstlicher Champagner und angeregte Gespräche für einen gelungenen Auftakt. Begleitet von stimmungsvoller Musik, einem exquisiten Flying Dinner und einem ausgezeichneten Service entwickelte sich der Abend zu einem besonderen Erlebnis.</p>
+    <p>Im Mittelpunkt standen jedoch die Menschen. Die vielen persönlichen Gespräche, neuen Kontakte und gemeinsamen Ideen haben diesen Abend zu etwas ganz Besonderem gemacht. Ein herzliches Dankeschön an alle Teilnehmenden für eure Zeit, eure Offenheit und die wunderbare Atmosphäre, die ihr mitgebracht habt.</p>
+    <p>Wir blicken mit Freude auf diesen gelungenen Abend zurück und freuen uns auf viele weitere Begegnungen, gemeinsame Ideen und spannende Projekte.</p>
+  </div>
+</section>
+
+<section class="partners-section">
+  <div class="partners-header">
+    <h2 class="partners-title">Ein herzliches Dankeschön an unsere Eventpartner</h2>
+  </div>
+  
+  <div class="partners-list">
+    <div class="partner-row">
+      <div class="partner-role">Location</div>
+      <div class="partner-name">Sablier Rooftop Restaurant & Bar</div>
+      <div class="partner-contact">Kontakt folgt</div>
+    </div>
+    
+    <div class="partner-row">
+      <div class="partner-role">Musik</div>
+      <div class="partner-name">FreddySax</div>
+      <div class="partner-contact">Kontakt folgt</div>
+    </div>
+    
+    <div class="partner-row">
+      <div class="partner-role">Fotografie</div>
+      <div class="partner-name">Inbound Production</div>
+      <div class="partner-contact">Kontakt folgt</div>
+    </div>
+  </div>
+</section>
+
+<section class="gallery-section">
+  <h2 class="gallery-title">Impressionen</h2>
+  <p class="gallery-sub">Momente des Abends</p>
+  
+  <div class="gallery-grid">
+    <div class="gallery-item" onclick="openLightbox(0)">
+      <img src="sablier/foto1.jpg" alt="Impression 1">
+    </div>
+    <div class="gallery-item" onclick="openLightbox(1)">
+      <img src="sablier/foto2.jpg" alt="Impression 2">
+    </div>
+    <div class="gallery-item" onclick="openLightbox(2)">
+      <img src="sablier/foto3.jpg" alt="Impression 3">
+    </div>
+    <div class="gallery-item" onclick="openLightbox(3)">
+      <img src="sablier/foto4.jpg" alt="Impression 4">
+    </div>
+    <div class="gallery-item" onclick="openLightbox(4)">
+      <img src="sablier/foto5.jpg" alt="Impression 5">
+    </div>
+    <div class="gallery-item" onclick="openLightbox(5)">
+      <img src="sablier/titel.jpg" alt="Impression 6">
+    </div>
+  </div>
+</section>
+
+<section class="event-nav">
+  <span class="event-nav-btn disabled">← Vorheriges Event</span>
+  
+  <a href="../events.html" class="event-nav-center">
+    <small>Zurück zur Übersicht</small>
+    Alle Events
+  </a>
+  
+  <span class="event-nav-btn disabled">Nächstes Event →</span>
+</section>
+
+<footer>
+  <div class="footer-logo">BAUKARUSSELL</div>
+  <div class="footer-sub">Networking à la carte</div>
+  <div class="footer-links">
+    <a href="../index.html">Startseite</a>
+    <a href="../index.html#members">Mitglieder</a>
+    <a href="../events.html">Events</a>
+    <a href="../projekte.html">Projekte</a>
+    <a href="../index.html#contact">Kontakt</a>
+    <a href="../impressum.html">Impressum</a>
+    <a href="../datenschutz.html">Datenschutz</a>
+  </div>
+  
+  <div class="footer-social">
+    <a href="https://ch.linkedin.com/company/baukarussell" target="_blank" title="LinkedIn" aria-label="LinkedIn">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+      </svg>
+    </a>
+    <a href="https://www.instagram.com/baukarussell/" target="_blank" title="Instagram" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+      </svg>
+    </a>
+  </div>
+  
+  <div class="footer-copy">© 2026 Baukarussell. Alle Rechte vorbehalten.</div>
+</footer>
+
+<button class="back-to-top" id="backToTop" aria-label="Nach oben">↑</button>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <button class="lightbox-nav lightbox-prev" onclick="changePhoto(-1)">‹</button>
+  <img id="lightbox-img" src="" alt="">
+  <button class="lightbox-nav lightbox-next" onclick="changePhoto(1)">›</button>
+  <div class="lightbox-counter" id="lightbox-counter"></div>
+</div>
+
+<script>
+  const backToTop = document.getElementById('backToTop');
+  
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) { backToTop.classList.add('visible'); }
+    else { backToTop.classList.remove('visible'); }
+  });
+  
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  
+  const photos = [
+    'sablier/foto1.jpg',
+    'sablier/foto2.jpg',
+    'sablier/foto3.jpg',
+    'sablier/foto4.jpg',
+    'sablier/foto5.jpg',
+    'sablier/titel.jpg'
+  ];
+  let currentIndex = 0;
+  
+  function openLightbox(index) {
+    currentIndex = index;
+    document.getElementById('lightbox-img').src = photos[currentIndex];
+    document.getElementById('lightbox-counter').textContent = (currentIndex + 1) + ' / ' + photos.length;
+    document.getElementById('lightbox').classList.add('active');
+  }
+  
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+  }
+  
+  function changePhoto(direction) {
+    currentIndex = (currentIndex + direction + photos.length) % photos.length;
+    document.getElementById('lightbox-img').src = photos[currentIndex];
+    document.getElementById('lightbox-counter').textContent = (currentIndex + 1) + ' / ' + photos.length;
+  }
+  
+  document.addEventListener('keydown', (e) => {
+    if (document.getElementById('lightbox').classList.contains('active')) {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') changePhoto(-1);
+      if (e.key === 'ArrowRight') changePhoto(1);
+    }
+  });
+  
+  document.getElementById('lightbox').addEventListener('click', (e) => {
+    if (e.target.id === 'lightbox') closeLightbox();
+  });
+</script>
+
+</body>
+</html>
