@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impressum – Baukarussell</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --gold: #b8945f; --gold-light: #d4b483; --dark: #1a1a1a; --cream: #faf8f5; --text: #333; }
+  body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--cream); line-height: 1.6; }
+  h1, h2, h3 { font-family: 'Cormorant Garamond', serif; font-weight: 400; }
+  
+  nav {
+    position: fixed; top: 0; width: 100%; padding: 25px 80px;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 1000; background: rgba(250, 248, 245, 0.98);
+    backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .logo-text { font-family: 'Cormorant Garamond', serif; text-decoration: none; line-height: 1; }
+  .logo-main { display: block; font-size: 42px; font-weight: 500; letter-spacing: 0.12em; color: var(--dark); text-transform: uppercase; line-height: 1; margin-bottom: 3px; }
+  .logo-sub { display: block; font-size: 11px; letter-spacing: 0.3em; color: var(--dark); text-transform: uppercase; padding-left: 8px; }
+  .logo-sub::before { content: '─── '; font-size: 10px; }
+  .logo-sub::after { content: ' ───'; font-size: 10px; }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a { color: var(--dark); text-decoration: none; font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; transition: all 0.3s; font-weight: 500; }
+  .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+  
+  .page-header { margin-top: 120px; padding: 80px 60px 60px; text-align: center; background: var(--dark); color: white; }
+  .page-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 5vw, 64px); color: white; letter-spacing: 0.05em; margin-bottom: 20px; }
+  .page-subtitle { color: var(--gold-light); font-size: 12px; letter-spacing: 0.4em; text-transform: uppercase; }
+  .page-title::after { content: ''; display: block; width: 60px; height: 1px; background: var(--gold); margin: 25px auto 0; }
+  
+  .content-section { max-width: 800px; margin: 0 auto; padding: 80px 60px 60px; }
+  .content-block { margin-bottom: 50px; }
+  .content-block:last-child { margin-bottom: 0; }
+  .content-block h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(22px, 2.4vw, 30px); color: var(--dark); margin-bottom: 20px; letter-spacing: 0.03em; }
+  .content-block h2::after { content: ''; display: block; width: 40px; height: 1px; background: var(--gold); margin: 15px 0 0; }
+  .content-block p { font-size: 15px; line-height: 1.9; color: #444; margin-bottom: 12px; text-align: justify; hyphens: auto; }
+  .content-block p:last-child { margin-bottom: 0; }
+  .content-block strong { color: var(--dark); font-weight: 600; }
+  .content-block a { color: var(--dark); text-decoration: none; border-bottom: 1px solid var(--gold); padding-bottom: 2px; transition: all 0.3s; }
+  .content-block a:hover { color: var(--gold); }
+  
+  .board-list { list-style: none; margin: 15px 0; }
+  .board-list li { padding: 15px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .board-list li:last-child { border-bottom: none; }
+  .board-list .name { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--dark); font-weight: 500; }
+  .board-list .role { font-size: 13px; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; }
+  .board-list .company { font-size: 13px; color: #888; width: 100%; }
+  
+  footer { background: var(--dark); color: white; padding: 70px 40px 30px; text-align: center; }
+  .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 32px; letter-spacing: 0.2em; color: white; margin-bottom: 8px; font-weight: 500; }
+  .footer-sub { font-size: 11px; letter-spacing: 0.4em; color: var(--gold-light); text-transform: uppercase; margin-bottom: 40px; }
+  .footer-links { display: flex; justify-content: center; gap: 40px; margin-bottom: 35px; flex-wrap: wrap; }
+  .footer-links a { color: white; text-decoration: none; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.7; transition: all 0.3s; }
+  .footer-links a:hover { opacity: 1; color: var(--gold); }
+  .footer-social { display: flex; justify-content: center; gap: 15px; margin: 35px 0 40px; padding-top: 35px; border-top: 1px solid #333; }
+  .footer-social a { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,0.2); color: white; transition: all 0.3s ease; }
+  .footer-social a:hover { border-color: var(--gold); background: var(--gold); color: white; transform: translateY(-3px); }
+  .footer-social svg { width: 18px; height: 18px; fill: currentColor; }
+  .footer-copy { font-size: 11px; color: #666; letter-spacing: 0.1em; padding-top: 25px; border-top: 1px solid #333; }
+  
+  @media (max-width: 900px) {
+    nav { padding: 15px 25px; }
+    .logo-main { font-size: 26px; }
+    .logo-sub { font-size: 9px; }
+    .nav-links { display: none; }
+    .page-header { margin-top: 90px; padding: 60px 25px 40px; }
+    .content-section { padding: 50px 25px; }
+    .content-block p { text-align: left; }
+    .footer-links { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo-text">
+    <span class="logo-main">BAUKARUSSELL</span>
+    <span class="logo-sub">Networking à la carte</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#about">Über uns</a></li>
+    <li><a href="index.html#members">Mitglieder</a></li>
+    <li><a href="events.html">Events</a></li>
+    <li><a href="projekte.html">Projekte</a></li>
+    <li><a href="index.html#contact">Kontakt</a></li>
+  </ul>
+</nav>
+<section class="page-header">
+  <h1 class="page-title">Impressum</h1>
+  <p class="page-subtitle">Rechtliche Angaben</p>
+</section>
+
+<section class="content-section">
+  
+  <div class="content-block">
+    <h2>Verantwortlich für den Inhalt</h2>
+    <p><strong>Baukarussell</strong><br>
+    Neunbrunnenstrasse 38<br>
+    CH-8050 Zürich<br>
+    Schweiz</p>
+    E-Mail: <a href="mailto:info@baukarussell.ch">info@baukarussell.ch</a>
+  </div>
+  
+  <div class="content-block">
+    <h2>Vorstand</h2>
+    <ul class="board-list">
+      <li>
+        <span class="name">Arda Onur</span>
+        <span class="role">Präsident</span>
+        <span class="company">ONUR Projects GmbH</span>
+      </li>
+      <li>
+        <span class="name">Milan Golijanin</span>
+        <span class="role">Vizepräsident</span>
+        <span class="company">Fischer AG Immobilienmanagement</span>
+      </li>
+      <li>
+        <span class="name">Curdin Grischott</span>
+        <span class="role">Vorstandsmitglied / Finanzen</span>
+        <span class="company">Gricu AG</span>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="content-block">
+    <h2>Rechtsform</h2>
+    <p>Baukarussell ist ein Verein im Sinne von Art. 60 ff. des Schweizerischen Zivilgesetzbuches (ZGB).</p>
+    <p>Der Verein ist nicht im Handelsregister eingetragen und nicht MWST-pflichtig.</p>
+  </div>
+  
+  <div class="content-block">
+    <h2>Haftungsausschluss</h2>
+    <p>Der Autor übernimmt keinerlei Gewähr für die Aktualität, Korrektheit, Vollständigkeit oder Qualität der bereitgestellten Informationen. Haftungsansprüche gegen den Autor, welche sich auf Schäden materieller oder ideeller Art beziehen, die durch die Nutzung oder Nichtnutzung der dargebotenen Informationen bzw. durch die Nutzung fehlerhafter und unvollständiger Informationen verursacht wurden, sind grundsätzlich ausgeschlossen.</p>
+    <p>Alle Angebote sind freibleibend und unverbindlich. Der Autor behält es sich ausdrücklich vor, Teile der Seiten oder das gesamte Angebot ohne gesonderte Ankündigung zu verändern, zu ergänzen, zu löschen oder die Veröffentlichung zeitweise oder endgültig einzustellen.</p>
+  </div>
+  
+  <div class="content-block">
+    <h2>Haftung für Links</h2>
+    <p>Verweise und Links auf Webseiten Dritter liegen ausserhalb unseres Verantwortungsbereichs. Es wird jegliche Verantwortung für solche Webseiten abgelehnt. Der Zugriff und die Nutzung solcher Webseiten erfolgen auf eigene Gefahr des Nutzers oder der Nutzerin.</p>
+  </div>
+  
+  <div class="content-block">
+    <h2>Urheberrechte</h2>
+    <p>Die Urheber- und alle anderen Rechte an Inhalten, Bildern, Fotos oder anderen Dateien auf der Website gehören ausschliesslich Baukarussell oder den speziell genannten Rechtsinhabern. Für die Reproduktion jeglicher Elemente ist die schriftliche Zustimmung der Urheberrechtsträger im Voraus einzuholen.</p>
+  </div>
+  
+</section>
+
+<footer>
+  <div class="footer-logo">BAUKARUSSELL</div>
+  <div class="footer-sub">Networking à la carte</div>
+  <div class="footer-links">
+    <a href="index.html">Startseite</a>
+    <a href="index.html#members">Mitglieder</a>
+    <a href="events.html">Events</a>
+    <a href="projekte.html">Projekte</a>
+    <a href="index.html#contact">Kontakt</a>
+    <a href="impressum.html">Impressum</a>
+    <a href="datenschutz.html">Datenschutz</a>
+  </div>
+  
+  <div class="footer-social">
+    <a href="https://ch.linkedin.com/company/baukarussell" target="_blank" title="LinkedIn" aria-label="LinkedIn">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+      </svg>
+    </a>
+    <a href="https://www.instagram.com/baukarussell/" target="_blank" title="Instagram" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+      </svg>
+    </a>
+  </div>
+  
+  <div class="footer-copy">© 2026 Baukarussell. Alle Rechte vorbehalten.</div>
+</footer>
+
+</body>
+</html>
