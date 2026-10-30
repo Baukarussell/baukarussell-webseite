@@ -2,7 +2,7 @@ backend:
   name: github
   repo: Baukarussell/baukarussell-webseite
   branch: main
-  base_url: https://api.netlify.com
+  base_url: https://baukarussell-webseite.pages.dev
 
 media_folder: "logos" 
 public_folder: "/logos"
