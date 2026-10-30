@@ -1,44 +1,41 @@
-export async function onRequest(context) {
-  const { request, env } = context;
-  const url = new URL(request.url);
-  const code = url.searchParams.get("code");
+backend:
+  name: github
+  repo: Baukarussell/baukarussell-webseite
+  branch: main
+  base_url: https://baukarussell-webseite.pages.dev
 
-  if (!code) {
-    return new Response("Kein Code von GitHub erhalten", { status: 400 });
-  }
+media_folder: "logos" 
+public_folder: "/logos"
 
-  const response = await fetch("https://github.com/login/oauth/access_token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify({
-      client_id: env.GITHUB_CLIENT_ID,
-      client_secret: env.GITHUB_CLIENT_SECRET,
-      code: code,
-    }),
-  });
+collections:
+  - name: "events"
+    label: "Events"
+    folder: "events"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Titel", name: "title", widget: "string"}
+      - {label: "Datum", name: "date", widget: "datetime"}
+      - {label: "Titelbild", name: "image", widget: "image"}
+      - {label: "Text", name: "body", widget: "markdown"}
 
-  const data = await response.json();
-  const token = data.access_token;
+  - name: "projekte"
+    label: "Projekte"
+    folder: "projekte"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Titel", name: "title", widget: "string"}
+      - {label: "Datum", name: "date", widget: "datetime"}
+      - {label: "Bild", name: "image", widget: "image"}
+      - {label: "Beschreibung", name: "body", widget: "markdown"}
 
-  if (!token) {
-    return new Response("Fehler beim Abrufen des Tokens", { status: 400 });
-  }
-
-  // Dieses Skript schickt den Token zurück an das CMS-Fenster
-  const script = `
-    <script>
-      window.opener.postMessage(
-        'authorization:github:success:{"token":"${token}","provider":"github"}',
-        '*'
-      );
-      window.close();
-    </script>
-  `;
-
-  return new Response(script, {
-    headers: { "Content-Type": "text/html" },
-  });
-}
+  - name: "mitglieder"
+    label: "Mitglieder"
+    folder: "mitglieder"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Firmenname", name: "title", widget: "string"}
+      - {label: "Logo", name: "logo", widget: "image"}
+      - {label: "Beschreibung", name: "body", widget: "markdown"}
