@@ -1,42 +1,12 @@
-backend:
-  name: github
-  repo: Baukarussell/baukarussell-webseite
-  branch: main
-  base_url: https://baukarussell-webseite.pages.dev
+export async function onRequest(context) {
+  const { request, env } = context;
+  const url = new URL(request.url);
+  
+  if (!env.GITHUB_CLIENT_ID) {
+    return new Response("GITHUB_CLIENT_ID fehlt", { status: 500 });
+  }
 
-media_folder: "logos" 
-public_folder: "/logos"
-
-collections:
-  - name: "events"
-    label: "Events"
-    folder: "events"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - {label: "Titel", name: "title", widget: "string"}
-      - {label: "Datum", name: "date", widget: "datetime"}
-      - {label: "Titelbild", name: "image", widget: "image"}
-      - {label: "Text", name: "body", widget: "markdown"}
-
-  - name: "projekte"
-    label: "Projekte"
-    folder: "projekte"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - {label: "Titel", name: "title", widget: "string"}
-      - {label: "Datum", name: "date", widget: "datetime"}
-      - {label: "Bild", name: "image", widget: "image"}
-      - {label: "Beschreibung", name: "body", widget: "markdown"}
-
-  - name: "mitglieder"
-    label: "Mitglieder"
-    folder: "mitglieder"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - {label: "Firmenname", name: "title", widget: "string"}
-      - {label: "Logo", name: "logo", widget: "image"}
-      - {label: "Beschreibung", name: "body", widget: "markdown"}
-
+  const authUrl = `https://github.com/login/oauth/authorize?client_id=${env.GITHUB_CLIENT_ID}&scope=repo,user&redirect_uri=${encodeURIComponent(url.origin + '/api/callback')}`;
+  
+  return Response.redirect(authUrl, 302);
+}
