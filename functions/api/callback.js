@@ -27,7 +27,6 @@ export async function onRequest(context) {
     return new Response("Fehler beim Abrufen des Tokens", { status: 400 });
   }
 
-  // Dieses Skript schickt den Token zurück an das CMS-Fenster
   const script = `
     <script>
       window.opener.postMessage(
