@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+.bk-preview{margin:0;background:#faf8f5;color:#333;font-family:Inter,Arial,sans-serif;font-size:15px;line-height:1.7}
+.bk-preview *{box-sizing:border-box}
+.bk-preview-hero{height:460px;min-height:340px;position:relative;overflow:hidden;background:#1a1a1a}
+.bk-preview-cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.bk-preview-shade{position:absolute;inset:0;background:linear-gradient(transparent 20%,rgba(0,0,0,.72))}
+.bk-preview-heading{position:absolute;left:7%;right:7%;bottom:42px;color:#fff;z-index:1}
+.bk-preview-date{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#d4b483;margin-bottom:12px}
+.bk-preview h1,.bk-preview h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400}
+.bk-preview h1{font-size:clamp(32px,4vw,54px);line-height:1.08;margin:0 0 10px}
+.bk-preview-subtitle{font-family:'Cormorant Garamond',Georgia,serif;font-size:23px;margin:0;color:#f4eee5}
+.bk-preview-content{max-width:850px;margin:0 auto;padding:55px 6%}
+.bk-preview-location{text-align:center;color:#b8945f;letter-spacing:.12em;text-transform:uppercase;font-size:12px;margin-bottom:28px}
+.bk-preview-body{white-space:pre-wrap;line-height:1.9;color:#444}
+.bk-preview-section{max-width:850px;margin:0 auto 55px;padding:30px 6%;background:#fff;border-left:3px solid #b8945f}
+.bk-preview h2{font-size:30px;margin:0 0 20px;color:#1a1a1a}
+.bk-preview-partner{display:grid;grid-template-columns:130px 1fr auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid #eee}
+.bk-preview-partner span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#b8945f}
+.bk-preview-partner small{color:#777}
+.bk-preview-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.bk-preview-gallery img{width:100%;aspect-ratio:4/3;object-fit:cover}
+@media(max-width:650px){.bk-preview-hero{height:340px}.bk-preview-heading{left:22px;right:22px;bottom:25px}.bk-preview-content{padding:35px 22px}.bk-preview-section{padding:25px 22px}.bk-preview-partner{grid-template-columns:1fr;gap:3px}.bk-preview-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
