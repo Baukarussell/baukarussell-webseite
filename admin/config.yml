@@ -5,38 +5,83 @@ backend:
   base_url: https://baukarussell-webseite.pages.dev
   auth_endpoint: api/auth
 
-media_folder: "logos"
-public_folder: "/logos"
+media_folder: "uploads"
+public_folder: "/uploads"
 
 collections:
   - name: "events"
     label: "Events"
     folder: "events"
     create: true
+    extension: "md"
     slug: "{{slug}}"
+    media_folder: "/uploads/events/{{slug}}"
+    public_folder: "/uploads/events/{{slug}}"
     fields:
       - {label: "Titel", name: "title", widget: "string"}
       - {label: "Datum", name: "date", widget: "datetime"}
+      - {label: "Untertitel", name: "subtitle", widget: "string", required: false}
       - {label: "Titelbild", name: "image", widget: "image"}
+      - {label: "Location", name: "location", widget: "string", required: false}
+      - label: "Eventpartner"
+        name: "partners"
+        widget: "list"
+        required: false
+        fields:
+          - {label: "Bereich", name: "role", widget: "string"}
+          - {label: "Name", name: "name", widget: "string"}
+          - {label: "Kontakt oder Website", name: "contact", widget: "string", required: false}
+      - label: "Impressionen"
+        name: "gallery"
+        widget: "list"
+        required: false
+        field: {label: "Bild", name: "image", widget: "image"}
       - {label: "Text", name: "body", widget: "markdown"}
 
   - name: "projekte"
     label: "Projekte"
     folder: "projekte"
     create: true
+    extension: "md"
     slug: "{{slug}}"
+    media_folder: "/uploads/projekte/{{slug}}"
+    public_folder: "/uploads/projekte/{{slug}}"
     fields:
       - {label: "Titel", name: "title", widget: "string"}
       - {label: "Datum", name: "date", widget: "datetime"}
-      - {label: "Bild", name: "image", widget: "image"}
+      - {label: "Titelbild", name: "image", widget: "image"}
+      - label: "Kategorien"
+        name: "categories"
+        widget: "list"
+        required: false
+        field: {label: "Kategorie", name: "category", widget: "string"}
+      - {label: "Projektmitglied", name: "member", widget: "string", required: false}
       - {label: "Beschreibung", name: "body", widget: "markdown"}
 
   - name: "mitglieder"
     label: "Mitglieder"
     folder: "mitglieder"
     create: true
+    extension: "md"
     slug: "{{slug}}"
+    media_folder: "/uploads/mitglieder/{{slug}}"
+    public_folder: "/uploads/mitglieder/{{slug}}"
     fields:
       - {label: "Firmenname", name: "title", widget: "string"}
       - {label: "Logo", name: "logo", widget: "image"}
+      - {label: "Profilbild", name: "profile_image", widget: "image", required: false}
+      - {label: "Kurzbeschreibung", name: "tagline", widget: "string", required: false}
       - {label: "Beschreibung", name: "body", widget: "markdown"}
+      - label: "Leistungen"
+        name: "services"
+        widget: "list"
+        required: false
+        field: {label: "Leistung", name: "service", widget: "string"}
+      - {label: "Strasse und Ort", name: "address", widget: "string", required: false}
+      - {label: "Telefon", name: "phone", widget: "string", required: false}
+      - {label: "Mobile", name: "mobile", widget: "string", required: false}
+      - {label: "E-Mail", name: "email", widget: "string", required: false}
+      - {label: "Website", name: "website", widget: "string", required: false}
+      - {label: "LinkedIn", name: "linkedin", widget: "string", required: false}
+      - {label: "YouTube", name: "youtube", widget: "string", required: false}
+      - {label: "Zitat", name: "quote", widget: "string", required: false}
