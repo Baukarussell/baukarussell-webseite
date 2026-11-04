@@ -1,11 +1,11 @@
 backend:
   name: github
   repo: Baukarussell/baukarussell-webseite
-  branch: main
+  branch: cms-integration
   base_url: https://baukarussell-webseite.pages.dev
   auth_endpoint: api/auth
 
-media_folder: "logos" 
+media_folder: "logos"
 public_folder: "/logos"
 
 collections:
