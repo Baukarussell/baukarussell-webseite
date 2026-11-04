@@ -13,6 +13,11 @@
     if (/^javascript:/i.test(v)) return fallback || "/cover.jpg";
     return "/" + esc(v.replace(/^\.?\//, ""));
   }
+  function safeHref(value) {
+    var v = String(value || "").trim();
+    if (/^(https?:\/\/|mailto:|tel:|\/|events\/|projekte\/|mitglieder\/)/i.test(v)) return esc(v);
+    return "#";
+  }
   function dateText(value) {
     var d = new Date(value);
     return isNaN(d.getTime()) ? "" : d.toLocaleDateString("de-CH", { day: "2-digit", month: "long", year: "numeric", timeZone: "Europe/Zurich" });
@@ -68,9 +73,9 @@
   }
   function memberCard(m) {
     var internal = m.slug === "onur";
-    var href = internal ? "mitglieder/onur.html" : (m.website || ("mitglieder/" + esc(m.slug) + ".html"));
+    var href = internal ? "mitglieder/onur.html" : (m.website || ("mitglieder/" + m.slug + ".html"));
     return '<div class="member-card reveal ' + (internal ? "featured" : "") + '"><img src="' + url(m.logo) + '" alt="' + esc(m.title) + '" class="member-img">' +
-      '<a href="' + esc(href) + '"' + (internal ? "" : ' target="_blank" rel="noopener"') + ' class="member-btn">' + (internal ? "Mehr erfahren →" : "Website →") + '</a></div>';
+      '<a href="' + safeHref(href) + '"' + (internal ? "" : ' target="_blank" rel="noopener"') + ' class="member-btn">' + (internal ? "Mehr erfahren →" : "Website →") + '</a></div>';
   }
   function homeProject(p, members) {
     var m = findMember(p.member, members);
@@ -105,7 +110,7 @@
     var contact = m ? '<div class="memberbox"><div><h3>Projekt von</h3><h2>' + esc(m.title) + '</h2>' +
       (m.address ? '<p>' + esc(m.address) + '</p>' : '') + (m.phone ? '<p>T ' + esc(m.phone) + '</p>' : '') +
       (m.email ? '<p><a href="mailto:' + esc(m.email) + '">' + esc(m.email) + '</a></p>' : '') +
-      (m.website ? '<p><a href="' + esc(m.website) + '" target="_blank" rel="noopener">Website besuchen →</a></p>' : '') +
+      (m.website ? '<p><a href="' + safeHref(m.website) + '" target="_blank" rel="noopener">Website besuchen →</a></p>' : '') +
       '</div>' + (m.logo ? '<img src="' + url(m.logo) + '" alt="' + esc(m.title) + '">' : '') + '</div>' : "";
     return '<section class="hero"><img src="' + url(p.image) + '" alt="' + esc(p.title) + '"><div class="hero-copy"><div class="meta">' + dateText(p.date) + '</div><h1>' + esc(p.title) + '</h1></div></section>' +
       '<section class="content">' + (p.bodyHtml || "") + contact + '</section>';
@@ -116,8 +121,8 @@
       '<img class="profile-logo" src="' + url(m.logo) + '" alt="' + esc(m.title) + '">';
     var links = (m.website ? '<a href="' + esc(m.website) + '" target="_blank" rel="noopener">Website besuchen →</a>' : '') +
       (m.email ? '<a href="mailto:' + esc(m.email) + '">E-Mail senden →</a>' : '') +
-      (m.linkedin ? '<a href="' + esc(m.linkedin) + '" target="_blank" rel="noopener">LinkedIn</a>' : '') +
-      (m.youtube ? '<a href="' + esc(m.youtube) + '" target="_blank" rel="noopener">YouTube</a>' : '');
+      (m.linkedin ? '<a href="' + safeHref(m.linkedin) + '" target="_blank" rel="noopener">LinkedIn</a>' : '') +
+      (m.youtube ? '<a href="' + safeHref(m.youtube) + '" target="_blank" rel="noopener">YouTube</a>' : '');
     var contact = (m.address ? '<div>' + esc(m.address) + '</div>' : '') +
       (m.phone ? '<div>T <a href="tel:' + esc(m.phone) + '">' + esc(m.phone) + '</a></div>' : '') +
       (m.mobile ? '<div>M <a href="tel:' + esc(m.mobile) + '">' + esc(m.mobile) + '</a></div>' : '') +
