@@ -1,9 +1,9 @@
 (function () {
-  if (!window.CMS || typeof createClass === "undefined" || typeof h === "undefined") {
-    console.error("Baukarussell Eventvorschau konnte nicht registriert werden: Decap CMS Vorschau API fehlt.");
+  if (!window.CMS) {
+    console.error("Baukarussell Vorschau: Decap CMS wurde vor der Vorschau geladen.");
     return;
   }
-  var element = h;
+
   var EventsPreview = createClass({
     render: function () {
       var entry = this.props.entry;
@@ -11,23 +11,30 @@
       var subtitle = entry.getIn(["data", "subtitle"]) || "";
       var date = entry.getIn(["data", "date"]) || "";
       var location = entry.getIn(["data", "location"]) || "";
-      var image = entry.getIn(["data", "image"]) || "";
-      var body = entry.getIn(["data", "body"]) || "";
+      var imageValue = entry.getIn(["data", "image"]);
+      var image = imageValue ? this.props.getAsset(imageValue) : null;
       var partners = entry.getIn(["data", "partners"]);
       var gallery = entry.getIn(["data", "gallery"]);
-      function asset(path) {
-        if (!path) return "";
-        if (/^(https?:)?\\/\\//i.test(path)) return path;
-        return path.charAt(0) === "/" ? path : "/" + path;
-      }
+
       function dateLabel(value) {
         if (!value) return "";
         var parsed = new Date(value);
-        return isNaN(parsed.getTime()) ? value : parsed.toLocaleDateString("de-CH", { day: "2-digit", month: "long", year: "numeric" });
+        return isNaN(parsed.getTime())
+          ? value
+          : parsed.toLocaleDateString("de-CH", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric"
+            });
       }
-      return element("article", { className: "bk-preview" },
-        element("header", { className: "bk-preview-hero" },
-          image ? h("img", { className: "bk-preview-cover", src: asset(image), alt: title }) : null,
+
+      return h("article", { className: "bk-preview" },
+        h("header", { className: "bk-preview-hero" },
+          image ? h("img", {
+            className: "bk-preview-cover",
+            src: image.toString(),
+            alt: title
+          }) : null,
           h("div", { className: "bk-preview-shade" }),
           h("div", { className: "bk-preview-heading" },
             h("div", { className: "bk-preview-date" }, dateLabel(date)),
@@ -37,7 +44,7 @@
         ),
         h("section", { className: "bk-preview-content" },
           location ? h("div", { className: "bk-preview-location" }, location) : null,
-          h("div", { className: "bk-preview-body" }, body)
+          h("div", { className: "bk-preview-body" }, this.props.widgetFor("body"))
         ),
         partners && partners.size ? h("section", { className: "bk-preview-section" },
           h("h2", null, "Ein herzliches Dankeschön an unsere Eventpartner"),
@@ -55,14 +62,20 @@
           h("h2", null, "Impressionen"),
           h("div", { className: "bk-preview-gallery" },
             gallery.map(function (item, index) {
-              var src = asset(item.get("image"));
-              return src ? h("img", { key: index, src: src, alt: "Impression " + (index + 1) }) : null;
-            }).toArray()
+              var imageValue = item.get("image");
+              var galleryImage = imageValue ? this.props.getAsset(imageValue) : null;
+              return galleryImage ? h("img", {
+                key: index,
+                src: galleryImage.toString(),
+                alt: "Impression " + (index + 1)
+              }) : null;
+            }, this).toArray()
           )
         ) : null
       );
     }
   });
-  CMS.registerPreviewStyle("/admin/preview.css");
-  CMS.registerPreviewTemplate("events", EventsPreview);
+
+  window.CMS.registerPreviewStyle("/admin/preview.css");
+  window.CMS.registerPreviewTemplate("events", EventsPreview);
 })();
