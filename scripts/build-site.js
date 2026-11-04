@@ -99,7 +99,8 @@ async function main() {
     const target = path.join(OUT, page);
     let html = await fs.readFile(target, "utf8");
     if (!html.includes("cms-render.js")) {
-      html = html.replace("</body>", "<script src=\"cms-render.js\"></script>\\n</body>");
+      html = html.replace("</body>", "<script src=\"cms-render.js\"></script>
+</body>");
       await fs.writeFile(target, html, "utf8");
     }
   }
