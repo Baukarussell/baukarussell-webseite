@@ -56,7 +56,7 @@ collections:
         required: false
         field: {label: "Kategorie", name: "category", widget: "string"}
       - {label: "Projektmitglied", name: "member", widget: "string", required: false}
-      - {label: "Beschreibung", name: "body", widget: "markdown"}
+      - {label: "Beschreibung", name: "body", widget: "markdown", required: false}
 
   - name: "mitglieder"
     label: "Mitglieder"
