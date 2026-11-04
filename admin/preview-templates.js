@@ -1,7 +1,10 @@
 (function () {
-  if (!window.CMS || !window.createClass || !window.h) return;
-  var h = window.h;
-  var EventsPreview = window.createClass({
+  if (!window.CMS || typeof createClass === "undefined" || typeof h === "undefined") {
+    console.error("Baukarussell Eventvorschau konnte nicht registriert werden: Decap CMS Vorschau API fehlt.");
+    return;
+  }
+  var element = h;
+  var EventsPreview = createClass({
     render: function () {
       var entry = this.props.entry;
       var title = entry.getIn(["data", "title"]) || "Event";
@@ -22,8 +25,8 @@
         var parsed = new Date(value);
         return isNaN(parsed.getTime()) ? value : parsed.toLocaleDateString("de-CH", { day: "2-digit", month: "long", year: "numeric" });
       }
-      return h("article", { className: "bk-preview" },
-        h("header", { className: "bk-preview-hero" },
+      return element("article", { className: "bk-preview" },
+        element("header", { className: "bk-preview-hero" },
           image ? h("img", { className: "bk-preview-cover", src: asset(image), alt: title }) : null,
           h("div", { className: "bk-preview-shade" }),
           h("div", { className: "bk-preview-heading" },
