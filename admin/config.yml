@@ -30,7 +30,7 @@ collections:
         fields:
           - {label: "Bereich", name: "role", widget: "string"}
           - {label: "Name", name: "name", widget: "string"}
-          - {label: "Kontakt oder Website", name: "contact", widget: "string", required: false}
+          - {label: "Kontakt oder Website", name: "contact", widget: "string", required: false, default: "Kontakt folgt"}
       - label: "Impressionen"
         name: "gallery"
         widget: "list"
