@@ -51,6 +51,7 @@
           h("h2", null, "Ein herzliches Dankeschön an unsere Eventpartner"),
           h("div", { className: "bk-preview-partners" },
             partners.map(function (partner, index) {
+              if (!partner || !partner.get) return null;
               return h("div", { className: "bk-preview-partner", key: index },
                 h("span", null, partner.get("role") || "Eventpartner"),
                 h("strong", null, partner.get("name") || ""),
@@ -63,6 +64,7 @@
           h("h2", null, "Impressionen"),
           h("div", { className: "bk-preview-gallery" },
             gallery.map(function (item, index) {
+              if (!item || !item.get) return null;
               var galleryImage = assetUrl(this.props, item.get("image"));
               return galleryImage ? h("img", {
                 key: index,
@@ -96,6 +98,7 @@
         ),
         categories && categories.size ? h("div", { className: "bk-preview-tags" },
           categories.map(function (item, index) {
+            if (item == null) return null;
             var category = typeof item === "string" ? item : (item.get ? item.get("category") : "");
             return category ? h("span", { className: "bk-preview-tag", key: index }, category) : null;
           }).toArray()
@@ -133,6 +136,7 @@
               h("h2", null, "Leistungen"),
               h("div", { className: "bk-preview-tags" },
                 services.map(function (item, index) {
+                  if (item == null) return null;
                   var service = typeof item === "string" ? item : (item.get ? item.get("service") : "");
                   return service ? h("span", { className: "bk-preview-tag", key: index }, service) : null;
                 }).toArray()
