@@ -15,12 +15,12 @@ partners:
     name: Inbound Production
     contact: Kontakt folgt
 gallery:
-  - image: /events/sablier/foto1.jpg
-  - image: /events/sablier/foto2.jpg
-  - image: /events/sablier/foto3.jpg
-  - image: /events/sablier/foto4.jpg
-  - image: /events/sablier/foto5.jpg
-  - image: /events/sablier/titel.jpg
+  - /events/sablier/foto1.jpg
+  - /events/sablier/foto2.jpg
+  - /events/sablier/foto3.jpg
+  - /events/sablier/foto4.jpg
+  - /events/sablier/foto5.jpg
+  - /events/sablier/titel.jpg
 ---
 Was für ein besonderer Abend im Sablier.
 
