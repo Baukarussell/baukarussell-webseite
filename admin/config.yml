@@ -33,12 +33,9 @@ collections:
           - {label: "Kontakt oder Website", name: "contact", widget: "string", required: false, default: "Kontakt folgt"}
       - label: "Impressionen"
         name: "gallery"
-        widget: "image"
+        widget: "list"
         required: false
-        media_library:
-          config:
-            multiple: true
-            max_files: 100
+        field: {label: "Bild", name: "image", widget: "image"}
       - {label: "Text", name: "body", widget: "markdown"}
 
   - name: "projekte"
