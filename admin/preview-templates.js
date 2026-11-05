@@ -32,6 +32,11 @@
       var image = assetUrl(this.props, entry.getIn(["data", "image"]));
       var partners = entry.getIn(["data", "partners"]);
       var gallery = entry.getIn(["data", "gallery"]);
+      var galleryValues = gallery && gallery.toArray ? gallery.toArray() : [];
+      var galleryImages = galleryValues.map(function (item) {
+        var value = typeof item === "string" ? item : (item && item.get ? item.get("image") : "");
+        return assetUrl(this.props, value);
+      }, this).filter(Boolean);
 
       return h("article", { className: "bk-preview" },
         h("header", { className: "bk-preview-hero" },
@@ -60,18 +65,16 @@
             }).toArray()
           )
         ) : null,
-        gallery && gallery.size ? h("section", { className: "bk-preview-section" },
+        galleryImages.length ? h("section", { className: "bk-preview-section" },
           h("h2", null, "Impressionen"),
           h("div", { className: "bk-preview-gallery" },
-            gallery.map(function (item, index) {
-              if (!item || !item.get) return null;
-              var galleryImage = assetUrl(this.props, item.get("image"));
-              return galleryImage ? h("img", {
+            galleryImages.map(function (galleryImage, index) {
+              return h("img", {
                 key: index,
                 src: galleryImage,
                 alt: "Impression " + (index + 1)
-              }) : null;
-            }, this).toArray()
+              });
+            })
           )
         ) : null
       );
