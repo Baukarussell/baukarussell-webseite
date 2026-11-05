@@ -96,10 +96,13 @@
       ? '<section class="panel"><h2>Ein herzliches Dankeschön an unsere Eventpartner</h2>' + e.partners.map(function (p) {
           return '<div class="row"><span>' + esc(p.role) + '</span><strong>' + esc(p.name) + '</strong><small>' + esc(p.contact) + '</small></div>';
         }).join("") + '</section>' : "";
-    var galleryItems = Array.isArray(e.gallery) ? e.gallery.filter(function (g) { return g && g.image; }) : [];
+    var galleryItems = Array.isArray(e.gallery) ? e.gallery.map(function (item) {
+      if (typeof item === "string") return item;
+      return item && item.image ? item.image : "";
+    }).filter(Boolean) : [];
     var gallery = galleryItems.length
-      ? '<section class="gallery"><h2>Impressionen</h2><div class="gallery-grid">' + galleryItems.map(function (g, i) {
-          return '<a href="' + url(g.image) + '" target="_blank" rel="noopener"><img src="' + url(g.image) + '" alt="Impression ' + (i + 1) + '" loading="lazy"></a>';
+      ? '<section class="gallery"><h2>Impressionen</h2><div class="gallery-grid">' + galleryItems.map(function (image, i) {
+          return '<a href="' + url(image) + '" target="_blank" rel="noopener"><img src="' + url(image) + '" alt="Impression ' + (i + 1) + '" loading="lazy"></a>';
         }).join("") + '</div></section>' : "";
     return '<section class="hero"><img src="' + url(e.image) + '" alt="' + esc(e.title) + '"><div class="hero-copy"><div class="meta">' + dateText(e.date) + '</div><h1>' + esc(e.title) + '</h1></div></section>' +
       '<section class="content">' + (e.subtitle ? '<h2>' + esc(e.subtitle) + '</h2>' : '') + (e.location ? '<p class="location">' + esc(e.location) + '</p>' : '') +
