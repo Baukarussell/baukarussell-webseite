@@ -20,3 +20,13 @@
 .bk-preview-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .bk-preview-gallery img{width:100%;aspect-ratio:4/3;object-fit:cover}
 @media(max-width:650px){.bk-preview-hero{height:340px}.bk-preview-heading{left:22px;right:22px;bottom:25px}.bk-preview-content{padding:35px 22px}.bk-preview-section{padding:25px 22px}.bk-preview-partner{grid-template-columns:1fr;gap:3px}.bk-preview-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+.bk-preview-tags{display:flex;flex-wrap:wrap;gap:9px;max-width:850px;margin:28px auto;padding:0 6%}
+.bk-preview-tag{display:inline-block;padding:7px 13px;background:#fff;border:1px solid #e8e1d7;color:#80633f;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.bk-preview-member{max-width:1100px;margin:55px auto;display:grid;grid-template-columns:minmax(200px,340px) 1fr;gap:45px;padding:0 6%;align-items:start}
+.bk-preview-portrait{width:100%;max-height:440px;object-fit:cover}
+.bk-preview-member-logo{max-width:240px;max-height:140px;object-fit:contain;justify-self:center}
+.bk-preview-member .bk-preview-section{margin:28px 0 0;padding:24px;background:#fff}
+.bk-preview-quote{margin:45px auto;max-width:900px;padding:35px 6%;background:#1a1a1a;color:#d4b483;text-align:center;font:italic 27px 'Cormorant Garamond',Georgia,serif}
+@media(max-width:650px){.bk-preview-member{display:block;margin:35px auto;padding:0 22px}.bk-preview-portrait{max-width:340px;margin-bottom:25px}.bk-preview-tags{padding:0 22px}}
