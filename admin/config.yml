@@ -33,13 +33,11 @@ collections:
           - {label: "Kontakt oder Website", name: "contact", widget: "string", required: false, default: "Kontakt folgt"}
       - label: "Impressionen"
         name: "gallery"
-        widget: "image"
+        widget: "list"
         required: false
-        hint: "Hier kannst du mehrere Fotos auf einmal auswählen. Die Bilder erscheinen anschliessend gemeinsam in der Galerie."
-        media_library:
-          config:
-            multiple: true
-            max_files: 100
+        label_singular: "Foto hinzufügen"
+        hint: "Füge die Fotos einzeln hinzu. Klicke für jedes weitere Foto auf «Foto hinzufügen»."
+        field: {label: "Foto", name: "image", widget: "image"}
       - {label: "Text", name: "body", widget: "markdown"}
 
   - name: "projekte"
