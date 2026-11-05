@@ -35,6 +35,8 @@ collections:
         name: "gallery"
         widget: "list"
         required: false
+        label_singular: "Bild hinzufügen"
+        hint: "Du kannst mehrere Fotos direkt über den Upload auswählen. Im Dateifenster mehrere Bilder mit Ctrl oder Shift markieren, öffnen und danach im Medienfenster auswählen."
         field: {label: "Bild", name: "image", widget: "image"}
       - {label: "Text", name: "body", widget: "markdown"}
 
