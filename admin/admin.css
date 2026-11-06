@@ -77,3 +77,46 @@ body { margin: 0; }
     padding-right: 28px;
   }
 }
+
+
+/* Wider working canvas for the CMS collection screens */
+#nc-root [class*="Page"],
+#nc-root [class*="page"],
+#nc-root [class*="Main"],
+#nc-root [class*="main"] {
+  max-width: none !important;
+}
+#nc-root [class*="CollectionPage"],
+#nc-root [class*="collectionPage"],
+#nc-root [class*="ListPage"],
+#nc-root [class*="listPage"] {
+  width: 100% !important;
+  max-width: none !important;
+}
+#nc-root [class*="CollectionMain"],
+#nc-root [class*="collectionMain"],
+#nc-root [class*="ListPage-listPage"] {
+  width: 100% !important;
+  max-width: none !important;
+  flex: 1 1 auto !important;
+}
+#nc-root [class*="CollectionMain"] > *,
+#nc-root [class*="collectionMain"] > *,
+#nc-root [class*="ListPage-listPage"] > * {
+  max-width: 1440px !important;
+  width: 100% !important;
+}
+#nc-root [class*="CollectionSidebar"],
+#nc-root [class*="collectionSidebar"] {
+  flex: 0 0 250px !important;
+  width: 250px !important;
+}
+@media (min-width: 1280px) {
+  #nc-root [class*="CollectionPage"],
+  #nc-root [class*="collectionPage"],
+  #nc-root [class*="ListPage"],
+  #nc-root [class*="listPage"] {
+    padding-left: clamp(24px, 4vw, 64px) !important;
+    padding-right: clamp(24px, 4vw, 64px) !important;
+  }
+}
