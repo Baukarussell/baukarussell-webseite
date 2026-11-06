@@ -32,6 +32,7 @@ collections:
         name: "partners"
         widget: "list"
         required: false
+        default: []
         fields:
           - {label: "Bereich", name: "role", widget: "string"}
           - {label: "Name", name: "name", widget: "string"}
@@ -40,14 +41,16 @@ collections:
         name: "gallery"
         widget: "list"
         required: false
+        default: []
+        min: 0
         label_singular: "Foto"
-        hint: "Füge die Fotos einzeln hinzu. Klicke für jedes weitere Foto auf «Foto hinzufügen»."
+        label_plural: "Fotos"
+        hint: "Die Galerie ist zu Beginn leer. Klicke für jedes Bild einmal auf «Foto hinzufügen» und wähle genau ein Foto aus."
         field:
           label: "Foto"
           name: "image"
           widget: "image"
-          media_library:
-            allow_multiple: false
+          allow_multiple: false
       - {label: "Text", name: "body", widget: "markdown"}
 
   - name: "projekte"
