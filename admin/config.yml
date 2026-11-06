@@ -80,7 +80,7 @@ collections:
       - {label: "Logo", name: "logo", widget: "image"}
       - {label: "Profilbild", name: "profile_image", widget: "image", required: false}
       - {label: "Kurzbeschreibung", name: "tagline", widget: "string", required: false}
-      - {label: "Beschreibung", name: "body", widget: "richtext"}
+      - {label: "Beschreibung", name: "body", widget: "richtext", buttons: ["bold", "italic", "strikethrough", "link", "heading-one", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"], editor_components: ["image", "code-block"]}
       - label: "Leistungen"
         name: "services"
         widget: "list"
