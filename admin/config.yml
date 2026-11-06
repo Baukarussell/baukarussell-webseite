@@ -1,3 +1,10 @@
+site_url: https://baukarussell-webseite.pages.dev
+display_url: https://baukarussell-webseite.pages.dev
+locale: de
+logo:
+  src: /admin/baukarussell-mark.svg
+  show_in_header: true
+
 backend:
   name: github
   repo: Baukarussell/baukarussell-webseite
@@ -38,7 +45,7 @@ collections:
         label_singular: "Foto hinzufügen"
         hint: "Füge die Fotos einzeln hinzu. Klicke für jedes weitere Foto auf «Foto hinzufügen»."
         field: {label: "Foto", name: "image", widget: "image"}
-      - {label: "Text", name: "body", widget: "richtext"}
+      - {label: "Text", name: "body", widget: "richtext", buttons: ["bold", "italic", "strikethrough", "link", "heading-one", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"], editor_components: ["image", "code-block"]}
 
   - name: "projekte"
     label: "Projekte"
@@ -58,7 +65,7 @@ collections:
         required: false
         field: {label: "Kategorie", name: "category", widget: "string"}
       - {label: "Projektmitglied", name: "member", widget: "string", required: false}
-      - {label: "Beschreibung", name: "body", widget: "richtext", required: false}
+      - {label: "Beschreibung", name: "body", widget: "richtext", required: false, buttons: ["bold", "italic", "strikethrough", "link", "heading-one", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"], editor_components: ["image", "code-block"]}
 
   - name: "mitglieder"
     label: "Mitglieder"
