@@ -22,8 +22,6 @@ collections:
     create: true
     extension: "md"
     slug: "{{slug}}"
-    media_folder: "/uploads/events/{{slug}}"
-    public_folder: "/uploads/events/{{slug}}"
     fields:
       - {label: "Titel", name: "title", widget: "string"}
       - {label: "Datum", name: "date", widget: "datetime"}
@@ -44,7 +42,12 @@ collections:
         required: false
         label_singular: "Foto"
         hint: "Füge die Fotos einzeln hinzu. Klicke für jedes weitere Foto auf «Foto hinzufügen»."
-        field: {label: "Foto", name: "image", widget: "image"}
+        field:
+          label: "Foto"
+          name: "image"
+          widget: "image"
+          media_library:
+            allow_multiple: false
       - {label: "Text", name: "body", widget: "markdown"}
 
   - name: "projekte"
@@ -53,8 +56,6 @@ collections:
     create: true
     extension: "md"
     slug: "{{slug}}"
-    media_folder: "/uploads/projekte/{{slug}}"
-    public_folder: "/uploads/projekte/{{slug}}"
     fields:
       - {label: "Titel", name: "title", widget: "string"}
       - {label: "Datum", name: "date", widget: "datetime"}
@@ -73,8 +74,6 @@ collections:
     create: true
     extension: "md"
     slug: "{{slug}}"
-    media_folder: "/uploads/mitglieder/{{slug}}"
-    public_folder: "/uploads/mitglieder/{{slug}}"
     fields:
       - {label: "Firmenname", name: "title", widget: "string"}
       - {label: "Logo", name: "logo", widget: "image"}
