@@ -42,7 +42,7 @@ collections:
         name: "gallery"
         widget: "list"
         required: false
-        label_singular: "Foto hinzufügen"
+        label_singular: "Foto"
         hint: "Füge die Fotos einzeln hinzu. Klicke für jedes weitere Foto auf «Foto hinzufügen»."
         field: {label: "Foto", name: "image", widget: "image"}
       - {label: "Text", name: "body", widget: "markdown"}
