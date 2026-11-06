@@ -1,0 +1,32 @@
+/* Baukarussell CMS: restrained visual polish */
+:root {
+  color-scheme: light;
+  --bk-ink: #24231f;
+  --bk-muted: #77736b;
+  --bk-gold: #a98b5c;
+  --bk-paper: #f7f5f0;
+  --bk-line: #e7e2d8;
+}
+html, body {
+  min-height: 100%;
+  background: var(--bk-paper) !important;
+  color: var(--bk-ink);
+  font-family: Inter, "Helvetica Neue", Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+}
+body { margin: 0; }
+button, input, textarea, select {
+  font: inherit;
+}
+input, textarea, select {
+  border-radius: 5px !important;
+}
+button {
+  transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--bk-gold) !important;
+  outline-offset: 2px;
+}
+a { text-underline-offset: 3px; }
+::selection { background: #e8dcc7; color: #24231f; }
