@@ -45,7 +45,7 @@ collections:
         label_singular: "Foto hinzufügen"
         hint: "Füge die Fotos einzeln hinzu. Klicke für jedes weitere Foto auf «Foto hinzufügen»."
         field: {label: "Foto", name: "image", widget: "image"}
-      - {label: "Text", name: "body", widget: "richtext", buttons: ["bold", "italic", "strikethrough", "link", "heading-one", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"], editor_components: ["image", "code-block"]}
+      - {label: "Text", name: "body", widget: "markdown", buttons: ["bold", "italic", "strikethrough", "link", "heading-one", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"], editor_components: ["image", "code-block"]}
 
   - name: "projekte"
     label: "Projekte"
@@ -65,7 +65,7 @@ collections:
         required: false
         field: {label: "Kategorie", name: "category", widget: "string"}
       - {label: "Projektmitglied", name: "member", widget: "string", required: false}
-      - {label: "Beschreibung", name: "body", widget: "richtext", required: false, buttons: ["bold", "italic", "strikethrough", "link", "heading-one", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"], editor_components: ["image", "code-block"]}
+      - {label: "Beschreibung", name: "body", widget: "markdown", required: false, buttons: ["bold", "italic", "strikethrough", "link", "heading-one", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"], editor_components: ["image", "code-block"]}
 
   - name: "mitglieder"
     label: "Mitglieder"
@@ -80,7 +80,7 @@ collections:
       - {label: "Logo", name: "logo", widget: "image"}
       - {label: "Profilbild", name: "profile_image", widget: "image", required: false}
       - {label: "Kurzbeschreibung", name: "tagline", widget: "string", required: false}
-      - {label: "Beschreibung", name: "body", widget: "richtext", buttons: ["bold", "italic", "strikethrough", "link", "heading-one", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"], editor_components: ["image", "code-block"]}
+      - {label: "Beschreibung", name: "body", widget: "markdown", buttons: ["bold", "italic", "strikethrough", "link", "heading-one", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"], editor_components: ["image", "code-block"]}
       - label: "Leistungen"
         name: "services"
         widget: "list"
