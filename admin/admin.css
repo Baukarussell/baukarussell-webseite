@@ -1,13 +1,15 @@
-/* Baukarussell CMS: restrained visual polish */
+/* Baukarussell CMS visual layer */
 :root {
   color-scheme: light;
   --bk-ink: #24231f;
   --bk-muted: #77736b;
   --bk-gold: #a98b5c;
   --bk-paper: #f7f5f0;
+  --bk-white: #fffefa;
   --bk-line: #e7e2d8;
+  --bk-shadow: 0 5px 22px rgba(37, 32, 24, .055);
 }
-html, body {
+html, body, #nc-root {
   min-height: 100%;
   background: var(--bk-paper) !important;
   color: var(--bk-ink);
@@ -15,18 +17,63 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 body { margin: 0; }
-button, input, textarea, select {
-  font: inherit;
+#nc-root { min-height: 100vh; }
+#nc-root, #nc-root * { box-sizing: border-box; }
+#nc-root button, #nc-root input, #nc-root textarea, #nc-root select {
+  font-family: inherit !important;
 }
-input, textarea, select {
-  border-radius: 5px !important;
+#nc-root input, #nc-root textarea, #nc-root select {
+  border-radius: 6px !important;
 }
-button {
+#nc-root input, #nc-root textarea {
+  min-height: 40px;
+}
+#nc-root button {
+  border-radius: 5px;
   transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
 }
-button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+#nc-root button:focus-visible,
+#nc-root input:focus-visible,
+#nc-root textarea:focus-visible,
+#nc-root select:focus-visible {
   outline: 2px solid var(--bk-gold) !important;
   outline-offset: 2px;
 }
-a { text-underline-offset: 3px; }
-::selection { background: #e8dcc7; color: #24231f; }
+#nc-root a { text-underline-offset: 3px; }
+#nc-root [class*="AppHeader"],
+#nc-root [class*="appHeader"] {
+  background: var(--bk-white) !important;
+  border-bottom: 1px solid var(--bk-line) !important;
+  box-shadow: 0 2px 12px rgba(37, 32, 24, .035);
+}
+#nc-root [class*="CollectionPage"],
+#nc-root [class*="collectionPage"],
+#nc-root [class*="CollectionMain"],
+#nc-root [class*="collectionMain"] {
+  max-width: none !important;
+  width: 100% !important;
+}
+#nc-root [class*="CollectionSidebar"],
+#nc-root [class*="collectionSidebar"] {
+  border-radius: 8px;
+}
+#nc-root [class*="CollectionMain"] > div,
+#nc-root [class*="collectionMain"] > div {
+  max-width: 1120px;
+}
+#nc-root [class*="Card"],
+#nc-root [class*="card"] {
+  border-radius: 7px;
+}
+#nc-root [class*="Toolbar"],
+#nc-root [class*="toolbar"] {
+  border-color: var(--bk-line);
+}
+::selection { background: #e8dcc7; color: var(--bk-ink); }
+@media (min-width: 1100px) {
+  #nc-root [class*="CollectionMain"],
+  #nc-root [class*="collectionMain"] {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+}
