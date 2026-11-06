@@ -4,22 +4,38 @@
     return;
   }
 
+  function asArray(value) {
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    if (typeof value.toArray === "function") {
+      var result = value.toArray();
+      return Array.isArray(result) ? result : [];
+    }
+    return [];
+  }
+
+  function field(item, key) {
+    if (item == null) return "";
+    if (typeof item.get === "function") return item.get(key) || "";
+    return item[key] || "";
+  }
+
   function dateLabel(value) {
     if (!value) return "";
     var parsed = new Date(value);
-    return isNaN(parsed.getTime())
-      ? value
-      : parsed.toLocaleDateString("de-CH", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric"
-        });
+    return isNaN(parsed.getTime()) ? String(value) : parsed.toLocaleDateString("de-CH", {
+      day: "2-digit", month: "long", year: "numeric"
+    });
   }
 
   function assetUrl(props, value) {
     if (!value) return null;
-    var asset = props.getAsset(value);
-    return asset ? asset.toString() : null;
+    try {
+      var asset = props.getAsset(value);
+      return asset ? asset.toString() : null;
+    } catch (error) {
+      return null;
+    }
   }
 
   var EventsPreview = createClass({
@@ -30,11 +46,10 @@
       var date = entry.getIn(["data", "date"]) || "";
       var location = entry.getIn(["data", "location"]) || "";
       var image = assetUrl(this.props, entry.getIn(["data", "image"]));
-      var partners = entry.getIn(["data", "partners"]);
-      var gallery = entry.getIn(["data", "gallery"]);
-      var galleryValues = gallery && gallery.toArray ? gallery.toArray() : [];
-      var galleryImages = galleryValues.map(function (item) {
-        var value = typeof item === "string" ? item : (item && item.get ? item.get("image") : "");
+      var partners = asArray(entry.getIn(["data", "partners"]));
+      var gallery = asArray(entry.getIn(["data", "gallery"]));
+      var galleryImages = gallery.map(function (item) {
+        var value = typeof item === "string" ? item : field(item, "image");
         return assetUrl(this.props, value);
       }, this).filter(Boolean);
 
@@ -52,28 +67,23 @@
           location ? h("div", { className: "bk-preview-location" }, location) : null,
           h("div", { className: "bk-preview-body" }, this.props.widgetFor("body"))
         ),
-        partners && partners.size ? h("section", { className: "bk-preview-section" },
+        partners.length ? h("section", { className: "bk-preview-section" },
           h("h2", null, "Ein herzliches Dankeschön an unsere Eventpartner"),
           h("div", { className: "bk-preview-partners" },
             partners.map(function (partner, index) {
-              if (!partner || !partner.get) return null;
               return h("div", { className: "bk-preview-partner", key: index },
-                h("span", null, partner.get("role") || "Eventpartner"),
-                h("strong", null, partner.get("name") || ""),
-                partner.get("contact") ? h("small", null, partner.get("contact")) : null
+                h("span", null, field(partner, "role") || "Eventpartner"),
+                h("strong", null, field(partner, "name")),
+                field(partner, "contact") ? h("small", null, field(partner, "contact")) : null
               );
-            }).toArray()
+            })
           )
         ) : null,
         galleryImages.length ? h("section", { className: "bk-preview-section" },
           h("h2", null, "Impressionen"),
           h("div", { className: "bk-preview-gallery" },
             galleryImages.map(function (galleryImage, index) {
-              return h("img", {
-                key: index,
-                src: galleryImage,
-                alt: "Impression " + (index + 1)
-              });
+              return h("img", { key: index, src: galleryImage, alt: "Impression " + (index + 1) });
             })
           )
         ) : null
@@ -88,7 +98,7 @@
       var date = entry.getIn(["data", "date"]) || "";
       var member = entry.getIn(["data", "member"]) || "";
       var image = assetUrl(this.props, entry.getIn(["data", "image"]));
-      var categories = entry.getIn(["data", "categories"]);
+      var categories = asArray(entry.getIn(["data", "categories"]));
       return h("article", { className: "bk-preview" },
         h("header", { className: "bk-preview-hero" },
           image ? h("img", { className: "bk-preview-cover", src: image, alt: title }) : null,
@@ -99,12 +109,11 @@
             member ? h("p", { className: "bk-preview-subtitle" }, member) : null
           )
         ),
-        categories && categories.size ? h("div", { className: "bk-preview-tags" },
+        categories.length ? h("div", { className: "bk-preview-tags" },
           categories.map(function (item, index) {
-            if (item == null) return null;
-            var category = typeof item === "string" ? item : (item.get ? item.get("category") : "");
+            var category = typeof item === "string" ? item : field(item, "category");
             return category ? h("span", { className: "bk-preview-tag", key: index }, category) : null;
-          }).toArray()
+          })
         ) : null,
         h("section", { className: "bk-preview-content" },
           h("div", { className: "bk-preview-body" }, this.props.widgetFor("body"))
@@ -120,7 +129,7 @@
       var tagline = entry.getIn(["data", "tagline"]) || "";
       var logo = assetUrl(this.props, entry.getIn(["data", "logo"]));
       var portrait = assetUrl(this.props, entry.getIn(["data", "profile_image"]));
-      var services = entry.getIn(["data", "services"]);
+      var services = asArray(entry.getIn(["data", "services"]));
       var address = entry.getIn(["data", "address"]) || "";
       var phone = entry.getIn(["data", "phone"]) || "";
       var mobile = entry.getIn(["data", "mobile"]) || "";
@@ -135,14 +144,13 @@
             h("h1", null, title),
             tagline ? h("p", { className: "bk-preview-subtitle" }, tagline) : null,
             h("div", { className: "bk-preview-body" }, this.props.widgetFor("body")),
-            services && services.size ? h("section", { className: "bk-preview-section" },
+            services.length ? h("section", { className: "bk-preview-section" },
               h("h2", null, "Leistungen"),
               h("div", { className: "bk-preview-tags" },
                 services.map(function (item, index) {
-                  if (item == null) return null;
-                  var service = typeof item === "string" ? item : (item.get ? item.get("service") : "");
+                  var service = typeof item === "string" ? item : field(item, "service");
                   return service ? h("span", { className: "bk-preview-tag", key: index }, service) : null;
-                }).toArray()
+                })
               )
             ) : null
           )
