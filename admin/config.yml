@@ -5,6 +5,9 @@ backend:
   base_url: https://baukarussell-webseite.pages.dev
   auth_endpoint: api/auth
 
+# Das hier ist der Schalter für "Entwurf speichern" (Preview Workflow)
+publish_mode: editorial_workflow
+
 media_folder: "logos" 
 public_folder: "/logos"
 
@@ -19,6 +22,12 @@ collections:
       - {label: "Datum", name: "date", widget: "datetime"}
       - {label: "Titelbild", name: "image", widget: "image"}
       - {label: "Text", name: "body", widget: "markdown"}
+      - label: "Galerie (mehrere Fotos)"
+        name: "galerie"
+        widget: "list"
+        required: false
+        fields:
+          - {label: "Foto", name: "image", widget: "image"}
 
   - name: "projekte"
     label: "Projekte"
@@ -26,6 +35,7 @@ collections:
     create: true
     slug: "{{slug}}"
     fields:
+      - {label: "Projekte anzeigen (Haken setzen)", name: "aktiv", widget: "boolean", default: true}
       - {label: "Titel", name: "title", widget: "string"}
       - {label: "Datum", name: "date", widget: "datetime"}
       - {label: "Bild", name: "image", widget: "image"}
@@ -40,3 +50,12 @@ collections:
       - {label: "Firmenname", name: "title", widget: "string"}
       - {label: "Logo", name: "logo", widget: "image"}
       - {label: "Beschreibung", name: "body", widget: "markdown"}
+
+  - name: "seiten"
+    label: "Seiten (Über uns & Kontakt)"
+    files:
+      - label: "Startseite (index.html)"
+        name: "startseite"
+        file: "index.html"
+        fields:
+          - {label: "HTML-Code der Startseite", name: "body", widget: "code", default_language: "html"}
