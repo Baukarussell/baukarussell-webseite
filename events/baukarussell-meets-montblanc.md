@@ -1,7 +1,11 @@
 ---
-title: Baukarussell x Montblanc | Eleganz trifft auf besondere Begegnungen
+title: Baukarussell Meets Montblanc
 date: 2026-10-22T18:00:00.000+02:00
+subtitle: Eleganz trifft auf besondere Begegnungen
 image: /logos/baukarussellxmontblanc-00148.jpg
+location: Montblanc Boutique Zürich
+gallery:
+  - /uploads/baukarussellxmontblanc-00001.jpg
 ---
 Ein Abend, der von zeitloser Eleganz, inspirierenden Gesprächen und wertvollen Begegnungen geprägt war.
 

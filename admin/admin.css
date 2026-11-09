@@ -1,0 +1,34 @@
+/* Minimal, non-invasive Baukarussell CMS styling.
+   Keep Decap CMS layout dimensions under its own control. */
+:root {
+  color-scheme: light;
+  --bk-ink: #24231f;
+  --bk-muted: #77736b;
+  --bk-gold: #a98b5c;
+  --bk-paper: #f7f5f0;
+  --bk-line: #e7e2d8;
+}
+html, body {
+  min-height: 100%;
+  background: var(--bk-paper);
+  color: var(--bk-ink);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+body { margin: 0; }
+#nc-root { min-height: 100vh; }
+#nc-root button, #nc-root input, #nc-root textarea, #nc-root select {
+  font-family: inherit;
+}
+#nc-root input, #nc-root textarea, #nc-root select {
+  border-radius: 5px;
+}
+#nc-root button:focus-visible,
+#nc-root input:focus-visible,
+#nc-root textarea:focus-visible,
+#nc-root select:focus-visible {
+  outline: 2px solid var(--bk-gold);
+  outline-offset: 2px;
+}
+#nc-root a { text-underline-offset: 3px; }
+::selection { background: #e8dcc7; color: #24231f; }

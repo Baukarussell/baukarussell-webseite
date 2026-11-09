@@ -1,0 +1,17 @@
+{
+  "name": "baukarussell-webseite",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "node scripts/build-site.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "marked": "^15.0.7",
+    "sanitize-html": "^2.14.0"
+  }
+}
