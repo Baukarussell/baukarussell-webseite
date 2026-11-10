@@ -22,10 +22,7 @@
   nav.scrolled { padding: 16px 80px; box-shadow: 0 2px 20px rgba(0,0,0,0.05); }
   .logo-text { font-family: 'Cormorant Garamond', serif; display: inline-block; text-decoration: none; line-height: 1; }
   .logo-main { display: block; font-size: 56px; font-weight: 500; letter-spacing: 0.08em; color: var(--dark); text-transform: uppercase; line-height: 1; margin-bottom: 5px; }
-  .logo-sub { display: block; font-size: 13px; font-weight: 400; letter-spacing: 0.35em; color: var(--dark); text-transform: uppercase; padding-left: 6px; }
-  .logo-sub::before { content: '─── '; font-size: 11px; }
-  .logo-sub::after { content: ' ───'; font-size: 11px; }
-  nav.scrolled .logo-main { font-size: 44px; }
+  .logo-sub { display: block; font-size: 13px; font-weight: 400; letter-spacing: 0.35em; color: var(--dark); text-transform: uppercase; padding-left: 6px; }  nav.scrolled .logo-main { font-size: 44px; }
   nav.scrolled .logo-sub { font-size: 11px; }
   .nav-links { display: flex; gap: 40px; list-style: none; }
   .nav-links a { color: var(--dark); text-decoration: none; font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; transition: all 0.3s; font-weight: 500; position: relative; }
@@ -56,6 +53,16 @@
   .event-loc strong { color: var(--dark); }
   .btn-read { align-self: flex-start; padding: 14px 30px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; color: white; background: var(--dark); transition: all 0.3s; font-weight: 500; }
   .event-card:hover .btn-read { background: var(--gold); }
+  .featured-event { grid-template-columns: 1.15fr 1fr; }
+  .archive-event { max-width: 850px; width: 100%; margin: 0 auto; grid-template-columns: 38% 1fr; gap: 0; }
+  .archive-event .event-image { aspect-ratio: 4/3; }
+  .archive-event .event-info { padding: 26px 34px; }
+  .archive-event .event-title { font-size: 28px; margin-bottom: 10px; }
+  .archive-event .event-desc { font-size: 13px; margin-bottom: 15px; }
+  .archive-event .event-loc { font-size: 10px; padding-top: 12px; margin-bottom: 15px; }
+  .archive-event .btn-read { padding: 10px 18px; font-size: 10px; }
+  .event-card[hidden] { display: none !important; }
+  .empty-events { text-align: center; color: #777; padding: 30px; }
 
   footer { background: var(--dark); color: white; padding: 70px 40px 30px; text-align: center; margin-top: 80px; }
   .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 32px; letter-spacing: 0.2em; color: white; margin-bottom: 8px; font-weight: 500; }
@@ -76,7 +83,8 @@
     .logo-main { font-size: 30px; }
     .logo-sub { font-size: 9px; }
     nav.scrolled .logo-main { font-size: 26px; }
-    .event-card { grid-template-columns: 1fr; gap: 0; }
+    .event-card, .featured-event, .archive-event { grid-template-columns: 1fr; gap: 0; }
+    .archive-event .event-info { padding: 25px; }
     .event-info { padding: 30px; }
     .events-list { padding: 40px 20px; }
     .filter-bar { padding: 20px; flex-wrap: wrap; }
@@ -105,17 +113,17 @@
 </header>
 
 <div class="filter-bar">
-  <button class="filter-btn active">Alle</button>
-  <button class="filter-btn">2026</button>
-  <button class="filter-btn">2025</button>
-  <button class="filter-btn">2024</button>
+  <button class="filter-btn active" data-filter="all">Alle</button>
+  <button class="filter-btn" data-filter="2026">2026</button>
+  <button class="filter-btn" data-filter="2025">2025</button>
+  <button class="filter-btn" data-filter="2024">2024</button>
 </div>
 
 <div class="events-list">
   <!-- Event 1: Montblanc -->
-  <a href="events/montblanc.html" class="event-card">
+  <a href="events/montblanc.html" class="event-card featured-event" data-year="2026">
     <div class="event-image">
-      <img src="events/montblanc/titel.jpg" alt="Baukarussell meets Montblanc">
+      <img src="logos/baukarussellxmontblanc-00148.jpg" alt="Baukarussell meets Montblanc">
     </div>
     <div class="event-info">
       <div class="event-meta">22. Oktober 2026 <span>•</span> Networking Event</div>
@@ -127,7 +135,7 @@
   </a>
 
   <!-- Event 2: Sablier -->
-  <a href="events/sablier.html" class="event-card">
+  <a href="events/sablier.html" class="event-card archive-event" data-year="2026">
     <div class="event-image">
       <img src="events/sablier/titel.jpg" alt="Baukarussell meets Sablier">
     </div>
@@ -140,7 +148,8 @@
     </div>
   </a>
   
-  <!-- Hier kannst du später ganz einfach weitere vergangene Events nach dem gleichen Muster einfügen -->
+  <p class="empty-events" hidden>Für dieses Jahr sind noch keine Events veröffentlicht.</p>
+  <!-- Weitere Events als Karten mit data-year ergänzen -->
 </div>
 
 <footer>
@@ -168,6 +177,22 @@
     if (window.scrollY > 80) { nav.classList.add('scrolled'); }
     else { nav.classList.remove('scrolled'); }
   });
+</script>
+<script>
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const eventCards = document.querySelectorAll('.events-list .event-card');
+  const emptyEvents = document.querySelector('.empty-events');
+  filterButtons.forEach(button => button.addEventListener('click', () => {
+    const year = button.dataset.filter;
+    filterButtons.forEach(item => item.classList.toggle('active', item === button));
+    let visible = 0;
+    eventCards.forEach(card => {
+      const show = year === 'all' || card.dataset.year === year;
+      card.hidden = !show;
+      if (show) visible++;
+    });
+    emptyEvents.hidden = visible > 0;
+  }));
 </script>
 </body>
 </html>
