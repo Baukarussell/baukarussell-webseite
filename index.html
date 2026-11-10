@@ -335,5 +335,25 @@
   reveals.forEach(el => observer.observe(el));
 </script>
 
+<script>
+/* Keep the homepage featured event in sync with published CMS content. */
+(async()=>{
+  const response=await fetch('/events-data.json',{cache:'no-store'});
+  if(!response.ok)return;
+  const data=await response.json();
+  if(!Array.isArray(data)||!data.length)return;
+  const e=data[0],card=document.querySelector('#events .featured-event');
+  if(!card)return;
+  card.href='/events/detail.html?event='+encodeURIComponent(e.slug);
+  const image=card.querySelector('.featured-event-image img');
+  if(image&&e.image){image.src=e.image;image.alt=e.title;}
+  const date=new Date(e.date),dateText=Number.isNaN(date.getTime())?e.date:new Intl.DateTimeFormat('de-CH',{day:'2-digit',month:'long',year:'numeric',timeZone:'Europe/Zurich'}).format(date);
+  const meta=card.querySelector('.featured-event-meta');
+  if(meta)meta.textContent=dateText+' · Networking Event';
+  const title=card.querySelector('.featured-event-title');if(title)title.textContent=e.title;
+  const desc=card.querySelector('.featured-event-description');if(desc)desc.textContent=e.subtitle||(e.body||'').split(/\n/)[0].slice(0,220);
+  const loc=card.querySelector('.featured-event-location strong');if(loc)loc.textContent=e.location||'';
+})().catch(error=>console.warn('CMS homepage feature unavailable',error));
+</script>
 </body>
 </html>
