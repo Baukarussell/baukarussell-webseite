@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event | Baukarussell</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#faf8f5;color:#262626;font-family:Inter,Arial,sans-serif;line-height:1.8}h1,h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400}nav{display:flex;justify-content:space-between;align-items:center;padding:18px 5%;background:#faf8f5}nav a{color:#222;text-decoration:none}nav .brand{font:30px 'Cormorant Garamond',Georgia,serif;letter-spacing:.1em}nav small{display:block;font:9px Inter,Arial,sans-serif;letter-spacing:.25em}.hero{position:relative;min-height:390px;background:#222;display:flex;align-items:end;color:white}.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.7}.hero-inner{position:relative;max-width:1100px;width:100%;margin:0 auto;padding:60px 30px;text-shadow:0 1px 4px #444}.hero h1{font-size:clamp(38px,5vw,65px);margin:0}.hero p{letter-spacing:.16em;font-size:12px}.body{max-width:740px;margin:70px auto;padding:0 24px}.body h2{text-align:center;font-size:35px}.body p{margin:0 0 25px}.gallery{max-width:1120px;margin:60px auto 90px;padding:0 24px}.gallery h2{text-align:center;font-size:40px}.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.photos button{padding:0;border:0;cursor:pointer;aspect-ratio:4/3;overflow:hidden;background:none}.photos img{width:100%;height:100%;object-fit:cover}.lightbox{display:none;position:fixed;inset:0;z-index:100;background:#000e;align-items:center;justify-content:center}.lightbox.active{display:flex}.lightbox img{max-width:85vw;max-height:85vh}.lightbox button{position:absolute;background:none;border:0;color:white;font-size:42px;cursor:pointer;padding:15px}.close{top:15px;right:20px}.prev{left:15px}.next{right:15px}footer{padding:45px;text-align:center;background:#222;color:white}footer a{color:white}@media(max-width:650px){.photos{grid-template-columns:repeat(2,1fr)}.hero{min-height:300px}nav .brand{font-size:22px}}
+</style></head><body><nav><a class="brand" href="/index.html">BAUKARUSSELL<small>NETWORKING À LA CARTE</small></a><a href="/events.html">Alle Events</a></nav><header class="hero"><img id="hero" alt=""><div class="hero-inner"><p id="date"></p><h1 id="title"></h1><p id="subtitle"></p></div></header><main><article class="body"><h2 id="heading"></h2><div id="description"></div></article><section class="gallery"><h2>Impressionen</h2><div class="photos" id="photos"></div></section></main><div class="lightbox" id="lightbox"><button class="close" aria-label="Schliessen">×</button><button class="prev" aria-label="Vorheriges Foto">‹</button><img id="large" alt="Vergrössertes Eventfoto"><button class="next" aria-label="Nächstes Foto">›</button></div><footer><a href="/events.html">Alle Events</a></footer>
+<script>
+(async()=>{
+const slug=new URLSearchParams(location.search).get('event');
+const events=await fetch('/events-data.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Keine Eventdaten');return r.json()});
+const e=events.find(x=>x.slug===slug);
+if(!e){document.querySelector('main').textContent='Event nicht gefunden.';return;}
+const date=new Date(e.date);
+document.title=e.title+' | Baukarussell';
+document.getElementById('title').textContent=e.title;
+document.getElementById('date').textContent=isNaN(date)?e.date:new Intl.DateTimeFormat('de-CH',{day:'2-digit',month:'long',year:'numeric',timeZone:'Europe/Zurich'}).format(date);
+document.getElementById('subtitle').textContent=e.subtitle||e.location||'';
+document.getElementById('heading').textContent=e.subtitle||'Besondere Begegnungen';
+const hero=document.getElementById('hero');if(e.image)hero.src=e.image;else hero.remove();
+const desc=document.getElementById('description');for(const paragraph of (e.body||'').split(/\n\s*\n/)){const p=document.createElement('p');p.textContent=paragraph;desc.append(p);}
+const images=[e.image,...(e.gallery||[])].filter((x,i,a)=>x&&a.indexOf(x)===i);
+const grid=document.getElementById('photos');if(!images.length)document.querySelector('.gallery').hidden=true;
+let index=0;const box=document.getElementById('lightbox');const big=document.getElementById('large');
+function show(i){index=(i+images.length)%images.length;big.src=images[index];box.classList.add('active');}
+function close(){box.classList.remove('active');}
+for(let i=0;i<images.length;i++){const button=document.createElement('button');const img=document.createElement('img');img.src=images[i];img.loading='lazy';img.alt=e.title;button.append(img);button.addEventListener('click',()=>show(i));grid.append(button);}
+document.querySelector('.close').onclick=close;document.querySelector('.prev').onclick=()=>show(index-1);document.querySelector('.next').onclick=()=>show(index+1);box.onclick=ev=>{if(ev.target===box)close()};document.addEventListener('keydown',ev=>{if(!box.classList.contains('active'))return;if(ev.key==='Escape')close();if(ev.key==='ArrowRight')show(index+1);if(ev.key==='ArrowLeft')show(index-1);});
+})().catch(()=>{document.querySelector('main').textContent='Eventdaten konnten nicht geladen werden.';});
+</script></body></html>
