@@ -204,5 +204,41 @@
     emptyEvents.hidden = visible > 0;
   }));
 </script>
+<script>
+/* Published CMS entries are generated from Markdown during Cloudflare build. */
+(async()=>{
+  let res=await fetch('/events-data.json',{cache:'no-store'});
+  if(!res.ok)return;
+  const entries=await res.json();
+  if(!Array.isArray(entries)||!entries.length)return;
+  const getDate=(e)=>{const d=new Date(e.date);return Number.isNaN(d.getTime())?e.date:new Intl.DateTimeFormat('de-CH',{day:'2-digit',month:'long',year:'numeric',timeZone:'Europe/Zurich'}).format(d);};
+  const make=(e,featured)=>{
+    const a=document.createElement('a');
+    a.className='event-card '+(featured?'featured-event':'archive-event');
+    a.dataset.year=e.year||'';
+    a.href='/events/detail.html?event='+encodeURIComponent(e.slug);
+    const image=document.createElement('div');image.className='event-image';
+    if(e.image){const img=document.createElement('img');img.src=e.image;img.alt=e.title;img.loading='lazy';image.append(img);}
+    const info=document.createElement('div');info.className='event-info';
+    const meta=document.createElement('div');meta.className='event-meta';meta.textContent=getDate(e)+' · Networking Event';
+    const title=document.createElement('h3');title.className='event-title';title.textContent=e.title;
+    const desc=document.createElement('p');desc.className='event-desc';desc.textContent=e.subtitle||(e.body||'').split(/\n/)[0].slice(0,190);
+    info.append(meta,title,desc);
+    if(e.location){const loc=document.createElement('div');loc.className='event-loc';loc.textContent='Location ';const strong=document.createElement('strong');strong.textContent=e.location;loc.append(strong);info.append(loc);}
+    const button=document.createElement('span');button.className='btn-read';button.textContent='Mehr erfahren →';info.append(button);
+    a.append(image,info);return a;
+  };
+  const list=document.querySelector('.events-list');
+  const archive=document.querySelector('.events-grid');
+  const existing=list.querySelector(':scope > .featured-event');
+  if(existing)existing.replaceWith(make(entries[0],true));
+  for(const e of entries.slice(1))archive.prepend(make(e,false));
+  const buttons=document.querySelectorAll('.filter-btn');
+  const empty=document.querySelector('.empty-events');
+  const cards=()=>list.querySelectorAll('.event-card');
+  const apply=()=>{const active=document.querySelector('.filter-btn.active');const year=active?.dataset.filter||'all';let visible=0;cards().forEach(card=>{card.hidden=year!=='all'&&card.dataset.year!==year;if(!card.hidden)visible++;});if(empty)empty.hidden=visible>0;};
+  buttons.forEach(b=>b.addEventListener('click',apply));apply();
+})().catch(error=>console.warn('CMS event listing unavailable',error));
+</script>
 </body>
 </html>
