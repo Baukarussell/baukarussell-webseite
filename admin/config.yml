@@ -1,8 +1,8 @@
 backend:
   name: github
   repo: Baukarussell/baukarussell-webseite
-  branch: main
-  base_url: https://baukarussell-webseite.pages.dev
+  branch: presentation-recovery-2026-11-10
+  base_url: https://baukarussell-cms-test.pages.dev
   auth_endpoint: api/auth
 
 # Das hier ist der Schalter für "Entwurf speichern" (Preview Workflow)
