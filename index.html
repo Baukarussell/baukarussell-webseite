@@ -52,14 +52,11 @@
   .members-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; max-width: 1200px; margin: 0 auto; }
   .member-card { display: flex; flex-direction: column; align-items: center; background: white; border: 1px solid #eee; padding: 30px 20px 20px; transition: all 0.4s ease; }
   .member-card:hover { border-color: var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.08); transform: translateY(-4px); }
-  .member-card.featured { border-color: var(--gold); border-width: 2px; }
-  .member-img { max-width: 100%; height: 90px; object-fit: contain; filter: grayscale(100%); opacity: 0.75; transition: all 0.4s ease; margin-bottom: 20px; }
+    .member-img { max-width: 100%; height: 90px; object-fit: contain; filter: grayscale(100%); opacity: 0.75; transition: all 0.4s ease; margin-bottom: 20px; }
   .member-card:hover .member-img { filter: grayscale(0%); opacity: 1; }
   .member-btn { display: inline-block; padding: 10px 20px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; color: var(--dark); border: 1px solid var(--dark); transition: all 0.3s; font-weight: 500; margin-top: auto; }
   .member-btn:hover { background: var(--gold); border-color: var(--gold); color: white; }
-  .member-card.featured .member-btn { background: var(--gold); border-color: var(--gold); color: white; }
-  .member-card.featured .member-btn:hover { background: var(--dark); border-color: var(--dark); }
-  
+      
   .projects-section { background: #f5f2ed; max-width: 100%; padding: 120px 60px; }
   .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 1400px; margin: 0 auto; }
   .project-card { background: white; overflow: hidden; transition: all 0.4s ease; text-decoration: none; display: block; }
@@ -234,7 +231,7 @@
       <img src="logos/konstantin.jpg" alt="Konstantin Architektur" class="member-img">
       <a href="https://www.konstantin-architektur.com/" target="_blank" class="member-btn">Website →</a>
     </div>
-    <div class="member-card reveal featured">
+    <div class="member-card reveal">
       <img src="logos/onur.jpg" alt="Onur Projects" class="member-img">
       <a href="mitglieder/onur.html" class="member-btn">Mehr erfahren →</a>
     </div>
@@ -253,39 +250,13 @@
   </div>
 </section>
 
-<section class="projects-section">
-  <div class="reveal">
-    <h2 class="section-title">Unsere Projekte</h2>
-    <p class="section-sub">Aus dem Netzwerk</p>
-  </div>
-  
-  <div class="projects-grid">
-    <a href="projekte/meyerhof.html" class="project-card reveal">
-      <div class="project-image">
-        <img src="projekte/meyerhof.jpg" alt="Neubau MFH im Meyerhof">
-      </div>
-      <div class="project-info">
-        <div class="project-meta">11. Sept. 2026 <span>•</span> Neubau</div>
-        <h3 class="project-title">Neubau MFH im Meyerhof, Fällanden ZH</h3>
-        <p class="project-description">In der Kernzone entsteht ein moderner Neubau mit zehn bewilligten Wohneinheiten in Massivbauweise. ONUR Projects übernimmt die gesamte Elektroplanung sowie das Photovoltaik Engineering.</p>
-        <div class="project-member">Von <strong>ONUR Projects</strong></div>
-      </div>
-    </a>
-    
-  </div>
-  
-  <div class="section-cta">
-    <a href="projekte.html" class="btn-more">Alle Projekte ansehen →</a>
-  </div>
-</section>
-
 <section id="events" class="events-section">
   <div class="reveal">
     <h2 class="section-title">Unser letztes Event</h2>
     <p class="section-sub">Begegnung. Atmosphäre. Austausch.</p>
   </div>
   
-  <a href="events/baukarussell-meets-montblanc.html" class="featured-event reveal">
+  <a href="events/montblanc.html" class="featured-event reveal">
     <div class="featured-event-image">
       <img src="logos/baukarussellxmontblanc-00148.jpg" alt="Baukarussell meets Montblanc">
     </div>
