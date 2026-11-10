@@ -4,6 +4,8 @@ subtitle: Eleganz trifft auf besondere Begegnungen
 location: Montblanc Boutique Zürich
 date: 2026-10-22T18:00:00.000+02:00
 image: /logos/baukarussellxmontblanc-00148.jpg
+galerie:
+  - image: /logos/baukarussellxmontblanc-00001.jpg
 ---
 Ein Abend, der von zeitloser Eleganz, inspirierenden Gesprächen und wertvollen Begegnungen geprägt war.
 
