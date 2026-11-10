@@ -35,6 +35,21 @@
     .event-hero-title { bottom: 25px; left: 25px; right: 25px; }
     .event-content { padding: 50px 25px 40px; }
   }
+
+  .gallery-section { max-width: 1200px; margin: 0 auto; padding: 60px 40px 100px; }
+  .gallery-title { font-family: 'Cormorant Garamond',serif; font-size: 38px; text-align: center; font-weight: 400; margin-bottom: 12px; }
+  .gallery-sub { text-align: center; color: var(--gold); letter-spacing: .24em; font-size: 11px; text-transform: uppercase; margin-bottom: 36px; }
+  .gallery-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
+  .gallery-item { display: block; padding: 0; border: 0; background: none; cursor: pointer; overflow: hidden; aspect-ratio: 4/3; }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+  .gallery-item:hover img { transform: scale(1.04); }
+  .lightbox { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.94); align-items: center; justify-content: center; padding: 60px; }
+  .lightbox.active { display: flex; }
+  .lightbox img { max-width: 90%; max-height: 82vh; object-fit: contain; }
+  .lightbox button { position: absolute; background: none; color: white; border: 0; font-size: 38px; cursor: pointer; padding: 15px; }
+  .lightbox-close { top: 12px; right: 24px; } .lightbox-prev { left: 12px; } .lightbox-next { right: 12px; }
+  .lightbox-counter { position: absolute; bottom: 20px; color: white; font-size: 12px; letter-spacing: .2em; }
+  @media(max-width:650px) { .gallery-grid { grid-template-columns: 1fr; } .gallery-section { padding: 40px 20px 70px; } .lightbox { padding: 25px; } }
 </style>
 </head>
 <body>
@@ -61,6 +76,30 @@
     <p>Wir blicken auf einen unvergesslichen Anlass zurück und freuen uns auf viele weitere besondere Begegnungen im Zeichen von Qualität, Vertrauen und gemeinsamen Werten.</p>
   </div>
 </section>
+<section class="gallery-section" aria-label="Impressionen">
+  <h2 class="gallery-title">Impressionen</h2>
+  <p class="gallery-sub">Baukarussell meets Montblanc</p>
+  <div class="gallery-grid">
+    <button class="gallery-item" type="button" onclick="openLightbox(0)" aria-label="Foto 1 vergrössern"><img src="../logos/baukarussellxmontblanc-00001.jpg" alt="Impression Montblanc Event" loading="lazy"></button>
+    <button class="gallery-item" type="button" onclick="openLightbox(1)" aria-label="Foto 2 vergrössern"><img src="../logos/baukarussellxmontblanc-00148.jpg" alt="Baukarussell meets Montblanc" loading="lazy"></button>
+  </div>
+</section>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Fotogalerie" onclick="if(event.target===this)closeLightbox()">
+  <button type="button" class="lightbox-close" onclick="closeLightbox()" aria-label="Schliessen">×</button>
+  <button type="button" class="lightbox-prev" onclick="changePhoto(-1)" aria-label="Vorheriges Foto">‹</button>
+  <img id="lightbox-img" alt="Vergrösserte Eventaufnahme">
+  <button type="button" class="lightbox-next" onclick="changePhoto(1)" aria-label="Nächstes Foto">›</button>
+  <span class="lightbox-counter" id="lightbox-counter"></span>
+</div>
+<script>
+const photos=['../logos/baukarussellxmontblanc-00001.jpg','../logos/baukarussellxmontblanc-00148.jpg'];
+let currentIndex=0;
+function openLightbox(index){currentIndex=index;updateLightbox();document.getElementById('lightbox').classList.add('active');}
+function updateLightbox(){document.getElementById('lightbox-img').src=photos[currentIndex];document.getElementById('lightbox-counter').textContent=(currentIndex+1)+' / '+photos.length;}
+function changePhoto(direction){currentIndex=(currentIndex+direction+photos.length)%photos.length;updateLightbox();}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('active');}
+document.addEventListener('keydown',e=>{if(!document.getElementById('lightbox').classList.contains('active'))return;if(e.key==='Escape')closeLightbox();if(e.key==='ArrowLeft')changePhoto(-1);if(e.key==='ArrowRight')changePhoto(1);});
+</script>
 <footer>
   <div class="footer-logo">BAUKARUSSELL</div>
   <div class="footer-links">
