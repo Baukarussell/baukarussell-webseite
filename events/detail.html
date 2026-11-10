@@ -10,7 +10,7 @@
 .event-heading #date{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#b8945f;margin:0 0 16px}
 .event-heading h1{font-size:clamp(32px,4.5vw,56px);line-height:1.17;margin:0 auto;max-width:960px;overflow-wrap:break-word}
 .event-heading #subtitle{font-size:13px;color:#b8945f;letter-spacing:.08em;margin:18px auto 0}
-.body{margin:45px auto 70px}
+.event-heading #subtitle{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(23px,2.5vw,31px);letter-spacing:.03em;color:#333;margin:13px auto 0}.body{margin:35px auto 70px}
 @media(max-width:650px){.hero{height:270px;min-height:0}.event-heading{padding:30px 18px 8px}.body{margin:35px auto 65px}}
 </style></head><body><nav><a class="brand" href="/index.html">BAUKARUSSELL<small>NETWORKING À LA CARTE</small></a><a href="/events.html">Alle Events</a></nav><header class="hero"><img id="hero" alt=""></header><section class="event-heading"><p id="date"></p><h1 id="title"></h1><p id="subtitle"></p></section><main><article class="body"><h2 id="heading"></h2><div id="description"></div></article><section class="gallery"><h2>Impressionen</h2><div class="photos" id="photos"></div></section></main><div class="lightbox" id="lightbox"><button class="close" aria-label="Schliessen">×</button><button class="prev" aria-label="Vorheriges Foto">‹</button><img id="large" alt="Vergrössertes Eventfoto"><button class="next" aria-label="Nächstes Foto">›</button></div><footer><a href="/events.html">Alle Events</a></footer>
 <script>
@@ -20,11 +20,11 @@ const events=await fetch('/events-data.json',{cache:'no-store'}).then(r=>{if(!r.
 const e=events.find(x=>x.slug===slug);
 if(!e){document.querySelector('main').textContent='Event nicht gefunden.';return;}
 const date=new Date(e.date);
-document.title=e.title+' | Baukarussell';
-document.getElementById('title').textContent=e.title;
+document.title=(e.subtitle?e.subtitle+' | ':'')+e.title+' | Baukarussell';
+document.getElementById('title').textContent=e.subtitle||e.title;
 document.getElementById('date').textContent=isNaN(date)?e.date:new Intl.DateTimeFormat('de-CH',{day:'2-digit',month:'long',year:'numeric',timeZone:'Europe/Zurich'}).format(date);
-document.getElementById('subtitle').textContent=e.subtitle||e.location||'';
-document.getElementById('heading').textContent=e.subtitle||'Besondere Begegnungen';
+document.getElementById('subtitle').textContent=e.subtitle?e.title:(e.location||'');
+document.getElementById('heading').remove();
 const hero=document.getElementById('hero');if(e.image)hero.src=e.image;else hero.remove();
 const desc=document.getElementById('description');for(const paragraph of (e.body||'').split(/\n\s*\n/)){const p=document.createElement('p');p.textContent=paragraph;desc.append(p);}
 const images=[e.image,...(e.gallery||[])].filter((x,i,a)=>x&&a.indexOf(x)===i);
