@@ -18,7 +18,9 @@ collections:
     create: true
     slug: "{{slug}}"
     fields:
-      - {label: "Titel", name: "title", widget: "string"}
+      - {label: "Eventname (z.B. Baukarussell x Montblanc)", name: "title", widget: "string"}
+      - {label: "Leitsatz (grosser Titel auf der Eventseite)", name: "subtitle", widget: "string", required: false}
+      - {label: "Location", name: "location", widget: "string", required: false}
       - {label: "Datum", name: "date", widget: "datetime"}
       - {label: "Titelbild", name: "image", widget: "image"}
       - {label: "Text", name: "body", widget: "markdown"}
