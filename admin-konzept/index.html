@@ -127,6 +127,25 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 @media(max-width:1200px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:720px){.hub-grid,.dashboard-lower{grid-template-columns:1fr}.hub-card{min-height:100px}}
 
+/* Unified brand/header alignment without decorative crossing lines */
+@media(min-width:901px){
+ .sidebar{padding:0 14px 24px;border-right:1px solid #f0ede8}
+ .sidebar .brand{height:88px;min-height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 -14px 0;padding:0 13px}
+ .sidebar .menu-label{margin-top:25px}
+ .sidebar .nav{max-width:100%;margin-bottom:4px}
+ .sidebar .sidebar-end{margin-left:0;margin-right:0}
+}
+.topbar{height:88px;min-height:88px;border-bottom:0!important;background:#fff;box-shadow:none}
+.sidebar .brand{border:0!important;box-shadow:none!important}
+.sidebar{box-shadow:none}
+.pages-grid .hub-card{min-height:134px}
+.pages-grid .hub-arrow{font-size:11px;font-weight:600;white-space:nowrap}
+.page-preview-content{padding:47px 42px 60px}
+.page-preview-content h2{font:500 clamp(30px,4vw,49px)/1.16 'Cormorant Garamond',Georgia,serif;text-align:center;margin:15px 0 31px}
+.page-preview-text{font-size:13px;line-height:2;color:#676b64;white-space:pre-wrap;overflow-wrap:anywhere}
+@media(max-width:900px){.topbar{height:auto;min-height:66px}.sidebar .brand{height:auto}.pages-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.pages-grid{grid-template-columns:1fr}.page-preview-content{padding:30px 21px}}
+
 </style>
 </head>
 <body>
@@ -140,6 +159,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <button class="nav" data-page="projects"><span class="ico">▤</span>Projekte <span class="pill">Inaktiv</span></button>
 <button class="nav" data-page="media"><span class="ico">▧</span>Medien</button>
 <button class="nav" data-page="pages"><span class="ico">▤</span>Seiten</button>
+<button class="nav" data-page="registrations"><span class="ico">▣</span>Anmeldungen <span class="pill">Geplant</span></button>
 <div class="sidebar-end"><small>DESIGNKONZEPT · TEST</small><div class="identity"><span class="avatar">BK</span><span><strong>Redaktion</strong><br><small>Baukarussell Verein</small></span></div></div>
 </aside>
 <div class="page">
@@ -147,7 +167,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <main class="main">
 <section id="dashboard">
 <div class="eyebrow">WILLKOMMEN IM REDAKTIONSBEREICH</div>
-<div class="hero-heading"><div><h1>Guten Morgen. Willkommen zurück.</h1><p class="sub">Dein zentraler Überblick über die Baukarussell Webseite.</p></div><button class="btn dark" id="dash-add">＋ Neues Event</button></div>
+<div class="hero-heading"><div><h1>Guten Morgen. Willkommen zurück.</h1><p class="sub">Dein zentraler Überblick über die Baukarussell Webseite.</p></div></div>
 <div class="notice"><strong>Interaktiver Designentwurf:</strong> Alle Bereiche und Kennzahlen dieser Seite sind Vorschauen. Noch keine Verbindung zu Live Statistiken oder echten Veröffentlichungen.</div>
 <div class="section-head"><h2>Deine Verwaltung auf einen Blick</h2><span class="dashboard-meta">Alle Bereiche direkt öffnen</span></div>
 <div class="hub-grid">
@@ -156,6 +176,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <button type="button" class="hub-card" data-hub-target="projects"><span class="hub-symbol">▤</span><span class="hub-text"><strong>Projekte <span class="mini-status">Inaktiv</span></strong><small>Für später vorbereitet</small></span><span class="hub-arrow">↗</span></button>
 <button type="button" class="hub-card" data-hub-target="media"><span class="hub-symbol">▧</span><span class="hub-text"><strong>Medien</strong><small>Fotos und Dateien organisieren</small></span><span class="hub-arrow">↗</span></button>
 <button type="button" class="hub-card" data-hub-target="pages"><span class="hub-symbol">▤</span><span class="hub-text"><strong>Seiten</strong><small>Startseite, Über uns und Kontakt</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card hub-muted" data-hub-target="registrations"><span class="hub-symbol">▣</span><span class="hub-text"><strong>Anmeldungen <span class="mini-status">Geplant</span></strong><small>Eventregistrierung, QR Code und Flyer</small></span><span class="hub-arrow">↗</span></button>
 <button type="button" class="hub-card hub-muted" data-hub-target="statistics"><span class="hub-symbol">▥</span><span class="hub-text"><strong>Statistik <span class="mini-status">Geplant</span></strong><small>Besuche und Seitenaufrufe im Blick</small></span><span class="hub-arrow">↗</span></button>
 </div>
 <div class="dashboard-lower">
@@ -186,6 +207,32 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <article class="event" data-status="draft"><div class="event-photo"><img src="/logos/baukarussellxmontblanc-00148.jpg" alt="Test Event"><span class="tag draft">Entwurf</span></div><div class="event-body"><div class="date">20. NOVEMBER 2026</div><h3>Baukarussell Test Event</h3><p>Ein besonderer Abend voller Begegnungen</p><div class="event-bottom"><span>Zürich</span><button data-open="test">Bearbeiten ↗</button></div></div></article>
 </div>
 
+</section>
+<section id="pages-list" class="hidden">
+<div class="eyebrow">WEBSEITE / INHALTE</div>
+<div class="hero-heading"><div><h1>Seiten bearbeiten.</h1><p class="sub">Wähle einen Bereich aus, den du später direkt und ohne Code ändern kannst.</p></div></div>
+<div class="notice"><strong>Designvorschau:</strong> Diese Bereiche lassen sich hier probeweise bearbeiten. Änderungen wirken sich noch nicht auf die öffentliche Webseite aus.</div>
+<div class="hub-grid pages-grid">
+<button class="hub-card" data-page-edit="start"><span class="hub-symbol">⌂</span><span class="hub-text"><strong>Startseite</strong><small>Einleitung, Teaser und Hauptbereiche</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
+<button class="hub-card" data-page-edit="about"><span class="hub-symbol">◎</span><span class="hub-text"><strong>Über uns</strong><small>Verein, Netzwerk und Leitbild</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
+<button class="hub-card" data-page-edit="contact"><span class="hub-symbol">✉</span><span class="hub-text"><strong>Kontakt</strong><small>Kontaktangaben und Anfragen</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
+<button class="hub-card" data-page-edit="imprint"><span class="hub-symbol">§</span><span class="hub-text"><strong>Impressum</strong><small>Rechtliche Angaben des Vereins</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
+<button class="hub-card" data-page-edit="privacy"><span class="hub-symbol">◇</span><span class="hub-text"><strong>Datenschutz</strong><small>Datenschutzerklärung und Hinweise</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
+</div>
+<div class="insight-panel" style="margin-top:20px"><div class="eyebrow">SPÄTERE ERWEITERUNG</div><h2 style="font:500 26px 'Cormorant Garamond',Georgia,serif;margin:0 0 12px">Eventanmeldung</h2><p class="sub">Einladungsseite, Flyer, QR Code, Registrierungsformular und Gästeliste als separater Bereich. Diese Funktion wird erst nach dem Redaktionssystem umgesetzt.</p><button type="button" class="quiet-link" data-hub-target="registrations">Zum Konzept Anmeldungen ↗</button></div>
+</section>
+<section id="page-editor" class="hidden">
+<button class="back" id="page-edit-back">← Zurück zu Seiten</button>
+<div class="hero-heading"><div><div class="eyebrow">SEITEN / BEARBEITEN</div><h1 id="page-edit-heading">Seite bearbeiten</h1><p class="sub">Inhalte unkompliziert ändern und rechts ansehen.</p></div><button class="btn" id="page-save-demo" type="button">Entwurf merken</button></div>
+<div class="notice"><strong>Nur Konzept:</strong> Änderungen hier werden nicht auf der Webseite gespeichert. Impressum und Datenschutz sollten vor einer späteren Veröffentlichung rechtlich geprüft werden.</div>
+<div class="edit-layout">
+<div class="panel"><div class="panel-head"><h2>Seiteninhalt</h2><p>Titel und Text dieser Seite im Entwurf bearbeiten.</p></div>
+<div class="panel-body">
+<div class="field"><label for="page-title-field">Seitentitel</label><input id="page-title-field" type="text"></div>
+<div class="field"><label for="page-text-field">Inhalt</label><textarea id="page-text-field" style="min-height:330px;line-height:1.85"></textarea><p class="help">Für den endgültigen Editor planen wir dieselben Textwerkzeuge wie bei den Events.</p></div>
+</div></div>
+<div class="panel page-preview-panel"><div class="panel-head"><h2>Vorschau</h2><p>So könnte die Textseite im Webdesign aussehen.</p></div><div class="page-preview-content"><div class="eyebrow">BAUKARUSSELL</div><h2 id="page-preview-title"></h2><div id="page-preview-text" class="page-preview-text"></div></div></div>
+</div>
 </section>
 <section id="editor" class="hidden">
 <button class="back" id="edit-back">← Zurück zu Events</button>
@@ -398,7 +445,7 @@ all('[data-hub-target]').forEach(button=>button.onclick=()=>{
  }else if(dest==='events')page('events');
  else placeholder(dest);
 });
-$('brand').onclick=e=>{e.preventDefault();page('dashboard')};$('dash-add').onclick=()=>openEditor('new');$('events-add').onclick=()=>openEditor('new');all('[data-open]').forEach(b=>b.onclick=()=>openEditor(b.dataset.open));
+$('brand').onclick=e=>{e.preventDefault();page('dashboard')};$('events-add').onclick=()=>openEditor('new');all('[data-open]').forEach(b=>b.onclick=()=>openEditor(b.dataset.open));
 $('edit-back').onclick=back;$('placeholder-back').onclick=()=>page('dashboard');$('placeholder-resume').onclick=()=>{if(editorResume&&currentKey)page('editor');};
 all('[data-filter]').forEach(b=>b.onclick=()=>{all('[data-filter]').forEach(t=>t.classList.toggle('selected',t===b));all('.event').forEach(card=>card.classList.toggle('hidden',b.dataset.filter!=='all'&&card.dataset.status!==b.dataset.filter));});
 all('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
