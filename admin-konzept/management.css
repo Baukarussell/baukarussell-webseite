@@ -181,3 +181,12 @@
 .real-event-empty{font-size:11px;color:#95948b;padding:16px;background:#fbf9f5;border-radius:7px}
 .real-event-open{color:#84653e!important;font-weight:600}
 @media(max-width:720px){.real-event-detail{padding-top:19px}.real-event-detail-layout{grid-template-columns:1fr}.real-event-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* Source editor is visually separate from the public source listing and demo cards */
+.real-event-edit{background:#f2ece3;border:1px solid #ded0bd;border-radius:6px;padding:7px 10px;margin:3px 10px 3px 0;color:#715630;font:600 11px Inter,Arial,sans-serif;white-space:nowrap}
+.real-event-edit:hover{background:#e6d8c4}
+.source-draft-banner{margin:14px 0 24px;padding:18px 20px;border:1px solid #d6c6aa;background:#fbf8f1;border-radius:10px;line-height:1.65}
+.source-draft-banner strong{font-size:12px;color:#654d2d}
+.source-draft-banner p{font-size:11px;color:#837660;margin:7px 0 0;max-width:930px}
+@media(max-width:650px){.real-event-edit{display:inline-block}.source-draft-banner{padding:16px}}
