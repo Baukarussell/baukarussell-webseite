@@ -4,6 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Baukarussell | Admin Konzept</title>
+<link rel="stylesheet" href="/admin-konzept/management.css?v=1">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f7f6f2;--white:#fff;--ink:#232521;--muted:#898982;--gold:#b19165;--edge:#e9e6df;--soft:#f3f0eb;--dark:#242725;--green:#547361}
@@ -156,10 +157,10 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <button class="nav active" data-page="dashboard"><span class="ico">◫</span>Übersicht</button>
 <button class="nav" data-page="events"><span class="ico">▦</span>Events</button>
 <button class="nav" data-page="members"><span class="ico">♧</span>Mitglieder</button>
-<button class="nav" data-page="projects"><span class="ico">▤</span>Projekte <span class="pill">Inaktiv</span></button>
+<button class="nav" data-page="projects"><span class="ico">▤</span>Projekte</button>
 <button class="nav" data-page="media"><span class="ico">▧</span>Medien</button>
 <button class="nav" data-page="pages"><span class="ico">▤</span>Seiten</button>
-<button class="nav" data-page="registrations"><span class="ico">▣</span>Anmeldungen <span class="pill">Geplant</span></button>
+<button class="nav" data-page="registrations"><span class="ico">▣</span>Anmeldungen</button>
 <div class="sidebar-end"><small>DESIGNKONZEPT · TEST</small><div class="identity"><span class="avatar">BK</span><span><strong>Redaktion</strong><br><small>Baukarussell Verein</small></span></div></div>
 </aside>
 <div class="page">
@@ -173,10 +174,10 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <div class="hub-grid">
 <button type="button" class="hub-card" data-hub-target="events"><span class="hub-symbol">▦</span><span class="hub-text"><strong>Events</strong><small>Veranstaltungen, Entwürfe und Galerien</small></span><span class="hub-arrow">↗</span></button>
 <button type="button" class="hub-card" data-hub-target="members"><span class="hub-symbol">♧</span><span class="hub-text"><strong>Mitglieder</strong><small>Firmenprofile und Logos verwalten</small></span><span class="hub-arrow">↗</span></button>
-<button type="button" class="hub-card" data-hub-target="projects"><span class="hub-symbol">▤</span><span class="hub-text"><strong>Projekte <span class="mini-status">Inaktiv</span></strong><small>Für später vorbereitet</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card" data-hub-target="projects"><span class="hub-symbol">▤</span><span class="hub-text"><strong>Projekte</strong><small>Intern verwalten, noch nicht auf der Webseite</small></span><span class="hub-arrow">↗</span></button>
 <button type="button" class="hub-card" data-hub-target="media"><span class="hub-symbol">▧</span><span class="hub-text"><strong>Medien</strong><small>Fotos und Dateien organisieren</small></span><span class="hub-arrow">↗</span></button>
 <button type="button" class="hub-card" data-hub-target="pages"><span class="hub-symbol">▤</span><span class="hub-text"><strong>Seiten</strong><small>Startseite, Über uns und Kontakt</small></span><span class="hub-arrow">↗</span></button>
-<button type="button" class="hub-card hub-muted" data-hub-target="registrations"><span class="hub-symbol">▣</span><span class="hub-text"><strong>Anmeldungen <span class="mini-status">Geplant</span></strong><small>Eventregistrierung, QR Code und Flyer</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card hub-muted" data-hub-target="registrations"><span class="hub-symbol">▣</span><span class="hub-text"><strong>Anmeldungen</strong><small>Einladungen, Flyer und Gästelisten</small></span><span class="hub-arrow">↗</span></button>
 <button type="button" class="hub-card hub-muted" data-hub-target="statistics"><span class="hub-symbol">▥</span><span class="hub-text"><strong>Statistik <span class="mini-status">Geplant</span></strong><small>Besuche und Seitenaufrufe im Blick</small></span><span class="hub-arrow">↗</span></button>
 </div>
 <div class="dashboard-lower">
@@ -184,7 +185,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <div class="insight-head"><div><div class="eyebrow">INHALTE</div><h2>Redaktionsübersicht</h2></div><span class="demo-note">Beispieldaten</span></div>
 <div class="insight-row"><span class="metric-dot published-dot"></span><span>Veröffentlichte Events</span><strong>1</strong></div>
 <div class="insight-row"><span class="metric-dot draft-dot"></span><span>Events als Entwurf</span><strong>1</strong></div>
-<div class="insight-row"><span class="metric-dot inactive-dot"></span><span>Projektbereich</span><strong class="metric-text">Inaktiv</strong></div>
+<div class="insight-row"><span class="metric-dot inactive-dot"></span><span>Projekte auf der Webseite</span><strong class="metric-text">Noch nicht veröffentlicht</strong></div>
 <button type="button" class="quiet-link" data-hub-target="events">Alle Events ansehen ↗</button>
 </section>
 <section class="insight-panel analytics-panel">
@@ -208,6 +209,85 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 </div>
 
 </section>
+
+<section id="members-list" class="hidden">
+<div class="eyebrow">INHALTE / MITGLIEDER</div>
+<div class="hero-heading"><div><h1>Mitglieder verwalten.</h1><p class="sub">Jedes Mitglied mit eigenem Logo, Firmenprofil und Webseite.</p></div><button type="button" class="btn dark" id="member-add">＋ Neues Mitglied</button></div>
+<div class="notice">Die bestehenden elf Mitglieder wurden als Ausgangspunkt aus der aktuellen Webseite übernommen. <strong>Änderungen hier sind nur im Designentwurf sichtbar.</strong></div>
+<div class="manager-info"><strong id="member-count">11</strong> Mitglieder im Entwurf · Firmen hinzufügen, bearbeiten oder entfernen</div>
+<div class="entity-grid" id="member-cards"></div>
+</section>
+<section id="member-editor" class="hidden">
+<button type="button" class="back" id="member-back">← Zurück zu Mitglieder</button>
+<div class="hero-heading"><div><div class="eyebrow">MITGLIEDER / BEARBEITEN</div><h1 id="member-editor-title">Mitglied bearbeiten.</h1><p class="sub">Alle Angaben und das Firmenlogo an einem Ort.</p></div><div class="manager-actions"><button type="button" class="btn" id="member-save-demo">Entwurf merken</button><button type="button" class="btn" id="member-remove">Mitglied entfernen</button></div></div>
+<div class="notice"><strong>Designvorschau:</strong> Änderungen wirken sich nicht auf die aktuelle Webseite aus. Ein Entfernen hier löscht kein Mitglied auf der öffentlichen Webseite.</div>
+<div class="edit-layout">
+<div class="panel"><div class="panel-head"><h2>Firmenprofil</h2><p>Basisinformationen für die Mitgliederübersicht.</p></div><div class="panel-body">
+<div class="field"><label for="member-name">Firmenname</label><input id="member-name" type="text" placeholder="Firmenname"></div>
+<div class="field"><label for="member-url">Webseite <span class="optional">Optional</span></label><input id="member-url" type="url" placeholder="https://..."></div>
+<div class="field"><label for="member-description">Beschreibung <span class="optional">Optional</span></label><textarea id="member-description" placeholder="Kurze Firmenbeschreibung"></textarea></div>
+<div class="field"><label>Firmenlogo</label><div class="inline-upload"><img id="member-logo-thumb" src="/logos/onur.jpg" alt="Firmenlogo"><div><strong>Logo austauschen</strong><p>JPG, PNG oder WebP auswählen.</p><button class="btn small" id="member-logo-button" type="button">Logo auswählen</button><input type="file" accept="image/*" id="member-logo-input" class="hidden"></div></div></div>
+<div class="field"><label class="check-row"><input id="member-public" type="checkbox" checked> Mitglied auf der Webseite anzeigen</label><p class="help">Dieser Schalter wird erst im echten Admin eine Veröffentlichung beeinflussen.</p></div>
+</div></div>
+<div class="panel"><div class="panel-head"><h2>Profilvorschau</h2><p>Firmenkarte, wie sie später erscheinen könnte.</p></div><div class="manager-preview"><div class="member-preview-logo"><img id="member-preview-logo" src="/logos/onur.jpg" alt="Logo Vorschau"></div><h2 id="member-preview-name"></h2><p id="member-preview-description"></p><a id="member-preview-url" href="#" target="_blank" rel="noopener noreferrer"></a></div></div>
+</div></section>
+
+<section id="projects-list" class="hidden">
+<div class="eyebrow">INHALTE / PROJEKTE</div>
+<div class="hero-heading"><div><h1>Projekte verwalten.</h1><p class="sub">Projekte intern vorbereiten. Die öffentliche Webseite zeigt derzeit keine Projekte.</p></div><button type="button" class="btn dark" id="project-add">＋ Neues Projekt</button></div>
+<div class="notice">Der Projektbereich bleibt im Admin verfügbar. <strong>Projekte werden aus diesem Entwurf nicht veröffentlicht.</strong> Erst nach einer bewussten Freigabe könnte später ein öffentlicher Projektbereich aktiviert werden.</div>
+<div class="entity-grid" id="project-cards"></div>
+<div class="entity-empty" id="project-empty"><div class="empty-icon">▤</div><h3>Noch keine Projekte vorhanden.</h3><p>Der Bereich darf vorerst leer bleiben. Wenn ihr später Projekte zeigen möchtet, kannst du sie hier vorbereiten.</p><button class="btn" type="button" id="project-empty-add">＋ Neues Projekt</button></div>
+</section>
+<section id="project-editor" class="hidden">
+<button class="back" type="button" id="project-back">← Zurück zu Projekte</button>
+<div class="hero-heading"><div><div class="eyebrow">PROJEKTE / INTERNER ENTWURF</div><h1>Projekt bearbeiten.</h1><p class="sub">Projektinformationen vorbereiten, ohne sie öffentlich anzuzeigen.</p></div><button type="button" class="btn" id="project-save-demo">Entwurf merken</button></div>
+<div class="notice">Auch bei ausgefüllten Projektinformationen wird nichts veröffentlicht.</div>
+<div class="edit-layout"><div class="panel"><div class="panel-head"><h2>Projektdaten</h2><p>Für eine spätere Nutzung vorbereitet.</p></div><div class="panel-body">
+<div class="field"><label for="project-name">Projekttitel</label><input id="project-name" type="text"></div>
+<div class="field"><label for="project-date">Datum <span class="optional">Optional</span></label><input id="project-date" type="date"></div>
+<div class="field"><label for="project-location">Ort <span class="optional">Optional</span></label><input id="project-location" type="text"></div>
+<div class="field"><label for="project-description">Beschreibung</label><textarea id="project-description"></textarea></div>
+<button class="btn" type="button" id="project-remove">Projekt aus Entwurf entfernen</button>
+</div></div><div class="panel"><div class="panel-head"><h2>Vorschau</h2><p>Nur innerhalb der Verwaltung sichtbar.</p></div><div class="manager-preview"><div class="eyebrow">INTERNER ENTWURF</div><h2 id="project-preview-title"></h2><p id="project-preview-date"></p><p id="project-preview-description"></p></div></div></div>
+</section>
+
+<section id="registrations-list" class="hidden">
+<div class="eyebrow">EVENTS / ANMELDUNGEN</div>
+<div class="hero-heading"><div><h1>Eventanmeldungen verwalten.</h1><p class="sub">Jeder Anlass erhält eine eigene Einladung, einen Flyer und später seine eigene Gästeliste.</p></div><button type="button" class="btn dark" id="registration-add">＋ Neue Anmeldung</button></div>
+<div class="notice"><strong>Designvorschau:</strong> Hier legst du Anmeldeseiten als einzelne Entwürfe an. Es werden noch keine Formulare veröffentlicht oder echten Anmeldungen verarbeitet.</div>
+<div class="entity-grid" id="registration-cards"></div>
+<div class="entity-empty" id="registration-empty"><div class="empty-icon">▣</div><h3>Noch keine Anmeldungen erstellt.</h3><p>Du kannst für jeden künftigen Event einen eigenen Einladungsbereich erstellen, inklusive Flyer und Informationen.</p><button type="button" class="btn" id="registration-empty-add">＋ Neue Anmeldung</button></div>
+</section>
+<section id="registration-editor" class="hidden">
+<button type="button" class="back" id="registration-back">← Zurück zu Anmeldungen</button>
+<div class="hero-heading"><div><div class="eyebrow">EVENTANMELDUNGEN / BEARBEITEN</div><h1>Einladung gestalten.</h1><p class="sub">Flyer, Termin und Registrierungsinformationen für einen Anlass.</p></div><div class="manager-actions"><button type="button" class="btn" id="registration-save-demo">Entwurf merken</button><button type="button" class="btn" id="registration-remove">Entwurf entfernen</button></div></div>
+<div class="no-real-data"><strong>Demo ohne echte Anmeldungen:</strong> Bitte hier noch keine persönlichen Gästedaten eingeben. Onlineformular, Versand, QR Code und Export benötigen zuerst eine sichere technische Anbindung.</div>
+<div class="edit-layout">
+<div class="panel"><div class="panel-head"><h2>Event und Anmeldung</h2><p>Jede Einladung kann unabhängig bearbeitet werden.</p></div><div class="panel-body">
+<div class="field"><label for="reg-title">Name der Veranstaltung</label><input id="reg-title" type="text" placeholder="z.B. Weihnachtsessen"></div>
+<div class="fields-2"><div class="field"><label for="reg-date">Datum</label><input type="date" id="reg-date"></div><div class="field"><label for="reg-time">Uhrzeit</label><input type="time" id="reg-time"></div></div>
+<div class="field"><label for="reg-location">Veranstaltungsort</label><input type="text" id="reg-location" placeholder="Adresse oder Location"></div>
+<div class="field"><label for="reg-description">Einladungstext</label><textarea id="reg-description" placeholder="Einladung, Programm und weitere Hinweise"></textarea></div>
+<div class="fields-2"><div class="field"><label for="reg-deadline">Anmeldefrist <span class="optional">Optional</span></label><input type="date" id="reg-deadline"></div><div class="field"><label for="reg-capacity">Maximale Gäste <span class="optional">Optional</span></label><input type="number" min="0" id="reg-capacity" placeholder="Keine Begrenzung"></div></div>
+<div class="field"><label>Flyer hochladen</label>
+<div class="inline-upload"><div class="preview-icon" id="reg-upload-symbol">▧</div><div><strong id="reg-flyer-name">Noch kein Flyer ausgewählt</strong><p>Foto, Flyerbild oder PDF als Vorschau.</p><button class="btn small" type="button" id="reg-flyer-button">Flyer auswählen</button><input type="file" accept="image/*,.pdf,application/pdf" id="reg-flyer-input" class="hidden"></div></div></div>
+<div class="demo-attendees"><h3>Gästeliste & Anmeldungen</h3><p id="reg-attendee-counter">0 Anmeldungen · noch keine echte Verbindung</p>
+<div class="entity-empty" style="padding:23px" id="reg-attendee-empty"><div class="empty-icon">♧</div><h3>Gästeliste</h3><p>Später: Zusagen, Absagen, Begleitpersonen, Bestätigungen und Excel Export.</p></div>
+<div id="reg-attendees"></div>
+<button class="btn small" type="button" id="reg-add-demo-attendee">＋ Testeintrag hinzufügen</button><p class="help">Fügt ausschliesslich «Testperson (Demo)» ohne personenbezogene Daten hinzu.</p>
+</div>
+</div></div>
+<div class="panel"><div class="panel-head"><h2>Einladungsvorschau</h2><p>So könnte die jeweilige Anmeldeseite aussehen.</p></div>
+<div class="manager-preview">
+<div class="eyebrow" style="text-align:center">BAUKARUSSELL · EINLADUNG</div>
+<div class="reg-flyer-display" id="reg-flyer-preview">Flyer noch nicht hinzugefügt</div>
+<h2 id="reg-preview-title"></h2><p id="reg-preview-date" style="text-align:center"></p><p id="reg-preview-location" style="text-align:center"></p><p id="reg-preview-description"></p>
+<div class="empty" style="margin-top:24px">Anmeldeformular<br><small>Funktion folgt nach der sicheren Anbindung</small></div>
+</div></div>
+</div>
+</section>
+
 <section id="pages-list" class="hidden">
 <div class="eyebrow">WEBSEITE / INHALTE</div>
 <div class="hero-heading"><div><h1>Seiten bearbeiten.</h1><p class="sub">Wähle einen Bereich aus, den du später direkt und ohne Code ändern kannst.</p></div></div>
@@ -230,8 +310,15 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <div class="panel-body">
 <div class="field"><label for="page-title-field">Seitentitel</label><input id="page-title-field" type="text"></div>
 <div class="field"><label for="page-text-field">Inhalt</label><textarea id="page-text-field" style="min-height:330px;line-height:1.85"></textarea><p class="help">Für den endgültigen Editor planen wir dieselben Textwerkzeuge wie bei den Events.</p></div>
+<section class="gallery-workspace hidden" id="about-gallery-workspace">
+<div class="tile-head"><div><h3>Mitgliederfotos & Gruppenbilder</h3><p class="help">Aktuelle Gruppenfotos, Vorstandsfotos oder Vereinsbilder. Mehrere Fotos auswählen, sortieren und entfernen.</p></div><small>Ziehen zum Sortieren</small></div>
+<div class="media-grid" id="about-gallery-editor"></div>
+<label class="upload-box" for="about-photo-upload"><span style="font-size:23px">＋</span><strong>Mehrere Fotos hinzufügen</strong><small>JPG, PNG oder WebP · Designvorschau</small></label>
+<input id="about-photo-upload" type="file" accept="image/*" multiple class="hidden">
+<p class="help">Neu hochgeladene Fotos bleiben in diesem Prototyp nur im geöffneten Browserfenster verfügbar und können beim Neuladen verloren gehen.</p>
+</section>
 </div></div>
-<div class="panel page-preview-panel"><div class="panel-head"><h2>Vorschau</h2><p>So könnte die Textseite im Webdesign aussehen.</p></div><div class="page-preview-content"><div class="eyebrow">BAUKARUSSELL</div><h2 id="page-preview-title"></h2><div id="page-preview-text" class="page-preview-text"></div></div></div>
+<div class="panel page-preview-panel"><div class="panel-head"><h2>Vorschau</h2><p>So könnte die Textseite im Webdesign aussehen.</p></div><div class="page-preview-content"><div class="eyebrow">BAUKARUSSELL</div><h2 id="page-preview-title"></h2><div id="page-preview-text" class="page-preview-text"></div><div class="page-picture-preview hidden" id="about-gallery-preview"><h3>Unsere Mitglieder</h3><div class="images" id="about-gallery-preview-images"></div></div></div></div>
 </div>
 </section>
 <section id="editor" class="hidden">
@@ -471,4 +558,5 @@ $('demo-save').onclick=()=>{rememberChange();toast('Demoentwurf in diesem Browse
 $('demo-publish').onclick=()=>toast('Nur Konzept: Kein Inhalt wird veröffentlicht.');
 })();
 </script>
+<script src="/admin-konzept/management.js?v=1"></script>
 </body></html>
