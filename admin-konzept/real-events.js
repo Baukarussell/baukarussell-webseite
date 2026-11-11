@@ -23,11 +23,24 @@
    }else wrap.textContent='▧';
    return wrap;
  }
+ function formatEventDate(event){
+   const raw=String(event.date||'').trim();
+   const explicitTime=String(event.time||'').trim();
+   if(!raw)return explicitTime?explicitTime+' Uhr':'Noch keine Angabe';
+   const hasClock=/T\d{2}:\d{2}/.test(raw);
+   const parsed=new Date(/^\d{4}-\d{2}-\d{2}$/.test(raw)?raw+'T12:00:00+01:00':raw);
+   if(Number.isNaN(parsed.getTime()))return [raw,explicitTime].filter(Boolean).join(' · ');
+   const opts={timeZone:'Europe/Zurich'};
+   const day=new Intl.DateTimeFormat('de-CH',{...opts,day:'2-digit',month:'long',year:'numeric'}).format(parsed);
+   let clock=explicitTime;
+   if(!clock&&hasClock)clock=new Intl.DateTimeFormat('de-CH',{...opts,hour:'2-digit',minute:'2-digit',hour12:false}).format(parsed);
+   return day+(clock?', '+clock+' Uhr':'');
+ }
  function createCard(event){
    const row=document.createElement('article');row.className='real-event-row';
    const info=document.createElement('div');info.className='real-event-content';
    const title=document.createElement('strong');title.textContent=String(event.title||'Ohne Titel');
-   const meta=document.createElement('span');meta.textContent=[event.date,event.location].filter(Boolean).join(' · ')||'Ohne Datum';
+   const meta=document.createElement('span');meta.textContent=[formatEventDate(event),event.location].filter(Boolean).join(' · ');
    const link=document.createElement('a');link.textContent='Quelldatei ansehen ↗';
    const file=encodeURIComponent(String(event.slug||''))+'.md';
    link.href='https://github.com/'+repo+'/blob/'+encodeURIComponent(branch)+'/events/'+file;
@@ -49,7 +62,7 @@
    const sourceImage=typeof event.image==='string'&&/^\/(?:logos|events|uploads)\//.test(event.image)&&!event.image.includes('..')?event.image:'';
    if(sourceImage){photo.src=sourceImage;photo.style.display='block';}
    else {photo.removeAttribute('src');photo.style.display='none';}
-   $('real-detail-date').textContent=[event.date,event.time].filter(Boolean).join(' · ')||'Noch keine Angabe';
+   $('real-detail-date').textContent=formatEventDate(event);
    $('real-detail-location').textContent=event.location||'Noch keine Angabe';
    $('real-detail-description').textContent=event.body||'Keine Beschreibung in der Quelldatei vorhanden.';
    const filename=encodeURIComponent(String(event.slug||''))+'.md';
