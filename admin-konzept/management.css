@@ -132,3 +132,27 @@
 .connection-panel.is-error{border-color:#e9d0bd}
 @media(max-width:950px){.connection-panel{flex-wrap:wrap}.connection-actions{width:100%;justify-content:flex-start;margin-left:57px}}
 @media(max-width:550px){.connection-panel{padding:17px;gap:10px}.connection-icon{width:34px;height:34px;flex-basis:34px}.connection-actions{margin:0;width:100%}}
+
+
+/* Explicit separation of source-controlled test content and unsaved visual mockups. */
+.real-events-panel{background:#fff;border:1px solid var(--edge);border-radius:12px;padding:25px;margin:16px 0 34px}
+.real-events-header{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:18px}
+.real-events-header h2{font:500 31px/1.15 'Cormorant Garamond',Georgia,serif;margin:0 0 7px}
+.real-events-header p{font-size:11px;line-height:1.65;color:#8f9189;margin:0}
+.real-events-header .eyebrow{margin:0 0 9px}
+.real-events-state{font-size:12px;line-height:1.7;border-radius:8px;padding:14px 16px;background:#faf8f3;color:#77786e;border:1px solid #efe9dd}
+.real-events-state.auth-required{background:#fffaf3;border-color:#e9d9c2;color:#876c48}
+.real-events-state.success{background:#f7faf7;border-color:#e4ede4;color:#536e57}
+.real-events-state.error{background:#fff8f5;border-color:#eedbd4;color:#99644c}
+.real-events-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.real-event-row{display:flex;gap:13px;align-items:center;min-width:0;background:#fbfaf7;border:1px solid #eee9df;border-radius:9px;padding:12px}
+.real-event-photo{width:82px;height:82px;flex:0 0 82px;border-radius:7px;overflow:hidden;display:grid;place-items:center;background:#f2eee7;color:#a18a66}
+.real-event-photo img{width:100%;height:100%;object-fit:cover}
+.real-event-content{flex:1;min-width:0}
+.real-event-content strong{font-size:12px;display:block;line-height:1.55;overflow-wrap:anywhere}
+.real-event-content span{font-size:10px;color:#96988d;display:block;margin:5px 0}
+.real-event-content a{font-size:11px;color:#9a784f;font-weight:600;display:inline-block;text-decoration:none;cursor:pointer}
+.real-event-content a:hover{text-decoration:underline}
+.real-events-hint{font-size:11px;color:#92938d;margin:12px 0 0;line-height:1.65}
+@media(max-width:1150px){.real-events-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.real-events-panel{padding:17px}.real-events-header{align-items:flex-start;flex-direction:column}.real-event-photo{width:70px;height:70px;flex-basis:70px}}
