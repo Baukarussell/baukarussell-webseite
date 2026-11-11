@@ -95,11 +95,17 @@
  };
  const params=new URLSearchParams(location.search);
  const status=params.get('connection');
- if(status==='denied'||status==='forbidden'){
-   display('error',status==='forbidden'?'Kein Schreibzugriff auf das Repository':'GitHub Anmeldung nicht abgeschlossen',
-     status==='forbidden'?'Ein berechtigtes GitHub Konto ist für die Verwaltung erforderlich.':'Du kannst es über den GitHub Login erneut versuchen.');
- }
+ const failureMessages={
+   denied:['GitHub Anmeldung nicht abgeschlossen','Bitte versuche die Anmeldung erneut.'],
+   forbidden:['Kein Schreibzugriff auf das Repository','Für diesen Admin ist ein berechtigtes GitHub Konto erforderlich.'],
+   config:['GitHub Anmeldung ist noch nicht konfiguriert','Bitte die Cloudflare OAuth Einstellungen prüfen.'],
+   error:['GitHub Verbindung fehlgeschlagen','Die Anmeldung konnte nicht abgeschlossen werden.']
+ };
  // Clear callback status from URL without causing a reload.
  if(status){params.delete('connection');history.replaceState(null,'',location.pathname+(params.size?'?'+params:'')+location.hash);}
- checkSession();
+ if(status&&failureMessages[status]){
+   display('error',...failureMessages[status]);
+ }else{
+   checkSession();
+ }
 })();
