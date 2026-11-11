@@ -32,7 +32,7 @@ let chosenMember=null,chosenProject=null,chosenRegistration=null;
 let dragAbout=null,temporaryUploads=false;
 function save(key,items){
  try{sessionStorage.setItem(key,JSON.stringify(items,function(prop,val){
-  if(prop==='logo'&&typeof val==='string'&&val.startsWith('blob:'))return '';
+  if((prop==='logo'||prop==='photo')&&typeof val==='string'&&val.startsWith('blob:'))return '';
   if(prop==='flyer'&&typeof val==='string'&&val.startsWith('blob:'))return '';
   if(prop==='images'&&Array.isArray(val))return val.filter(s=>typeof s==='string'&&!s.startsWith('blob:'));
   return val;
@@ -83,7 +83,7 @@ function renderMembers(){
 }
 function memberItem(){return members.find(x=>x.id===chosenMember)}
 function newMember(){
- const item={id:id(),name:'',url:'',description:'',logo:'',public:true};
+ const item={id:id(),name:'',person:'',role:'',phone:'',email:'',url:'',description:'',logo:'',photo:'',socials:[],public:true};
  members.push(item);save('bk-demo-members-v1',members);editMember(item.id);
 }
 function editMember(memberId){
@@ -92,7 +92,44 @@ function editMember(memberId){
  $('member-editor-title').textContent=m.name||'Neues Mitglied';
  $('member-name').value=m.name;$('member-url').value=m.url;
  $('member-description').value=m.description||'';$('member-public').checked=m.public!==false;
- memberPreview();api.page('member-editor');
+ $('member-person').value=m.person||'';$('member-role').value=m.role||'';
+ $('member-phone').value=m.phone||'';$('member-email').value=m.email||'';
+ if(!Array.isArray(m.socials))m.socials=[];
+ renderMemberSocials();memberPreview();api.page('member-editor');
+}
+const socialPlatforms={
+ linkedin:{name:'LinkedIn',icon:'in'},
+ youtube:{name:'YouTube',icon:'▶'},
+ instagram:{name:'Instagram',icon:'◎'},
+ facebook:{name:'Facebook',icon:'f'},
+ tiktok:{name:'TikTok',icon:'♪'},
+ x:{name:'X',icon:'𝕏'},
+ pinterest:{name:'Pinterest',icon:'P'},
+ website:{name:'Webseite',icon:'↗'}
+};
+function renderMemberSocials(){
+ const m=memberItem();if(!m)return;
+ if(!Array.isArray(m.socials))m.socials=[];
+ const root=$('member-social-rows');root.replaceChildren();
+ m.socials.forEach((link,i)=>{
+  const row=make('div','member-social-row');
+  const dropdown=make('select');dropdown.setAttribute('aria-label','Plattform auswählen');
+  for(const [value,platform] of Object.entries(socialPlatforms)){
+    const option=make('option','',platform.name);option.value=value;dropdown.append(option);
+  }
+  dropdown.value=socialPlatforms[link.platform]?link.platform:'website';
+  dropdown.onchange=()=>{link.platform=dropdown.value;save('bk-demo-members-v1',members);memberPreview();};
+  const url=make('input');url.type='url';url.placeholder='https://...';url.value=link.url||'';
+  url.setAttribute('aria-label','Profiladresse');
+  url.oninput=()=>{link.url=url.value;save('bk-demo-members-v1',members);memberPreview();};
+  const up=make('button','', '↑');up.type='button';up.title='Nach oben';up.disabled=i===0;
+  up.onclick=()=>{if(i<1)return;[m.socials[i-1],m.socials[i]]=[m.socials[i],m.socials[i-1]];save('bk-demo-members-v1',members);renderMemberSocials();memberPreview();};
+  const down=make('button','', '↓');down.type='button';down.title='Nach unten';down.disabled=i===m.socials.length-1;
+  down.onclick=()=>{if(i===m.socials.length-1)return;[m.socials[i+1],m.socials[i]]=[m.socials[i],m.socials[i+1]];save('bk-demo-members-v1',members);renderMemberSocials();memberPreview();};
+  const del=make('button','', '×');del.type='button';del.title='Link entfernen';
+  del.onclick=()=>{m.socials.splice(i,1);save('bk-demo-members-v1',members);renderMemberSocials();memberPreview();};
+  row.append(dropdown,url,up,down,del);root.append(row);
+ });
 }
 function memberPreview(){
  const m=memberItem();if(!m)return;
@@ -100,13 +137,33 @@ function memberPreview(){
  $('member-editor-title').textContent=m.name||'Neues Mitglied';
  $('member-preview-description').textContent=m.description||'Firmenbeschreibung';
  for(const elem of [$('member-preview-logo'),$('member-logo-thumb')]){elem.src=m.logo||'/admin/brand.svg';}
- const link=$('member-preview-url'),href=safeHref(m.url);
- link.textContent=href||'Keine Webseite hinterlegt';
- if(href){link.href=href;link.target='_blank';}else link.removeAttribute('href');
+ $('member-photo-thumb').src=m.photo||'/admin/brand.svg';
+ $('member-preview-photo-wrap').classList.toggle('hidden',!m.photo);
+ if(m.photo)$('member-preview-photo').src=m.photo;
+ $('member-preview-person').textContent=[m.person,m.role].filter(Boolean).join(' · ');
+ const contact=$('member-preview-contacts');contact.replaceChildren();
+ function contactLink(text,href){
+  if(!text)return;
+  if(href){const a=make('a','',text);a.href=href;a.target=href.startsWith('http')?'_blank':'_self';if(a.target==='_blank')a.rel='noopener noreferrer';contact.append(a);}
+  else contact.append(make('span','',text));
+ }
+ if(m.phone)contactLink('☎ '+m.phone,'tel:'+String(m.phone).replace(/[^+\d]/g,''));
+ if(m.email)contactLink('✉ '+m.email,'mailto:'+String(m.email).trim());
+ if(m.url)contactLink('↗ '+m.url,safeHref(m.url));
+ const socials=$('member-preview-social');socials.replaceChildren();
+ for(const social of m.socials||[]){
+  const href=safeHref(social.url);
+  if(!href)continue;
+  const platform=socialPlatforms[social.platform]||socialPlatforms.website;
+  const a=make('a','',platform.icon);a.href=href;a.target='_blank';a.rel='noopener noreferrer';
+  a.title=platform.name;a.setAttribute('aria-label',platform.name+' öffnen');socials.append(a);
+ }
 }
 function changeMember(){
  const m=memberItem();if(!m)return;
  m.name=$('member-name').value;m.url=$('member-url').value;
+ m.person=$('member-person').value;m.role=$('member-role').value;
+ m.phone=$('member-phone').value;m.email=$('member-email').value;
  m.description=$('member-description').value;m.public=$('member-public').checked;
  memberPreview();save('bk-demo-members-v1',members);
 }
@@ -116,8 +173,21 @@ $('member-remove').onclick=()=>{const m=memberItem();if(!m)return;
  removeWithConfirm('Mitglied',m.name||'Neues Mitglied',()=>{
  members=members.filter(x=>x.id!==m.id);chosenMember=null;save('bk-demo-members-v1',members);renderMembers();api.page('members');
  });};
-['member-name','member-url','member-description','member-public'].forEach(x=>$(x).addEventListener('input',changeMember));
+['member-name','member-url','member-person','member-role','member-phone','member-email','member-description','member-public'].forEach(x=>$(x).addEventListener('input',changeMember));
 $('member-save-demo').onclick=()=>{changeMember();renderMembers();alertDemo()};
+$('member-social-add').onclick=()=>{
+ const m=memberItem();if(!m)return;
+ if(!Array.isArray(m.socials))m.socials=[];
+ m.socials.push({platform:'linkedin',url:''});save('bk-demo-members-v1',members);renderMemberSocials();
+ const last=$('member-social-rows').lastElementChild;if(last)last.querySelector('input')?.focus();
+};
+$('member-photo-button').onclick=()=>$('member-photo-input').click();
+$('member-photo-input').onchange=e=>{
+ const m=memberItem(),file=e.target.files?.[0];if(!m||!safeImage(file))return;
+ m.photo=URL.createObjectURL(file);temporaryUploads=true;memberPreview();
+ save('bk-demo-members-v1',members);e.target.value='';
+ api.toast('Foto in der Vorschau hinzugefügt. Noch nicht dauerhaft hochgeladen.');
+};
 $('member-logo-button').onclick=()=>$('member-logo-input').click();
 $('member-logo-input').onchange=e=>{
  const m=memberItem(),file=e.target.files?.[0];if(!m||!safeImage(file))return;
