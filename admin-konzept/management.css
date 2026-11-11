@@ -190,3 +190,15 @@
 .source-draft-banner strong{font-size:12px;color:#654d2d}
 .source-draft-banner p{font-size:11px;color:#837660;margin:7px 0 0;max-width:930px}
 @media(max-width:650px){.real-event-edit{display:inline-block}.source-draft-banner{padding:16px}}
+
+
+/* Clear editor save states: browser-only changes are never presented as durable saves. */
+.editor-save-indicator{display:inline-flex;align-items:center;gap:8px;min-height:28px;margin-top:10px;padding:6px 11px;border-radius:18px;background:#f5f2eb;border:1px solid #e8e0d3;color:#766b57;font:600 11px/1.45 Inter,Arial,sans-serif}
+.editor-save-dot{width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:#9a9184}
+.editor-save-indicator[data-state="local"]{background:#fbf4e8;border-color:#e6d7bb;color:#87602f}
+.editor-save-indicator[data-state="local"] .editor-save-dot{background:#ad7e36}
+.editor-save-indicator[data-state="savedLocal"]{background:#f2f1ec;border-color:#dedcd3;color:#706b60}
+.editor-save-indicator[data-state="savedLocal"] .editor-save-dot{background:#8e8571}
+.editor-save-indicator[data-state="savedRemote"]{background:#ecf4eb;border-color:#c9dec6;color:#486346}
+.editor-save-indicator[data-state="savedRemote"] .editor-save-dot{background:#578359}
+@media(max-width:650px){.editor-save-indicator{font-size:10px;line-height:1.5;white-space:normal}}
