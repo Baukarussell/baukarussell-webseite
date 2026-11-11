@@ -1,7 +1,13 @@
+import {handleBkAdminCallback} from '../_lib/bk-admin-callback.js';
 
 export async function onRequest(context) {
     const { request, env } = context;
     const url = new URL(request.url);
+    // New custom admin uses its own state, PKCE and HttpOnly session.
+    // Every original Decap OAuth popup flow continues down the legacy path below.
+    if ((url.searchParams.get('state')||'').startsWith('bk1.')) {
+        return handleBkAdminCallback(context);
+    }
     const code = url.searchParams.get("code");
 
     if (!code) {
