@@ -159,12 +159,13 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <button class="nav" data-page="members"><span class="ico">♧</span>Mitglieder</button>
 <button class="nav" data-page="projects"><span class="ico">▤</span>Projekte</button>
 <button class="nav" data-page="media"><span class="ico">▧</span>Medien</button>
-<button class="nav" data-page="pages"><span class="ico">▤</span>Seiten</button>
+<button class="nav" data-page="pages"><span class="ico">⌂</span>Startseite</button>
+<button class="nav" data-page="about"><span class="ico">◎</span>Über uns</button>
 <button class="nav" data-page="registrations"><span class="ico">▣</span>Anmeldungen</button>
 <div class="sidebar-end"><small>DESIGNKONZEPT · TEST</small><div class="identity"><span class="avatar">BK</span><span><strong>Redaktion</strong><br><small>Baukarussell Verein</small></span></div></div>
 </aside>
 <div class="page">
-<header class="topbar"><span class="crumb">Baukarussell / <strong id="crumb">Übersicht</strong></span><span class="topright">Nur Designvorschau <span class="circle">BK</span></span></header>
+<header class="topbar"><span class="crumb">Baukarussell / <strong id="crumb">Übersicht</strong></span><span class="topright"><button type="button" class="overview-link hidden" id="global-overview">← Zurück zur Übersicht</button><span class="design-label">Nur Designvorschau</span><span class="circle">BK</span></span></header>
 <main class="main">
 <section id="dashboard">
 <div class="eyebrow">WILLKOMMEN IM REDAKTIONSBEREICH</div>
@@ -176,7 +177,8 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <button type="button" class="hub-card" data-hub-target="members"><span class="hub-symbol">♧</span><span class="hub-text"><strong>Mitglieder</strong><small>Firmenprofile und Logos verwalten</small></span><span class="hub-arrow">↗</span></button>
 <button type="button" class="hub-card" data-hub-target="projects"><span class="hub-symbol">▤</span><span class="hub-text"><strong>Projekte</strong><small>Intern verwalten, noch nicht auf der Webseite</small></span><span class="hub-arrow">↗</span></button>
 <button type="button" class="hub-card" data-hub-target="media"><span class="hub-symbol">▧</span><span class="hub-text"><strong>Medien</strong><small>Fotos und Dateien organisieren</small></span><span class="hub-arrow">↗</span></button>
-<button type="button" class="hub-card" data-hub-target="pages"><span class="hub-symbol">▤</span><span class="hub-text"><strong>Seiten</strong><small>Startseite, Über uns und Kontakt</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card" data-hub-target="pages"><span class="hub-symbol">▤</span><span class="hub-text"><strong>Startseite</strong><small>Hauptseite, Kontakt und Rechtliches</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card" data-hub-target="about"><span class="hub-symbol">◎</span><span class="hub-text"><strong>Über uns</strong><small>Verein, Gruppenbilder und Mitgliederfotos</small></span><span class="hub-arrow">↗</span></button>
 <button type="button" class="hub-card hub-muted" data-hub-target="registrations"><span class="hub-symbol">▣</span><span class="hub-text"><strong>Anmeldungen</strong><small>Einladungen, Flyer und Gästelisten</small></span><span class="hub-arrow">↗</span></button>
 <button type="button" class="hub-card hub-muted" data-hub-target="statistics"><span class="hub-symbol">▥</span><span class="hub-text"><strong>Statistik <span class="mini-status">Geplant</span></strong><small>Besuche und Seitenaufrufe im Blick</small></span><span class="hub-arrow">↗</span></button>
 </div>
@@ -225,11 +227,25 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <div class="panel"><div class="panel-head"><h2>Firmenprofil</h2><p>Basisinformationen für die Mitgliederübersicht.</p></div><div class="panel-body">
 <div class="field"><label for="member-name">Firmenname</label><input id="member-name" type="text" placeholder="Firmenname"></div>
 <div class="field"><label for="member-url">Webseite <span class="optional">Optional</span></label><input id="member-url" type="url" placeholder="https://..."></div>
+<div class="fields-2"><div class="field"><label for="member-person">Ansprechperson <span class="optional">Optional</span></label><input id="member-person" placeholder="Vorname Nachname"></div><div class="field"><label for="member-role">Funktion / Position <span class="optional">Optional</span></label><input id="member-role" placeholder="z.B. Geschäftsführung"></div></div>
 <div class="field"><label for="member-description">Beschreibung <span class="optional">Optional</span></label><textarea id="member-description" placeholder="Kurze Firmenbeschreibung"></textarea></div>
+<div class="fields-2"><div class="field"><label for="member-phone">Telefon <span class="optional">Optional</span></label><input id="member-phone" type="tel" placeholder="+41 ..."></div><div class="field"><label for="member-email">E-Mail <span class="optional">Optional</span></label><input id="member-email" type="email" placeholder="name@firma.ch"></div></div>
 <div class="field"><label>Firmenlogo</label><div class="inline-upload"><img id="member-logo-thumb" src="/logos/onur.jpg" alt="Firmenlogo"><div><strong>Logo austauschen</strong><p>JPG, PNG oder WebP auswählen.</p><button class="btn small" id="member-logo-button" type="button">Logo auswählen</button><input type="file" accept="image/*" id="member-logo-input" class="hidden"></div></div></div>
+<div class="field"><label>Profilfoto oder Firmenfoto <span class="optional">Optional</span></label><div class="inline-upload"><img id="member-photo-thumb" src="/admin/brand.svg" alt="Profilfoto"><div><strong>Personenfoto / Firmenbild</strong><p>Ein Foto zur Vorstellung der Person oder Firma. Das Logo bleibt separat.</p><button class="btn small" id="member-photo-button" type="button">Foto auswählen</button><input type="file" accept="image/*" id="member-photo-input" class="hidden"></div></div></div>
+<div class="member-social-editor">
+<div class="tile-head"><strong>Social Media & weitere Links</strong><small>Reihenfolge frei wählen</small></div>
+<p class="help">Plattform auswählen, Link eintragen, mit den Pfeilen sortieren. In der Vorschau erscheinen kleine anklickbare Symbole.</p>
+<div id="member-social-rows"></div>
+<button type="button" class="btn small" id="member-social-add">＋ Link hinzufügen</button>
+</div>
 <div class="field"><label class="check-row"><input id="member-public" type="checkbox" checked> Mitglied auf der Webseite anzeigen</label><p class="help">Dieser Schalter wird erst im echten Admin eine Veröffentlichung beeinflussen.</p></div>
 </div></div>
-<div class="panel"><div class="panel-head"><h2>Profilvorschau</h2><p>Firmenkarte, wie sie später erscheinen könnte.</p></div><div class="manager-preview"><div class="member-preview-logo"><img id="member-preview-logo" src="/logos/onur.jpg" alt="Logo Vorschau"></div><h2 id="member-preview-name"></h2><p id="member-preview-description"></p><a id="member-preview-url" href="#" target="_blank" rel="noopener noreferrer"></a></div></div>
+<div class="panel"><div class="panel-head"><h2>Profilvorschau</h2><p>Firmenkarte, wie sie später erscheinen könnte.</p></div><div class="manager-preview"><div class="member-preview-logo"><img id="member-preview-logo" src="/logos/onur.jpg" alt="Logo Vorschau"></div><div id="member-preview-photo-wrap" class="member-preview-photo-wrap hidden"><img id="member-preview-photo" src="" alt="Profilfoto"></div>
+<h2 id="member-preview-name"></h2>
+<div id="member-preview-person" class="member-preview-person"></div>
+<p id="member-preview-description"></p>
+<div id="member-preview-contacts" class="member-preview-contacts"></div>
+<div id="member-preview-social" class="member-preview-social"></div></div></div>
 </div></section>
 
 <section id="projects-list" class="hidden">
@@ -289,19 +305,19 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 </section>
 
 <section id="pages-list" class="hidden">
-<div class="eyebrow">WEBSEITE / INHALTE</div>
-<div class="hero-heading"><div><h1>Seiten bearbeiten.</h1><p class="sub">Wähle einen Bereich aus, den du später direkt und ohne Code ändern kannst.</p></div></div>
+<div class="eyebrow">WEBSEITE / STARTSEITE</div>
+<div class="hero-heading"><div><h1>Startseite verwalten.</h1><p class="sub">Hauptseite, zentrale Kontaktdaten und die rechtlichen Texte an einem Ort.</p></div></div>
 <div class="notice"><strong>Designvorschau:</strong> Diese Bereiche lassen sich hier probeweise bearbeiten. Änderungen wirken sich noch nicht auf die öffentliche Webseite aus.</div>
 <div class="hub-grid pages-grid">
 <button class="hub-card" data-page-edit="start"><span class="hub-symbol">⌂</span><span class="hub-text"><strong>Startseite</strong><small>Einleitung, Teaser und Hauptbereiche</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
-<button class="hub-card" data-page-edit="about"><span class="hub-symbol">◎</span><span class="hub-text"><strong>Über uns</strong><small>Verein, Netzwerk und Leitbild</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
+
 <button class="hub-card" data-page-edit="contact"><span class="hub-symbol">✉</span><span class="hub-text"><strong>Kontakt</strong><small>Kontaktangaben und Anfragen</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
 <button class="hub-card" data-page-edit="imprint"><span class="hub-symbol">§</span><span class="hub-text"><strong>Impressum</strong><small>Rechtliche Angaben des Vereins</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
 <button class="hub-card" data-page-edit="privacy"><span class="hub-symbol">◇</span><span class="hub-text"><strong>Datenschutz</strong><small>Datenschutzerklärung und Hinweise</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
 </div>
 </section>
 <section id="page-editor" class="hidden">
-<button class="back" id="page-edit-back">← Zurück zu Seiten</button>
+<button class="back" id="page-edit-back">← Zurück zur Startseite</button>
 <div class="hero-heading"><div><div class="eyebrow">SEITEN / BEARBEITEN</div><h1 id="page-edit-heading">Seite bearbeiten</h1><p class="sub">Inhalte unkompliziert ändern und rechts ansehen.</p></div><button class="btn" id="page-save-demo" type="button">Entwurf merken</button></div>
 <div class="notice"><strong>Nur Konzept:</strong> Änderungen hier werden nicht auf der Webseite gespeichert. Impressum und Datenschutz sollten vor einer späteren Veröffentlichung rechtlich geprüft werden.</div>
 <div class="edit-layout">
@@ -309,6 +325,16 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <div class="panel-body">
 <div class="field"><label for="page-title-field">Seitentitel</label><input id="page-title-field" type="text"></div>
 <div class="field"><label for="page-text-field">Inhalt</label><textarea id="page-text-field" style="min-height:330px;line-height:1.85"></textarea><p class="help">Für den endgültigen Editor planen wir dieselben Textwerkzeuge wie bei den Events.</p></div>
+<div class="site-data-section hidden" id="site-data-section">
+<div class="tile-head"><strong>Zentrale Vereinsangaben & Kontakt</strong><small>Gemeinsam verwendet</small></div>
+<p class="help">Hier bearbeitete Angaben werden in der Vorschau von Startseite, Kontakt und Impressum gemeinsam verwendet. Rechtstexte bleiben eigenständige Inhalte.</p>
+<div class="field"><label for="site-company">Vereinsname / Organisation</label><input type="text" id="site-company" placeholder="Baukarussell Verein"></div>
+<div class="field"><label for="site-contact-person">Kontaktperson / Vertretung <span class="optional">Optional</span></label><input type="text" id="site-contact-person" placeholder="Name oder Funktion"></div>
+<div class="field"><label for="site-address">Strasse und Hausnummer <span class="optional">Optional</span></label><input type="text" id="site-address" placeholder="Strasse und Nummer"></div>
+<div class="field"><label for="site-city">PLZ und Ort <span class="optional">Optional</span></label><input type="text" id="site-city" placeholder="8000 Zürich"></div>
+<div class="fields-2"><div class="field"><label for="site-phone">Telefon</label><input id="site-phone" type="tel" placeholder="+41 ..."></div><div class="field"><label for="site-email">E-Mail</label><input id="site-email" type="email" placeholder="info@..."></div></div>
+<div class="field"><label for="site-website">Webseite</label><input type="url" id="site-website" placeholder="https://..."></div>
+</div>
 <section class="gallery-workspace hidden" id="about-gallery-workspace">
 <div class="tile-head"><div><h3>Mitgliederfotos & Gruppenbilder</h3><p class="help">Aktuelle Gruppenfotos, Vorstandsfotos oder Vereinsbilder. Mehrere Fotos auswählen, sortieren und entfernen.</p></div><small>Ziehen zum Sortieren</small></div>
 <div class="media-grid" id="about-gallery-editor"></div>
@@ -317,7 +343,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <p class="help">Neu hochgeladene Fotos bleiben in diesem Prototyp nur im geöffneten Browserfenster verfügbar und können beim Neuladen verloren gehen.</p>
 </section>
 </div></div>
-<div class="panel page-preview-panel"><div class="panel-head"><h2>Vorschau</h2><p>So könnte die Textseite im Webdesign aussehen.</p></div><div class="page-preview-content"><div class="eyebrow">BAUKARUSSELL</div><h2 id="page-preview-title"></h2><div id="page-preview-text" class="page-preview-text"></div><div class="page-picture-preview hidden" id="about-gallery-preview"><h3>Unsere Mitglieder</h3><div class="images" id="about-gallery-preview-images"></div></div></div></div>
+<div class="panel page-preview-panel"><div class="panel-head"><h2>Vorschau</h2><p>So könnte die Textseite im Webdesign aussehen.</p></div><div class="page-preview-content"><div class="eyebrow">BAUKARUSSELL</div><h2 id="page-preview-title"></h2><div id="page-preview-text" class="page-preview-text"></div><div id="site-preview-block" class="site-preview-block hidden"></div><div class="page-picture-preview hidden" id="about-gallery-preview"><h3>Unsere Mitglieder</h3><div class="images" id="about-gallery-preview-images"></div></div></div></div>
 </div>
 </section>
 <section id="editor" class="hidden">
@@ -373,6 +399,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 </main>
 </div>
 </div>
+<button type="button" id="scroll-top" class="scroll-top" aria-label="Zurück nach oben" title="Zurück zum Seitenanfang">↑</button>
 <div class="toast hidden" id="toast" role="status"></div>
 <script>
 (function(){
