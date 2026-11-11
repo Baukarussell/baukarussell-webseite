@@ -35,7 +35,7 @@ export async function handleBkAdminCallback({request,env}) {
         redirect_uri:url.origin+'/api/callback',
         code_verifier:verifier
       }),
-      redirect:'error'
+      redirect:'manual'
     });
     if(!tokenResponse.ok)return finish('denied',origin);
     const data=await tokenResponse.json();
