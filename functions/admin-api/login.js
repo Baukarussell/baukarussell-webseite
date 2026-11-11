@@ -2,7 +2,7 @@ import {
   STATE_COOKIE, VERIFIER_COOKIE, cookie, randomString, redirect, json
 } from '../../src/admin/bk-admin-auth.js';
 
-export async function onRequestGet({request,env}) {
+async function startGitHubLogin({request,env}) {
   if(!env.GITHUB_CLIENT_ID||!env.GITHUB_CLIENT_SECRET) {
     return json({error:'GitHub OAuth ist noch nicht konfiguriert.'},503);
   }
@@ -23,4 +23,12 @@ export async function onRequestGet({request,env}) {
   response.headers.append('Set-Cookie',cookie(STATE_COOKIE,state,{sameSite:'Lax',maxAge:600}));
   response.headers.append('Set-Cookie',cookie(VERIFIER_COOKIE,verifier,{sameSite:'Lax',maxAge:600}));
   return response;
+}
+
+export async function onRequestGet(context) {
+  try {
+    return await startGitHubLogin(context);
+  } catch (_) {
+    return json({error:'GitHub Anmeldung kann derzeit nicht gestartet werden.'},503);
+  }
 }
