@@ -48,9 +48,13 @@
    const open=document.createElement('button');
    open.type='button';open.className='real-event-open';
    open.textContent='Details & Galerie ansehen ↗';
-   open.style.cssText='border:0;background:transparent;padding:4px 0;margin-right:13px;font-size:11px;cursor:pointer;';
+   open.style.cssText='border:0;background:transparent;padding:4px 0;margin-right:10px;font-size:11px;cursor:pointer;';
    open.addEventListener('click',()=>showDetails(event));
-   info.append(title,meta,open,link);row.append(img(event.image,title.textContent),info);
+   const edit=document.createElement('button');
+   edit.type='button';edit.className='real-event-edit';
+   edit.textContent='Im Editor öffnen ↗';
+   edit.addEventListener('click',()=>{if(window.BKAdmin?.openSourceEvent)window.BKAdmin.openSourceEvent(event);});
+   info.append(title,meta,open,edit,link);row.append(img(event.image,title.textContent),info);
    return row;
  }
  function showDetails(event){
