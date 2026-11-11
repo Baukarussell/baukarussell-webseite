@@ -382,7 +382,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 </section>
 <section id="editor" class="hidden">
 <button class="back" id="edit-back">← Zurück zu Events</button>
-<div class="hero-heading"><div><div class="eyebrow">EVENTS / BEARBEITEN</div><h1 id="editor-heading">Event bearbeiten</h1><p class="sub" id="editor-subtitle">Übersichtlich bearbeiten und die Vorschau sofort sehen.</p></div><div class="editor-actions"><button class="btn" id="demo-save">Entwurf sichern</button><button class="btn dark" id="demo-publish">Veröffentlichen</button></div></div>
+<div class="hero-heading"><div><div class="eyebrow">EVENTS / BEARBEITEN</div><h1 id="editor-heading">Event bearbeiten</h1><p class="sub" id="editor-subtitle">Übersichtlich bearbeiten und die Vorschau sofort sehen.</p><div class="editor-save-indicator" id="editor-save-indicator" data-state="original" role="status" aria-live="polite"><span class="editor-save-dot" aria-hidden="true"></span><span id="editor-save-label">Noch keine Änderungen</span></div></div><div class="editor-actions"><button class="btn" id="demo-save">Entwurf sichern</button><button class="btn dark" id="demo-publish">Veröffentlichen</button></div></div>
 <div class="notice" id="editor-notice">Designvorschau: Änderungen bleiben beim Wechsel zwischen den Bereichen in diesem Browserfenster erhalten. <strong>Keine echte Speicherung oder Veröffentlichung.</strong> Neue Fotodateien können beim Neuladen verloren gehen.</div>
 <div class="source-draft-banner hidden" id="source-draft-banner" role="status">
 <strong>GitHub Eventdatei · nicht veröffentlicht</strong>
@@ -429,7 +429,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 </div>
 </section>
 <section id="placeholder" class="hidden">
-<button class="back" id="placeholder-back">← Zurück zur Übersicht</button><button class="back hidden" id="placeholder-resume" style="float:right;color:#8f7045;font-weight:600">↩ Weiter am geöffneten Event arbeiten</button>
+<button class="back" id="placeholder-back">← Zurück zur Übersicht</button>
 <div class="eyebrow">GEPLANTER VERWALTUNGSBEREICH</div><h1 id="placeholder-title">Mitglieder</h1>
 <p class="sub" id="placeholder-text">Dieser Bereich wird im nächsten Schritt ausgearbeitet.</p>
 <div style="margin-top:30px;background:white;border:1px solid var(--edge);border-radius:12px;padding:35px"><div class="empty">Vorschau des Menübereichs. Hier werden später die zugehörigen Funktionen eingebaut.</div></div>
@@ -450,7 +450,9 @@ montblanc:{title:'Baukarussell x Montblanc',slogan:'Eleganz trifft auf besondere
 test:{title:'Baukarussell Test Event',slogan:'Ein besonderer Abend voller Begegnungen',date:'2026-11-20',time:'18:00',location:'Zürich',text:'Dies ist ein Testevent zur Überprüfung der neuen Baukarussell Webseite und des Redaktionssystems.',cover:photo,images:[photo],partners:[]}
 };
 let current=null,currentKey=null,align='left',dragIndex=null;
-let editorResume=false,editorScrollY=0;
+let editorScrollY=0;
+const editorStatuses=Object.create(null);
+const restoredDraftKeys=new Set();
 let currentPageKey=null;
 const pageContent={start:{title:'Startseite',text:'Hier werden künftig die Einleitung und Haupttexte der Startseite bearbeitet.'},about:{title:'Über uns',text:'Hier wird künftig der Text über den Verein Baukarussell bearbeitet.'},contact:{title:'Kontakt',text:'Hier werden künftig Kontaktangaben und Kontakttexte bearbeitet.'},imprint:{title:'Impressum',text:'Hier wird später der bestehende Impressumstext zur Bearbeitung übernommen. Bitte keine rechtlichen Angaben ohne Prüfung veröffentlichen.'},privacy:{title:'Datenschutz',text:'Hier wird später die bestehende Datenschutzerklärung zur Bearbeitung übernommen. Vor Veröffentlichung bitte prüfen lassen.'}};
 try{const savedPages=JSON.parse(sessionStorage.getItem('bk-admin-pages-demo-v1')||'{}');for(const key of Object.keys(pageContent)){if(savedPages[key]&&typeof savedPages[key].title==='string'&&typeof savedPages[key].text==='string')pageContent[key]=savedPages[key]}}catch(_){/* ignore */}
@@ -459,7 +461,22 @@ try{const persisted=JSON.parse(sessionStorage.getItem('bk-admin-site-info-v1')||
 const siteFields={company:'site-company',contactPerson:'site-contact-person',address:'site-address',city:'site-city',phone:'site-phone',email:'site-email',website:'site-website'};
 const sessionKey='bk-admin-konzept-drafts-v2';
 let hasTemporaryPhotoChanges=false;
-try { const restored=JSON.parse(sessionStorage.getItem(sessionKey)||'{}'); for (const [key,val] of Object.entries(restored)) { if (val && typeof val==='object' && Array.isArray(val.images)) models[key]=val; } } catch (_) { /* Browser storage may be unavailable. */ }
+try { const restored=JSON.parse(sessionStorage.getItem(sessionKey)||'{}'); for (const [key,val] of Object.entries(restored)) { if (val && typeof val==='object' && Array.isArray(val.images)) {models[key]=val;restoredDraftKeys.add(key);} } } catch (_) { /* Browser storage may be unavailable. */ }
+function setEditorStatus(key,state){
+ editorStatuses[key]=state;
+ if(key!==currentKey)return;
+ const banner=$('editor-save-indicator'),label=$('editor-save-label');
+ const source=Boolean(models[key]?.sourceSlug);
+ const descriptions={
+  original:'Noch keine Änderungen · nicht veröffentlicht',
+  local:'Nicht gespeicherte Änderungen · nur lokal vorgemerkt',
+  savedLocal:'Lokal gemerkt · nicht dauerhaft gespeichert',
+  savedRemote:'Privater Entwurf gespeichert · nicht veröffentlicht'
+ };
+ const normalized=state==='savedRemote'&&!source?'savedLocal':state;
+ banner.dataset.state=normalized;
+ label.textContent=descriptions[normalized]||descriptions.local;
+}
 function rememberChange() {
  try {
    const snapshot={};
@@ -468,9 +485,12 @@ function rememberChange() {
      images:val.images.filter(src=>!String(src).startsWith('blob:'))
    };
    sessionStorage.setItem(sessionKey,JSON.stringify(snapshot));
- }catch(_){/* Keep working in memory. */}
- if(current?.sourceSlug&&!$('editor').classList.contains('hidden')){
-   $('source-draft-status').textContent='Änderungen lokal vorgemerkt. Für dauerhafte Speicherung bitte «Entwurf speichern» verwenden. Keine Veröffentlichung.';
+ }catch(_){/* Keep working in memory; the browser may block storage. */}
+ if(currentKey&&current){
+   setEditorStatus(currentKey,'local');
+   if(current.sourceSlug&&!$('editor').classList.contains('hidden')){
+     $('source-draft-status').textContent='Änderungen nur lokal vorgemerkt. Für dauerhafte Speicherung bitte «Entwurf speichern» verwenden. Keine Veröffentlichung.';
+   }
  }
 }
 window.addEventListener('beforeunload',function(event){if(hasTemporaryPhotoChanges){event.preventDefault();event.returnValue='';}});
@@ -501,10 +521,10 @@ function page(name){
  if(editing){requestAnimationFrame(()=>window.scrollTo(0,editorScrollY));}
  else window.scrollTo(0,0);
 }
-function back(){editorResume=false;page('events');}
+function back(){page('events');}
 function setTab(name){all('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$('tab-info').classList.toggle('hidden',name!=='info');$('tab-gallery').classList.toggle('hidden',name!=='gallery');}
 function openEditor(key){
- currentKey=key;editorResume=true;editorScrollY=0;
+ currentKey=key;editorScrollY=0;
  if(!models[key])models[key]={title:'Neues Event',slogan:'',date:'',time:'18:00',location:'',text:'',cover:photo,images:[],partners:[]};
  current=models[key];
  current.partners=Array.isArray(current.partners)?current.partners.map(p=>typeof p==='string'?{role:'partner',name:p,url:''}:{role:p.role||'partner',name:p.name||'',url:p.url||''}):[];
@@ -514,12 +534,13 @@ function openEditor(key){
  $('e-location').value=current.location;$('e-text').value=current.text;$('cover-small').src=current.cover;$('p-image').src=current.cover;
  const source=Boolean(current.sourceSlug);
  $('editor-heading').textContent=source?'GitHub Event bearbeiten':key==='new'?'Neues Event':'Event bearbeiten';
- $('demo-save').textContent=source?'Entwurf speichern':'Entwurf merken';
+ $('demo-save').textContent=source?'Entwurf speichern':'Lokal merken';
  $('source-draft-banner').classList.toggle('hidden',!source);
  $('editor-notice').textContent=source
   ?'Echte GitHub Quelldatei im Editor. Änderungen werden nicht veröffentlicht. Der private Entwurfsspeicher muss in Cloudflare eingerichtet sein, damit Speichern dauerhaft funktioniert.'
   :'Designvorschau: Änderungen bleiben in diesem Browserfenster erhalten. Keine echte Speicherung oder Veröffentlichung. Neue Fotodateien können beim Neuladen verloren gehen.';
  setTab('info');render();page('editor');
+ setEditorStatus(key,editorStatuses[key]||(restoredDraftKeys.has(key)?'local':'original'));
 }
 function sourceEventTime(event){
  if(/^\d{2}:\d{2}$/.test(String(event.time||'')))return event.time;
@@ -550,13 +571,14 @@ async function openSourceEvent(event){
  try{
    const response=await fetch('/admin-api/draft?slug='+encodeURIComponent(event.slug),{credentials:'same-origin',cache:'no-store'});
    const data=await response.json().catch(()=>({}));
-   if(currentKey!==key)return;
+   if(currentKey!==key||$('editor').classList.contains('hidden'))return;
    if(JSON.stringify(models[key])!==initialState)return;
    if(response.ok&&data.found&&data.draft){
      const d=data.draft;
      models[key]={...source,...d,sourceSlug:event.slug,sourceSha:event.sha||'',sourceType:'github'};
      current=models[key];
      rememberChange();openEditor(key);
+     setEditorStatus(key,'savedRemote');
      $('source-draft-status').textContent='Gespeicherten privaten Entwurf geladen ('+new Date(d.savedAt).toLocaleString('de-CH')+'). Noch nicht veröffentlicht.';
    }else if(response.status===503){
      $('source-draft-status').textContent='Privater Entwurfsspeicher noch nicht eingerichtet. Änderungen bleiben derzeit nur in diesem Browserfenster.';
@@ -593,12 +615,19 @@ async function saveSourceDraft(){
      sourceSha:current.sourceSha||'',cover:current.cover||'',images:current.images.slice(),
      partners:current.partners.map(x=>typeof x==='string'?{role:'partner',name:x,url:''}:x)
    };
+   const savingKey=currentKey;
+   const savingFingerprint=JSON.stringify(current);
    const response=await fetch('/admin-api/draft?slug='+encodeURIComponent(current.sourceSlug),{
      method:'PUT',credentials:'same-origin',cache:'no-store',
      headers:{'Content-Type':'application/json','X-BK-CSRF':session.csrf},body:JSON.stringify(body)
    });
    const data=await response.json().catch(()=>({}));
    if(response.ok&&data.saved){
+     if(currentKey===savingKey&&JSON.stringify(current)===savingFingerprint){
+       setEditorStatus(savingKey,'savedRemote');
+     }else if(currentKey===savingKey){
+       setEditorStatus(savingKey,'local');
+     }
      info.textContent='Privater Entwurf gespeichert: '+new Date(data.savedAt).toLocaleString('de-CH')+'. Nicht veröffentlicht.';
      toast('Entwurf im privaten Cloudflare Speicher gesichert. Nicht veröffentlicht.');
    }else{
@@ -712,13 +741,10 @@ function formatSelection(kind){
  current.text=area.value;rememberChange();render();area.focus();
 }
 
-function placeholder(key){$('placeholder-resume').classList.toggle('hidden',!(editorResume&&currentKey));const labels={members:['Mitglieder','Firmenprofile, Logos und Kontaktdaten komfortabel verwalten.'],projects:['Projekte','Projekte bleiben auf der Webseite verborgen, bis ihr sie ausdrücklich aktiviert.'],media:['Medien','Fotos und Logos hochladen, organisieren und wiederverwenden.'],registrations:['Eventanmeldungen','Geplant: Einladungsseiten, Flyer, QR Code, Registrierungsformulare, automatische Bestätigungen und Gästelisten. Noch nicht verfügbar.']};const result=labels[key]||['Bereich','Dieser Verwaltungsbereich ist noch nicht verfügbar.'];$('placeholder-title').textContent=result[0];$('placeholder-text').textContent=result[1];page(key);}
+function placeholder(key){const labels={members:['Mitglieder','Firmenprofile, Logos und Kontaktdaten komfortabel verwalten.'],projects:['Projekte','Projekte bleiben auf der Webseite verborgen, bis ihr sie ausdrücklich aktiviert.'],media:['Medien','Fotos und Logos hochladen, organisieren und wiederverwenden.'],registrations:['Eventanmeldungen','Geplant: Einladungsseiten, Flyer, QR Code, Registrierungsformulare, automatische Bestätigungen und Gästelisten. Noch nicht verfügbar.']};const result=labels[key]||['Bereich','Dieser Verwaltungsbereich ist noch nicht verfügbar.'];$('placeholder-title').textContent=result[0];$('placeholder-text').textContent=result[1];page(key);}
 all('.nav').forEach(b=>b.onclick=()=>{
  const p=b.dataset.page;
- if(p==='events'&&editorResume&&currentKey){
-  // Resume the exact event, editor tab, gallery order and scroll location.
-  page('editor');
- }else if(p==='about'){
+ if(p==='about'){
   editPage('about');
  }else if(['dashboard','events','pages','members','projects','registrations'].includes(p)){
   page(p);
@@ -729,7 +755,6 @@ all('[data-hub-target]').forEach(button=>button.onclick=()=>{
  if(dest==='statistics'){
   $('placeholder-title').textContent='Besucherstatistik';
   $('placeholder-text').textContent='Echte Besuchszahlen können nach einer späteren Verbindung mit Cloudflare Web Analytics angezeigt werden. Aktuell ist keine Statistik verbunden.';
-  $('placeholder-resume').classList.toggle('hidden',!(editorResume&&currentKey));
   page('statistics');
  }else if(dest==='about')editPage('about');
  else if(['events','pages','members','projects','registrations'].includes(dest))page(dest);
@@ -779,7 +804,7 @@ function editPage(key){
 all('[data-page-edit]').forEach(b=>b.onclick=()=>editPage(b.dataset.pageEdit));
 $('page-edit-back').onclick=()=>page(currentPageKey==='about'?'dashboard':'pages');$('page-title-field').addEventListener('input',previewPage);$('page-text-field').addEventListener('input',previewPage);
 $('page-save-demo').onclick=()=>{previewPage();toast('Nur Demo: Text im Browser gemerkt. Noch nicht auf der Webseite gespeichert.');};$('events-add').onclick=()=>openEditor('new');all('[data-open]').forEach(b=>b.onclick=()=>openEditor(b.dataset.open));
-$('edit-back').onclick=back;$('placeholder-back').onclick=()=>page('dashboard');$('placeholder-resume').onclick=()=>{if(editorResume&&currentKey)page('editor');};
+$('edit-back').onclick=back;$('placeholder-back').onclick=()=>page('dashboard');
 all('[data-filter]').forEach(b=>b.onclick=()=>{all('[data-filter]').forEach(t=>t.classList.toggle('selected',t===b));all('.event').forEach(card=>card.classList.toggle('hidden',b.dataset.filter!=='all'&&card.dataset.status!==b.dataset.filter));});
 all('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 all('[data-format]').forEach(b=>b.onclick=()=>formatSelection(b.dataset.format));
@@ -789,7 +814,7 @@ $('partner-add').onclick=()=>{current.partners.push({role:'partner',name:'',url:
 $('change-cover').onclick=()=>$('cover-upload').click();
 $('cover-upload').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f||!f.type.startsWith('image/'))return;current.cover=URL.createObjectURL(f);hasTemporaryPhotoChanges=true;rememberChange();render();e.target.value='';toast('Titelbild für diese Vorschau ausgewählt.');};
 $('upload-input').onchange=e=>{const files=Array.from(e.target.files||[]).filter(f=>f.type.startsWith('image/'));if(!files.length)return;files.forEach(f=>{current.images.push(URL.createObjectURL(f))});hasTemporaryPhotoChanges=true;rememberChange();render();e.target.value='';toast(files.length+' Foto(s) in der Designvorschau hinzugefügt.');};
-$('demo-save').onclick=async()=>{if(await saveSourceDraft())return;rememberChange();toast('Demoentwurf nur in diesem Browserfenster gemerkt. Kein Speichern auf GitHub.');};
+$('demo-save').onclick=async()=>{if(await saveSourceDraft())return;rememberChange();setEditorStatus(currentKey,'savedLocal');toast('Zwischenstand nur in diesem Browserfenster gemerkt. Nicht dauerhaft gespeichert.');};
 $('demo-publish').onclick=()=>toast('Nur Konzept: Kein Inhalt wird veröffentlicht.');
 window.BKAdmin={page,toast,rememberChange,openSourceEvent};
 })();
