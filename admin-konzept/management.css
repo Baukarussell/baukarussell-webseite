@@ -57,3 +57,39 @@
 .no-real-data{background:#fff9ef;border:1px solid #eddcc6;border-radius:7px;color:#8a7149;padding:12px 15px;font-size:11px;line-height:1.75;margin:0 0 20px}
 @media(max-width:1250px){.entity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.entity-grid{grid-template-columns:1fr}.inline-upload{align-items:stretch;flex-direction:column}.manager-preview{padding:20px}.gallery-workspace{padding:17px}}
+
+
+/* Navigation shared by every editor and long management page */
+.overview-link{background:#f8f5ef;border:1px solid #e5ddd0;color:#6f644e;border-radius:8px;min-height:34px;padding:7px 12px;font-weight:600;font-size:11px;white-space:nowrap;cursor:pointer}
+.overview-link:hover{background:#eee7db;color:#3e372a}
+.scroll-top{position:fixed;bottom:26px;right:25px;width:43px;height:43px;display:grid;place-items:center;background:#282b28;color:#fff;border:1px solid #373a36;border-radius:50%;box-shadow:0 6px 20px #0002;font-size:22px;z-index:40;cursor:pointer;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .2s,visibility .2s,transform .2s}
+.scroll-top.visible{opacity:1;visibility:visible;transform:translateY(0)}
+.scroll-top:hover{background:#987a53}
+.member-social-editor{padding:20px 0 6px;margin:12px 0 18px;border-top:1px solid var(--edge)}
+.member-social-row{display:grid;grid-template-columns:114px minmax(0,1fr) 31px 31px 31px;gap:6px;align-items:center;margin:0 0 9px}
+.member-social-row select,.member-social-row input{width:100%;min-width:0;border:1px solid #e4e5df;border-radius:6px;background:#fff;min-height:38px;padding:8px;font-size:11px}
+.member-social-row button{height:33px;width:30px;border:0;border-radius:6px;background:#f3eee6;color:#8f795a;cursor:pointer}
+.member-social-row button:hover{background:#e6dbc8}
+.member-social-row button:disabled{opacity:.35}
+.member-preview-photo-wrap{display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+.member-preview-photo-wrap img{max-width:100%;width:185px;height:185px;object-fit:cover;border-radius:10px;border:1px solid var(--edge)}
+.member-preview-person{text-align:center;color:#8a7a60;font-size:12px;margin:5px 0 17px;line-height:1.65}
+.member-preview-contacts{border-top:1px solid var(--edge);padding:18px 0 10px;margin-top:14px;display:grid;gap:10px}
+.member-preview-contacts a,.member-preview-contacts span{font-size:12px;text-align:center;color:#806845;overflow-wrap:anywhere;line-height:1.7;text-decoration:none}
+.member-preview-contacts a:hover{text-decoration:underline}
+.member-preview-social{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:20px;flex-wrap:wrap}
+.member-preview-social a{margin:0;width:37px;height:37px;border-radius:50%;border:1px solid #ded4c5;background:#fbf9f6;display:grid;place-items:center;text-decoration:none;font-size:15px;font-weight:700;color:#69563a;transition:background .16s,transform .16s}
+.member-preview-social a:hover{background:#eee5d8;transform:translateY(-2px)}
+.member-preview-social a[title="YouTube"]{color:#bf342b}
+.member-preview-social a[title="LinkedIn"]{color:#1a6a9a}
+.member-preview-social a[title="Instagram"]{color:#ad467d}
+.member-preview-social a[title="Facebook"]{color:#3167ac}
+.site-data-section{border-top:1px solid var(--edge);margin-top:22px;padding-top:25px}
+.site-data-section>.tile-head{align-items:flex-start;gap:8px;margin-bottom:7px}
+.site-data-section>.tile-head strong{font-size:12px}
+.site-preview-block{margin-top:29px;padding:23px;background:#fcfaf6;border:1px solid #ede6da;border-radius:10px;display:grid;gap:9px;text-align:center;line-height:1.6;overflow-wrap:anywhere}
+.site-preview-block strong{font:500 23px 'Cormorant Garamond',Georgia,serif}
+.site-preview-block a{color:#8d744e;font-size:11px;text-decoration:underline}
+.site-preview-block span{font-size:11px;color:#828782}
+@media(max-width:900px){.topbar .topright{display:flex}.topbar .topright .design-label{display:none}.topbar .topright .circle{display:none}.topbar{padding:12px 20px}}
+@media(max-width:560px){.member-social-row{grid-template-columns:85px minmax(0,1fr) 27px 27px 27px;gap:4px}.member-social-row button{height:30px;width:26px}.member-social-row select,.member-social-row input{font-size:10px;padding:6px}.overview-link{padding:8px;font-size:10px;max-width:150px}.topbar .crumb{font-size:11px}.scroll-top{right:17px;bottom:17px}}
