@@ -49,7 +49,16 @@ export function cookie(name,value,options={}) {
 export function clearCookie(name,sameSite='Strict') {
   return cookie(name,'',{maxAge:0,sameSite});
 }
-export function redirect(url) { return noStore(Response.redirect(url,303)); }
+export function redirect(url) {
+  // Response.redirect() has immutable Headers. Our OAuth flow must attach
+  // security headers and short-lived state cookies, so build a mutable response.
+  const target=new URL(url);
+  if(target.protocol!=='https:')throw new Error('HTTPS redirect required');
+  return noStore(new Response(null,{
+    status:303,
+    headers:{Location:target.toString()}
+  }));
+}
 
 async function sessionKey(env) {
   // The OAuth secret is already configured in the existing test Cloudflare project.
