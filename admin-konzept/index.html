@@ -220,6 +220,23 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 </div>
 <div class="real-events-state" id="real-events-state" role="status">Verbindungsprüfung noch ausstehend.</div>
 <div id="real-events-list" class="real-events-grid"></div>
+<section id="real-event-detail" class="real-event-detail hidden" aria-label="Details zur GitHub Eventdatei">
+<div class="real-event-detail-head">
+<div><div class="eyebrow">EVENTDATEI / ORIGINALANSICHT</div><h3 id="real-detail-title">Event</h3><p id="real-detail-subtitle"></p></div>
+<button type="button" class="btn small" id="real-detail-close">✕ Schliessen</button>
+</div>
+<div class="notice"><strong>Nur Leseansicht.</strong> Du siehst die Originaldaten aus dem GitHub Testbranch. Es werden keine Änderungen gespeichert oder veröffentlicht.</div>
+<div class="real-event-detail-layout">
+<div class="real-event-detail-photo"><img id="real-detail-cover" alt="Titelbild des Events"></div>
+<div class="real-event-detail-data">
+<div class="real-detail-line"><strong>Datum und Uhrzeit</strong><span id="real-detail-date">–</span></div>
+<div class="real-detail-line"><strong>Location</strong><span id="real-detail-location">–</span></div>
+<div class="real-detail-line"><strong>GitHub Datei</strong><a id="real-detail-source" target="_blank" rel="noopener noreferrer">Quelldatei ansehen ↗</a></div>
+</div>
+</div>
+<div class="real-event-detail-text"><h4>Eventbeschreibung</h4><div id="real-detail-description"></div></div>
+<div class="real-event-gallery"><h4>Eventgalerie <span id="real-detail-gallery-count"></span></h4><div id="real-detail-gallery" class="real-event-gallery-grid"></div></div>
+</section>
 </section>
 <div class="section-head"><div><h2>Designentwürfe</h2><p class="help">Die folgenden Beispielkarten gehören zur interaktiven Vorschau und sind nicht mit den GitHub Dateien verbunden.</p></div><div class="filter"><button class="selected" data-filter="all">Alle</button><button data-filter="published">Veröffentlicht</button><button data-filter="draft">Entwürfe</button></div></div>
 <div class="cards" id="cards">
