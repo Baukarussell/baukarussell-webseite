@@ -35,3 +35,13 @@ Die KV Bindung darf **nur am Testprojekt** eingerichtet werden, bis wir die spä
 - Der GitHub Dateistand wird im Entwurf mittels SHA mitgeführt; spätere Veröffentlichung muss den SHA vor einem Schreibvorgang auf Konflikte prüfen.
 
 **Nie Geheimnisse, Tokens oder KV Namespace IDs in GitHub hinterlegen.**
+
+## Editor: Rückgängig / Wiederholen
+
+Das Admin Konzept bietet für **Events, Mitglieder, Projekte, Startseite und Unterseiten sowie Eventanmeldungen** die Buttons **Rückgängig** und **Wiederholen** direkt in der Editorkopfzeile und neben den Textfeldern. Tastenkürzel: Ctrl + Z und Ctrl + Y (auch Ctrl + Shift + Z). Der Verlauf wird pro Event, Mitglied, Projekt, Seite bzw. Einladung getrennt und nur im laufenden Browserfenster verwaltet.
+
+- Betroffen sind Texte und Formulareingaben. **Nicht** Teil des Undo Verlaufs: Datei und Fotouploads, Bildreihenfolge, das Löschen ganzer Einträge.
+- Das Undo Werkzeug aktualisiert via `input` und `change` die vorhandene lokale Vorschau, speichert jedoch selbst **nichts dauerhaft**.
+- `Lokal merken` wurde für die Demo Eingabemasken ausgeblendet, da diese bereits automatisch in der Browsersitzung vorgemerkt werden.
+- **Entwurf speichern** bleibt ausschliesslich für echte GitHub Eventdaten sichtbar und benötigt die private Cloudflare KV Bindung. Die Funktion **Veröffentlichen** ist weiterhin nur eine Designvorschau.
+- Der Undo Verlauf geht beim vollständigen Neuladen des Tabs verloren. Die bestehenden Textentwürfe können dagegen aus Session Storage zurückkommen.
