@@ -1,6 +1,6 @@
 import {
   openSession,getAuthorizedIdentity,json,SESSION_COOKIE,clearCookie
-} from '../_lib/bk-admin-auth.js';
+} from '../../src/admin/bk-admin-auth.js';
 
 export async function onRequestGet({request,env}) {
   const session=await openSession(request,env);
