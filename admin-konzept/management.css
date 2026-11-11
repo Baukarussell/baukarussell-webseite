@@ -93,3 +93,26 @@
 .site-preview-block span{font-size:11px;color:#828782}
 @media(max-width:900px){.topbar .topright{display:flex}.topbar .topright .design-label{display:none}.topbar .topright .circle{display:none}.topbar{padding:12px 20px}}
 @media(max-width:560px){.member-social-row{grid-template-columns:85px minmax(0,1fr) 27px 27px 27px;gap:4px}.member-social-row button{height:30px;width:26px}.member-social-row select,.member-social-row input{font-size:10px;padding:6px}.overview-link{padding:8px;font-size:10px;max-width:150px}.topbar .crumb{font-size:11px}.scroll-top{right:17px;bottom:17px}}
+
+
+/* Clear, distinctive iconography in navigation and dashboard */
+.sidebar .nav .ico{display:inline-flex;align-items:center;justify-content:center;flex:0 0 28px;width:28px;height:28px;color:#8e7956}
+.sidebar .nav .ico svg{display:block;flex:none;width:23px;height:23px;stroke-width:1.9}
+.sidebar .nav.active .ico{color:#6f5131}
+.sidebar .nav:hover .ico{color:#84643d}
+.hub-symbol svg{display:block;width:27px;height:27px;stroke-width:1.8}
+.hub-card:hover .hub-symbol{color:#70522b;background:#eee5d7}
+.scroll-top,.scroll-top.visible{display:inline-flex!important;align-items:center;justify-content:center;gap:9px;width:auto!important;min-width:116px;height:45px;min-height:45px;padding:0 16px;border:1px solid #b99a68;border-radius:25px;background:#292b28;color:white;opacity:1!important;visibility:visible!important;transform:none!important;z-index:90;bottom:23px;right:23px;box-shadow:0 8px 24px rgba(0,0,0,.19);font:600 11px Inter,Arial,sans-serif;letter-spacing:.01em}
+.scroll-top span:first-child{font-size:22px;line-height:1}
+.scroll-top:hover{background:#795f39;border-color:#c9a676}
+.scroll-top:focus-visible{outline:3px solid #ae8d5b;outline-offset:3px}
+@media(max-width:900px){
+ .sidebar .nav .ico{display:inline-flex;width:21px;flex-basis:21px;height:25px}
+ .sidebar .nav .ico svg{width:20px;height:20px}
+ .sidebar .nav{gap:5px}
+}
+@media(max-width:600px){
+ .scroll-top,.scroll-top.visible{right:12px;bottom:12px;min-width:108px;padding:0 12px;height:42px}
+ .sidebar .nav .ico{display:inline-flex!important}
+ .sidebar .nav .ico svg{width:17px;height:17px}
+}
