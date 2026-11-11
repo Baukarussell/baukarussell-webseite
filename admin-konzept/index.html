@@ -125,7 +125,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 </div>
 </section>
 <section id="placeholder" class="hidden">
-<button class="back" id="placeholder-back">← Zurück zur Übersicht</button>
+<button class="back" id="placeholder-back">← Zurück zur Übersicht</button><button class="back hidden" id="placeholder-resume" style="float:right;color:#8f7045;font-weight:600">↩ Weiter am geöffneten Event arbeiten</button>
 <div class="eyebrow">GEPLANTER VERWALTUNGSBEREICH</div><h1 id="placeholder-title">Mitglieder</h1>
 <p class="sub" id="placeholder-text">Dieser Bereich wird im nächsten Schritt ausgearbeitet.</p>
 <div style="margin-top:30px;background:white;border:1px solid var(--edge);border-radius:12px;padding:35px"><div class="empty">Vorschau des Menübereichs. Hier werden später die zugehörigen Funktionen eingebaut.</div></div>
@@ -145,6 +145,7 @@ montblanc:{title:'Baukarussell x Montblanc',slogan:'Eleganz trifft auf besondere
 test:{title:'Baukarussell Test Event',slogan:'Ein besonderer Abend voller Begegnungen',date:'2026-11-20',time:'18:00',location:'Zürich',text:'Dies ist ein Testevent zur Überprüfung der neuen Baukarussell Webseite und des Redaktionssystems.',cover:photo,images:[photo],partners:[]}
 };
 let current=null,currentKey=null,align='left',dragIndex=null;
+let editorResume=false,editorScrollY=0;
 const sessionKey='bk-admin-konzept-drafts-v2';
 let hasTemporaryPhotoChanges=false;
 try { const restored=JSON.parse(sessionStorage.getItem(sessionKey)||'{}'); for (const [key,val] of Object.entries(restored)) { if (val && typeof val==='object' && Array.isArray(val.images)) models[key]=val; } } catch (_) { /* Browser storage may be unavailable. */ }
@@ -152,12 +153,21 @@ function rememberChange() { try { const snapshot={}; for (const [key,val] of Obj
 window.addEventListener('beforeunload',function(event){if(hasTemporaryPhotoChanges){event.preventDefault();event.returnValue='';}});
 let toastTimer=null;
 function toast(message){const t=$('toast');t.textContent=message;t.classList.remove('hidden');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add('hidden'),3500);}
-function page(name){$('dashboard').classList.toggle('hidden',name!=='dashboard');$('editor').classList.toggle('hidden',name!=='editor');$('placeholder').classList.toggle('hidden',name!=='placeholder');$('crumb').textContent=name==='editor'?'Event bearbeiten':name==='dashboard'?'Übersicht':name;
- all('.nav').forEach(b=>b.classList.toggle('active',name==='dashboard'?b.dataset.page==='dashboard':name==='editor'?b.dataset.page==='events':b.dataset.page===name));
- window.scrollTo(0,0);}
-function back(){page('dashboard');}
+function page(name){
+ const leavingEditor=!$('editor').classList.contains('hidden') && name!=='editor';
+ if(leavingEditor)editorScrollY=window.scrollY;
+ const editing=name==='editor', dashboard=name==='dashboard', placeholder=!editing&&!dashboard;
+ $('dashboard').classList.toggle('hidden',!dashboard);
+ $('editor').classList.toggle('hidden',!editing);
+ $('placeholder').classList.toggle('hidden',!placeholder);
+ $('crumb').textContent=editing?'Event bearbeiten':dashboard?'Übersicht':name;
+ all('.nav').forEach(b=>b.classList.toggle('active',dashboard?b.dataset.page==='dashboard':editing?b.dataset.page==='events':b.dataset.page===name));
+ if(editing){requestAnimationFrame(()=>window.scrollTo(0,editorScrollY));}
+ else window.scrollTo(0,0);
+}
+function back(){editorResume=false;page('dashboard');}
 function setTab(name){all('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$('tab-info').classList.toggle('hidden',name!=='info');$('tab-gallery').classList.toggle('hidden',name!=='gallery');}
-function openEditor(key){currentKey=key;if(!models[key])models[key]={title:'Neues Event',slogan:'',date:'',time:'18:00',location:'',text:'',cover:photo,images:[],partners:[]};current=models[key];
+function openEditor(key){currentKey=key;editorResume=true;editorScrollY=0;if(!models[key])models[key]={title:'Neues Event',slogan:'',date:'',time:'18:00',location:'',text:'',cover:photo,images:[],partners:[]};current=models[key];
 $('e-title').value=current.title;$('e-slogan').value=current.slogan;$('e-date').value=current.date;$('e-time').value=current.time;$('e-location').value=current.location;$('e-text').value=current.text;$('cover-small').src=current.cover;$('p-image').src=current.cover;$('editor-heading').textContent=key==='new'?'Neues Event':'Event bearbeiten';setTab('info');render();page('editor');}
 function render(){if(!current)return;
 $('p-title').textContent=current.title||'Eventname';
@@ -174,10 +184,19 @@ const tile=document.createElement('div');tile.className='media-tile';tile.dragga
 tile.addEventListener('dragstart',()=>{dragIndex=i;tile.classList.add('dragging')});tile.addEventListener('dragend',()=>tile.classList.remove('dragging'));tile.addEventListener('dragover',event=>event.preventDefault());tile.addEventListener('drop',event=>{event.preventDefault();if(dragIndex===null||dragIndex===i)return;const moved=current.images.splice(dragIndex,1)[0];current.images.splice(i,0,moved);dragIndex=null;rememberChange();render();});editor.append(tile);});
 const part=$('partner-list');part.replaceChildren();current.partners.forEach((name,i)=>{const row=document.createElement('div');row.className='partner';const input=document.createElement('input');input.value=name;input.placeholder='Name oder Unternehmen';input.oninput=()=>{current.partners[i]=input.value;rememberChange();};const remove=document.createElement('button');remove.textContent='×';remove.title='Entfernen';remove.onclick=()=>{current.partners.splice(i,1);rememberChange();render();};row.append(input,remove);part.append(row);});
 }
-function placeholder(key){const labels={members:['Mitglieder','Firmenprofile, Logos und Kontaktdaten komfortabel verwalten.'],projects:['Projekte','Projekte bleiben auf der Webseite verborgen, bis ihr sie ausdrücklich aktiviert.'],media:['Medien','Fotos und Logos hochladen, organisieren und wiederverwenden.'],pages:['Seiten','Startseite, Über uns und Kontakt visuell bearbeiten.']};$('placeholder-title').textContent=labels[key][0];$('placeholder-text').textContent=labels[key][1];page(key);$('placeholder').classList.remove('hidden');}
-all('.nav').forEach(b=>b.onclick=()=>{let p=b.dataset.page;if(p==='dashboard'||p==='events'){page('dashboard');document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n===b));}else placeholder(p)});
+function placeholder(key){$('placeholder-resume').classList.toggle('hidden',!(editorResume&&currentKey));const labels={members:['Mitglieder','Firmenprofile, Logos und Kontaktdaten komfortabel verwalten.'],projects:['Projekte','Projekte bleiben auf der Webseite verborgen, bis ihr sie ausdrücklich aktiviert.'],media:['Medien','Fotos und Logos hochladen, organisieren und wiederverwenden.'],pages:['Seiten','Startseite, Über uns und Kontakt visuell bearbeiten.']};$('placeholder-title').textContent=labels[key][0];$('placeholder-text').textContent=labels[key][1];page(key);}
+all('.nav').forEach(b=>b.onclick=()=>{
+ const p=b.dataset.page;
+ if(p==='events'&&editorResume&&currentKey){
+  // Resume the exact event, editor tab, gallery order and scroll location.
+  page('editor');
+ }else if(p==='dashboard'||p==='events'){
+  page('dashboard');
+  all('.nav').forEach(n=>n.classList.toggle('active',n===b));
+ }else placeholder(p);
+});
 $('brand').onclick=e=>{e.preventDefault();back()};$('dash-add').onclick=()=>openEditor('new');all('[data-open]').forEach(b=>b.onclick=()=>openEditor(b.dataset.open));
-$('edit-back').onclick=back;$('placeholder-back').onclick=back;
+$('edit-back').onclick=back;$('placeholder-back').onclick=back;$('placeholder-resume').onclick=()=>{if(editorResume&&currentKey)page('editor');};
 all('[data-filter]').forEach(b=>b.onclick=()=>{all('[data-filter]').forEach(t=>t.classList.toggle('selected',t===b));all('.event').forEach(card=>card.classList.toggle('hidden',b.dataset.filter!=='all'&&card.dataset.status!==b.dataset.filter));});
 all('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 ['title','slogan','date','time','location','text'].forEach(key=>{$('e-'+key).addEventListener('input',e=>{current[key]=e.target.value;rememberChange();render()})});
