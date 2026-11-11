@@ -32,9 +32,43 @@
    const file=encodeURIComponent(String(event.slug||''))+'.md';
    link.href='https://github.com/'+repo+'/blob/'+encodeURIComponent(branch)+'/events/'+file;
    link.target='_blank';link.rel='noopener noreferrer';
-   info.append(title,meta,link);row.append(img(event.image,title.textContent),info);
+   const open=document.createElement('button');
+   open.type='button';open.className='real-event-open';
+   open.textContent='Details & Galerie ansehen ↗';
+   open.style.cssText='border:0;background:transparent;padding:4px 0;margin-right:13px;font-size:11px;cursor:pointer;';
+   open.addEventListener('click',()=>showDetails(event));
+   info.append(title,meta,open,link);row.append(img(event.image,title.textContent),info);
    return row;
  }
+ function showDetails(event){
+   const pane=$('real-event-detail');
+   if(!pane)return;
+   $('real-detail-title').textContent=event.title||'Event';
+   $('real-detail-subtitle').textContent=event.subtitle||'';
+   const photo=$('real-detail-cover');
+   const sourceImage=typeof event.image==='string'&&/^\/(?:logos|events|uploads)\//.test(event.image)&&!event.image.includes('..')?event.image:'';
+   if(sourceImage){photo.src=sourceImage;photo.style.display='block';}
+   else {photo.removeAttribute('src');photo.style.display='none';}
+   $('real-detail-date').textContent=[event.date,event.time].filter(Boolean).join(' · ')||'Noch keine Angabe';
+   $('real-detail-location').textContent=event.location||'Noch keine Angabe';
+   $('real-detail-description').textContent=event.body||'Keine Beschreibung in der Quelldatei vorhanden.';
+   const filename=encodeURIComponent(String(event.slug||''))+'.md';
+   $('real-detail-source').href='https://github.com/'+repo+'/blob/'+encodeURIComponent(branch)+'/events/'+filename;
+   const gallery=$('real-detail-gallery');gallery.replaceChildren();
+   const photos=Array.isArray(event.gallery)?event.gallery:[];
+   $('real-detail-gallery-count').textContent='('+photos.length+')';
+   if(!photos.length){const empty=document.createElement('div');empty.className='real-event-empty';empty.textContent='In der Quelldatei sind keine Galeriefotos hinterlegt.';gallery.append(empty);}
+   for(const item of photos){
+     if(typeof item!=='string'||!/^\/(?:logos|events|uploads)\//.test(item)||item.includes('..'))continue;
+     const photo=document.createElement('img');photo.src=item;photo.alt='Eventgalerie';photo.loading='lazy';gallery.append(photo);
+   }
+   pane.classList.remove('hidden');
+   pane.scrollIntoView({behavior:'smooth',block:'start'});
+ }
+ $('real-detail-close').addEventListener('click',()=>{
+   $('real-event-detail').classList.add('hidden');
+   root.scrollIntoView({behavior:'smooth',block:'start'});
+ });
  async function get(url){
    const controller=new AbortController();
    const timeout=setTimeout(()=>controller.abort(),15000);
@@ -47,6 +81,7 @@
  async function load(){
    if(busy)return;busy=true;refresh.disabled=true;
    list.replaceChildren();
+   $('real-event-detail').classList.add('hidden');
    message('GitHub Verbindung und Zugriffsrechte werden geprüft ...');
    try{
      const session=await get('/admin-api/session');
