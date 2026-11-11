@@ -111,7 +111,7 @@ export async function github(token,path) {
       'X-GitHub-Api-Version':'2022-11-28',
       'User-Agent':'Baukarussell-Test-Admin'
     },
-    redirect:'error'
+    redirect:'manual'
   });
   if(!response.ok)return {ok:false,status:response.status};
   return {ok:true,status:response.status,data:await response.json()};
