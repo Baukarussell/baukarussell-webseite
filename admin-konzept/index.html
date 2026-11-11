@@ -383,7 +383,11 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <section id="editor" class="hidden">
 <button class="back" id="edit-back">← Zurück zu Events</button>
 <div class="hero-heading"><div><div class="eyebrow">EVENTS / BEARBEITEN</div><h1 id="editor-heading">Event bearbeiten</h1><p class="sub" id="editor-subtitle">Übersichtlich bearbeiten und die Vorschau sofort sehen.</p></div><div class="editor-actions"><button class="btn" id="demo-save">Entwurf sichern</button><button class="btn dark" id="demo-publish">Veröffentlichen</button></div></div>
-<div class="notice">Designvorschau: Änderungen bleiben beim Wechsel zwischen den Bereichen in diesem Browserfenster erhalten. <strong>Keine echte Speicherung oder Veröffentlichung.</strong> Neue Fotodateien können beim Neuladen verloren gehen.</div>
+<div class="notice" id="editor-notice">Designvorschau: Änderungen bleiben beim Wechsel zwischen den Bereichen in diesem Browserfenster erhalten. <strong>Keine echte Speicherung oder Veröffentlichung.</strong> Neue Fotodateien können beim Neuladen verloren gehen.</div>
+<div class="source-draft-banner hidden" id="source-draft-banner" role="status">
+<strong>GitHub Eventdatei · nicht veröffentlicht</strong>
+<p id="source-draft-status">Dieser Event wurde aus GitHub geladen. Änderungen bleiben bis zur Einrichtung eines privaten Entwurfsspeichers lokal.</p>
+</div>
 <div class="edit-layout">
 <section class="panel">
 <div class="panel-head"><h2>Event gestalten</h2><p>Alle Informationen an einem Ort.</p></div>
@@ -487,8 +491,111 @@ function page(name){
 }
 function back(){editorResume=false;page('events');}
 function setTab(name){all('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$('tab-info').classList.toggle('hidden',name!=='info');$('tab-gallery').classList.toggle('hidden',name!=='gallery');}
-function openEditor(key){currentKey=key;editorResume=true;editorScrollY=0;if(!models[key])models[key]={title:'Neues Event',slogan:'',date:'',time:'18:00',location:'',text:'',cover:photo,images:[],partners:[]};current=models[key];current.partners=Array.isArray(current.partners)?current.partners.map(p=>typeof p==='string'?{role:'partner',name:p,url:''}:{role:p.role||'partner',name:p.name||'',url:p.url||''}):[];align=current.textAlign||'left';all('[data-align]').forEach(b=>b.classList.toggle('active',b.dataset.align===align));
-$('e-title').value=current.title;$('e-slogan').value=current.slogan;$('e-date').value=current.date;$('e-time').value=current.time;$('e-location').value=current.location;$('e-text').value=current.text;$('cover-small').src=current.cover;$('p-image').src=current.cover;$('editor-heading').textContent=key==='new'?'Neues Event':'Event bearbeiten';setTab('info');render();page('editor');}
+function openEditor(key){
+ currentKey=key;editorResume=true;editorScrollY=0;
+ if(!models[key])models[key]={title:'Neues Event',slogan:'',date:'',time:'18:00',location:'',text:'',cover:photo,images:[],partners:[]};
+ current=models[key];
+ current.partners=Array.isArray(current.partners)?current.partners.map(p=>typeof p==='string'?{role:'partner',name:p,url:''}:{role:p.role||'partner',name:p.name||'',url:p.url||''}):[];
+ align=current.textAlign||'left';
+ all('[data-align]').forEach(b=>b.classList.toggle('active',b.dataset.align===align));
+ $('e-title').value=current.title;$('e-slogan').value=current.slogan;$('e-date').value=current.date;$('e-time').value=current.time;
+ $('e-location').value=current.location;$('e-text').value=current.text;$('cover-small').src=current.cover;$('p-image').src=current.cover;
+ const source=Boolean(current.sourceSlug);
+ $('editor-heading').textContent=source?'GitHub Event bearbeiten':key==='new'?'Neues Event':'Event bearbeiten';
+ $('demo-save').textContent=source?'Entwurf speichern':'Entwurf merken';
+ $('source-draft-banner').classList.toggle('hidden',!source);
+ $('editor-notice').textContent=source
+  ?'Echte GitHub Quelldatei im Editor. Änderungen werden nicht veröffentlicht. Der private Entwurfsspeicher muss in Cloudflare eingerichtet sein, damit Speichern dauerhaft funktioniert.'
+  :'Designvorschau: Änderungen bleiben in diesem Browserfenster erhalten. Keine echte Speicherung oder Veröffentlichung. Neue Fotodateien können beim Neuladen verloren gehen.';
+ setTab('info');render();page('editor');
+}
+function sourceEventTime(event){
+ if(/^\d{2}:\d{2}$/.test(String(event.time||'')))return event.time;
+ if(!event.date||!String(event.date).includes('T'))return '18:00';
+ const date=new Date(event.date);
+ if(Number.isNaN(date.getTime()))return '18:00';
+ return new Intl.DateTimeFormat('de-CH',{timeZone:'Europe/Zurich',hour:'2-digit',minute:'2-digit',hour12:false}).format(date);
+}
+async function openSourceEvent(event){
+ if(!event||typeof event.slug!=='string'||!/^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,119}$/.test(event.slug)||event.slug.includes('..'))return;
+ const key='github_'+event.slug;
+ const hadLocal=Boolean(models[key]&&models[key].sourceSlug);
+ const source={
+   title:event.title||'',slogan:event.subtitle||'',
+   date:String(event.date||'').slice(0,10),time:sourceEventTime(event),
+   location:event.location||'',text:event.body||'',cover:event.image||photo,
+   images:Array.isArray(event.gallery)?event.gallery.slice():[],partners:[],
+   sourceSlug:event.slug,sourceSha:event.sha||'',sourceType:'github',textAlign:'left'
+ };
+ if(!hadLocal)models[key]=source;
+ openEditor(key);
+ $('source-draft-status').textContent=hadLocal
+   ?'Lokaler Zwischenstand aus diesem Browserfenster geöffnet. Noch nicht auf GitHub veröffentlicht.'
+   :'Originaldaten aus dem GitHub Testbranch geladen. Prüfe oder bearbeite sie hier als privaten Entwurf.';
+ if(hadLocal)return;
+ try{
+   const response=await fetch('/admin-api/draft?slug='+encodeURIComponent(event.slug),{credentials:'same-origin',cache:'no-store'});
+   const data=await response.json().catch(()=>({}));
+   if(currentKey!==key)return;
+   if(response.ok&&data.found&&data.draft){
+     const d=data.draft;
+     models[key]={...source,...d,sourceSlug:event.slug,sourceSha:event.sha||'',sourceType:'github'};
+     current=models[key];
+     rememberChange();openEditor(key);
+     $('source-draft-status').textContent='Gespeicherten privaten Entwurf geladen ('+new Date(d.savedAt).toLocaleString('de-CH')+'). Noch nicht veröffentlicht.';
+   }else if(response.status===503){
+     $('source-draft-status').textContent='Privater Entwurfsspeicher noch nicht eingerichtet. Änderungen bleiben derzeit nur in diesem Browserfenster.';
+   }else if(!response.ok){
+     $('source-draft-status').textContent='Entwurfsspeicher momentan nicht erreichbar. Du kannst weiterhin im Browser arbeiten.';
+   }else{
+     $('source-draft-status').textContent='Kein privater Entwurf vorhanden. GitHub Original geöffnet, bisher unverändert.';
+   }
+ }catch(_){if(currentKey===key)$('source-draft-status').textContent='Verbindung zum Entwurfsspeicher nicht erreichbar. Änderungen bleiben nur lokal.';}
+}
+async function saveSourceDraft(){
+ if(!current||!current.sourceSlug)return false;
+ rememberChange();
+ const info=$('source-draft-status');
+ const btn=$('demo-save');
+ if(!current.title.trim()){info.textContent='Bitte zuerst einen Eventnamen eingeben.';return true;}
+ const allImages=[current.cover,...current.images];
+ if(allImages.some(v=>typeof v==='string'&&v.startsWith('blob:'))){
+   info.textContent='Neue Fotos sind noch nicht dauerhaft hochgeladen. Bitte verwende vorerst nur bereits im GitHub Projekt vorhandene Bilder.';
+   toast('Fotos müssen zuerst dauerhaft hochgeladen werden. Kein Cloudflare Entwurf gespeichert.');
+   return true;
+ }
+ btn.disabled=true;btn.textContent='Speichern ...';
+ try{
+   const sessionResponse=await fetch('/admin-api/session',{credentials:'same-origin',cache:'no-store'});
+   const session=await sessionResponse.json().catch(()=>({}));
+   if(!sessionResponse.ok||!session.authenticated||!session.csrf){
+     info.textContent='GitHub Anmeldung erforderlich. Dein Zwischenstand ist nur im Browser verfügbar.';
+     toast('Bitte auf Übersicht mit GitHub anmelden.');return true;
+   }
+   const body={
+     slug:current.sourceSlug,title:current.title,slogan:current.slogan||'',date:current.date||'',
+     time:current.time||'',location:current.location||'',text:current.text||'',textAlign:current.textAlign||align,
+     sourceSha:current.sourceSha||'',cover:current.cover||'',images:current.images.slice(),
+     partners:current.partners.map(x=>typeof x==='string'?{role:'partner',name:x,url:''}:x)
+   };
+   const response=await fetch('/admin-api/draft?slug='+encodeURIComponent(current.sourceSlug),{
+     method:'PUT',credentials:'same-origin',cache:'no-store',
+     headers:{'Content-Type':'application/json','X-BK-CSRF':session.csrf},body:JSON.stringify(body)
+   });
+   const data=await response.json().catch(()=>({}));
+   if(response.ok&&data.saved){
+     info.textContent='Privater Entwurf gespeichert: '+new Date(data.savedAt).toLocaleString('de-CH')+'. Nicht veröffentlicht.';
+     toast('Entwurf im privaten Cloudflare Speicher gesichert. Nicht veröffentlicht.');
+   }else{
+     info.textContent=data.error||'Der private Entwurf konnte nicht gespeichert werden. Die Änderungen bleiben vorläufig im Browser.';
+     toast('Kein permanenter Speichererfolg. Dein Entwurf bleibt vorläufig im Browser.');
+   }
+ }catch(_){
+   info.textContent='Entwurfsspeicher derzeit nicht erreichbar. Änderungen bleiben nur in diesem Browserfenster.';
+   toast('Speichern derzeit nicht möglich.');
+ }finally{btn.disabled=false;btn.textContent='Entwurf speichern';}
+ return true;
+}
 function render(){if(!current)return;
 $('p-title').textContent=current.title||'Eventname';
 $('p-slogan').textContent=current.slogan||current.title||'Eventtitel';
@@ -667,9 +774,9 @@ $('partner-add').onclick=()=>{current.partners.push({role:'partner',name:'',url:
 $('change-cover').onclick=()=>$('cover-upload').click();
 $('cover-upload').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f||!f.type.startsWith('image/'))return;current.cover=URL.createObjectURL(f);hasTemporaryPhotoChanges=true;rememberChange();render();e.target.value='';toast('Titelbild für diese Vorschau ausgewählt.');};
 $('upload-input').onchange=e=>{const files=Array.from(e.target.files||[]).filter(f=>f.type.startsWith('image/'));if(!files.length)return;files.forEach(f=>{current.images.push(URL.createObjectURL(f))});hasTemporaryPhotoChanges=true;rememberChange();render();e.target.value='';toast(files.length+' Foto(s) in der Designvorschau hinzugefügt.');};
-$('demo-save').onclick=()=>{rememberChange();toast('Demoentwurf in diesem Browserfenster gemerkt. Kein Speichern auf GitHub. Neue Fotos bleiben vorläufig.');};
+$('demo-save').onclick=async()=>{if(await saveSourceDraft())return;rememberChange();toast('Demoentwurf nur in diesem Browserfenster gemerkt. Kein Speichern auf GitHub.');};
 $('demo-publish').onclick=()=>toast('Nur Konzept: Kein Inhalt wird veröffentlicht.');
-window.BKAdmin={page,toast,rememberChange};
+window.BKAdmin={page,toast,rememberChange,openSourceEvent};
 })();
 </script>
 <script src="/admin-konzept/management.js?v=1"></script>
