@@ -91,3 +91,18 @@ img{
 @media (prefers-reduced-motion:reduce){
   button,[role="button"],input,textarea,select{transition:none!important}
 }
+
+
+/* Make the Baukarussell wordmark legible in the CMS header. */
+header img[src*="/admin/brand.svg"],
+[role="banner"] img[src*="/admin/brand.svg"]{
+  width:175px!important;
+  height:auto!important;
+  max-width:175px!important;
+  max-height:54px!important;
+  object-fit:contain!important;
+}
+/* Use Baukarussell brand colours for the primary call to action. */
+button[type="submit"]:not(:disabled){
+  border-color:#30312e!important;
+}
