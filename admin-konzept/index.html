@@ -563,7 +563,9 @@ async function openSourceEvent(event){
  if(!hadLocal)models[key]=source;
  openEditor(key);
  $('source-draft-status').textContent=hadLocal
-   ?'Lokaler Zwischenstand aus diesem Browserfenster geöffnet. Noch nicht auf GitHub veröffentlicht.'
+   ?(editorStatuses[key]==='savedRemote'
+      ?'Privater Entwurf in diesem Browserfenster wieder geöffnet. Nicht veröffentlicht.'
+      :'Lokaler Zwischenstand aus diesem Browserfenster geöffnet. Noch nicht dauerhaft gespeichert.')
    :'Originaldaten aus dem GitHub Testbranch geladen. Prüfe oder bearbeite sie hier als privaten Entwurf.';
  if(hadLocal)return;
  // If the user begins editing while the remote draft is loading, never overwrite her changes.
@@ -591,51 +593,58 @@ async function openSourceEvent(event){
 }
 async function saveSourceDraft(){
  if(!current||!current.sourceSlug)return false;
+ const item=current;
+ const key=currentKey;
  rememberChange();
  const info=$('source-draft-status');
  const btn=$('demo-save');
- if(!current.title.trim()){info.textContent='Bitte zuerst einen Eventnamen eingeben.';return true;}
- const allImages=[current.cover,...current.images];
+ const active=()=>currentKey===key&&!$('editor').classList.contains('hidden');
+ const notice=message=>{if(active())info.textContent=message;};
+ if(!item.title.trim()){notice('Bitte zuerst einen Eventnamen eingeben.');return true;}
+ const allImages=[item.cover,...item.images];
  if(allImages.some(v=>typeof v==='string'&&v.startsWith('blob:'))){
-   info.textContent='Neue Fotos sind noch nicht dauerhaft hochgeladen. Bitte verwende vorerst nur bereits im GitHub Projekt vorhandene Bilder.';
+   notice('Neue Fotos sind noch nicht dauerhaft hochgeladen. Bitte verwende vorerst nur bereits im GitHub Projekt vorhandene Bilder.');
    toast('Fotos müssen zuerst dauerhaft hochgeladen werden. Kein Cloudflare Entwurf gespeichert.');
    return true;
  }
+ // Capture exactly what was submitted before asynchronous network requests.
+ // Editing another event while saving must never change the target slug.
+ const body={
+   slug:item.sourceSlug,title:item.title,slogan:item.slogan||'',date:item.date||'',
+   time:item.time||'',location:item.location||'',text:item.text||'',textAlign:item.textAlign||align,
+   sourceSha:item.sourceSha||'',cover:item.cover||'',images:item.images.slice(),
+   partners:item.partners.map(x=>typeof x==='string'?{role:'partner',name:x,url:''}:{...x})
+ };
+ const fingerprint=JSON.stringify(item);
  btn.disabled=true;btn.textContent='Speichern ...';
  try{
    const sessionResponse=await fetch('/admin-api/session',{credentials:'same-origin',cache:'no-store'});
    const session=await sessionResponse.json().catch(()=>({}));
    if(!sessionResponse.ok||!session.authenticated||!session.csrf){
-     info.textContent='GitHub Anmeldung erforderlich. Dein Zwischenstand ist nur im Browser verfügbar.';
+     notice('GitHub Anmeldung erforderlich. Dein Zwischenstand ist nur im Browser verfügbar.');
      toast('Bitte auf Übersicht mit GitHub anmelden.');return true;
    }
-   const body={
-     slug:current.sourceSlug,title:current.title,slogan:current.slogan||'',date:current.date||'',
-     time:current.time||'',location:current.location||'',text:current.text||'',textAlign:current.textAlign||align,
-     sourceSha:current.sourceSha||'',cover:current.cover||'',images:current.images.slice(),
-     partners:current.partners.map(x=>typeof x==='string'?{role:'partner',name:x,url:''}:x)
-   };
-   const savingKey=currentKey;
-   const savingFingerprint=JSON.stringify(current);
-   const response=await fetch('/admin-api/draft?slug='+encodeURIComponent(current.sourceSlug),{
+   const response=await fetch('/admin-api/draft?slug='+encodeURIComponent(body.slug),{
      method:'PUT',credentials:'same-origin',cache:'no-store',
      headers:{'Content-Type':'application/json','X-BK-CSRF':session.csrf},body:JSON.stringify(body)
    });
    const data=await response.json().catch(()=>({}));
    if(response.ok&&data.saved){
-     if(currentKey===savingKey&&JSON.stringify(current)===savingFingerprint){
-       setEditorStatus(savingKey,'savedRemote');
-     }else if(currentKey===savingKey){
-       setEditorStatus(savingKey,'local');
+     const unchanged=JSON.stringify(models[key])===fingerprint;
+     setEditorStatus(key,unchanged?'savedRemote':'local');
+     if(unchanged){
+       notice('Privater Entwurf gespeichert: '+new Date(data.savedAt).toLocaleString('de-CH')+'. Nicht veröffentlicht.');
+       toast('Entwurf im privaten Cloudflare Speicher gesichert. Nicht veröffentlicht.');
+     }else{
+       notice('Ein früherer Zwischenstand wurde gespeichert. Neuere Änderungen sind weiterhin ungespeichert.');
+       toast('Änderungen während des Speicherns bleiben lokal vorgemerkt.');
      }
-     info.textContent='Privater Entwurf gespeichert: '+new Date(data.savedAt).toLocaleString('de-CH')+'. Nicht veröffentlicht.';
-     toast('Entwurf im privaten Cloudflare Speicher gesichert. Nicht veröffentlicht.');
    }else{
-     info.textContent=data.error||'Der private Entwurf konnte nicht gespeichert werden. Die Änderungen bleiben vorläufig im Browser.';
-     toast('Kein permanenter Speichererfolg. Dein Entwurf bleibt vorläufig im Browser.');
+     notice(data.error||'Der private Entwurf konnte nicht gespeichert werden. Die Änderungen bleiben vorläufig im Browser.');
+     toast('Kein permanenter Speichererfolg. Dein Zwischenstand bleibt im Browser.');
    }
  }catch(_){
-   info.textContent='Entwurfsspeicher derzeit nicht erreichbar. Änderungen bleiben nur in diesem Browserfenster.';
+   notice('Entwurfsspeicher derzeit nicht erreichbar. Änderungen bleiben nur in diesem Browserfenster.');
    toast('Speichern derzeit nicht möglich.');
  }finally{btn.disabled=false;btn.textContent='Entwurf speichern';}
  return true;
