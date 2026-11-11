@@ -159,7 +159,6 @@
    if(root.id!=='editor'){
      const note=document.createElement('div');note.className='bk-undo-local-note';
      note.textContent='Automatische Vorschau im Browser · nicht veröffentlicht';
-     header.querySelector('.hero-heading')?.append(note);
      // A simple status under the heading is enough; no redundant "Lokal merken" button.
      const title=header.querySelector('h1');
      if(title)title.insertAdjacentElement('afterend',note);
@@ -191,10 +190,11 @@
    const action=(k==='z'&&!event.shiftKey)?'undo':
       (k==='y'||k==='z'&&event.shiftKey)?'redo':null;
    if(!action)return;
-   const h=histories.get(ctx.key);
-   if(!h||!available(h,ctx.root,action))return;
+   // Do not fall back to the browser's unrelated native history after our
+   // custom Undo stack has been exhausted.
    event.preventDefault();
-   step(action,ctx.root);
+   const h=histories.get(ctx.key);
+   if(h&&available(h,ctx.root,action))step(action,ctx.root);
  },true);
  updateButtons();
 })();
