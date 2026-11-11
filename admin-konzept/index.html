@@ -460,7 +460,19 @@ const siteFields={company:'site-company',contactPerson:'site-contact-person',add
 const sessionKey='bk-admin-konzept-drafts-v2';
 let hasTemporaryPhotoChanges=false;
 try { const restored=JSON.parse(sessionStorage.getItem(sessionKey)||'{}'); for (const [key,val] of Object.entries(restored)) { if (val && typeof val==='object' && Array.isArray(val.images)) models[key]=val; } } catch (_) { /* Browser storage may be unavailable. */ }
-function rememberChange() { try { const snapshot={}; for (const [key,val] of Object.entries(models)) snapshot[key]={...val,cover:String(val.cover||'').startsWith('blob:')?photo:val.cover,images:val.images.filter(src=>!String(src).startsWith('blob:'))}; sessionStorage.setItem(sessionKey,JSON.stringify(snapshot)); } catch (_) { /* Keep working in memory. */ } }
+function rememberChange() {
+ try {
+   const snapshot={};
+   for (const [key,val] of Object.entries(models))snapshot[key]={
+     ...val,cover:String(val.cover||'').startsWith('blob:')?photo:val.cover,
+     images:val.images.filter(src=>!String(src).startsWith('blob:'))
+   };
+   sessionStorage.setItem(sessionKey,JSON.stringify(snapshot));
+ }catch(_){/* Keep working in memory. */}
+ if(current?.sourceSlug&&!$('editor').classList.contains('hidden')){
+   $('source-draft-status').textContent='Änderungen lokal vorgemerkt. Für dauerhafte Speicherung bitte «Entwurf speichern» verwenden. Keine Veröffentlichung.';
+ }
+}
 window.addEventListener('beforeunload',function(event){if(hasTemporaryPhotoChanges){event.preventDefault();event.returnValue='';}});
 let toastTimer=null;
 function toast(message){const t=$('toast');t.textContent=message;t.classList.remove('hidden');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add('hidden'),3500);}
@@ -533,10 +545,13 @@ async function openSourceEvent(event){
    ?'Lokaler Zwischenstand aus diesem Browserfenster geöffnet. Noch nicht auf GitHub veröffentlicht.'
    :'Originaldaten aus dem GitHub Testbranch geladen. Prüfe oder bearbeite sie hier als privaten Entwurf.';
  if(hadLocal)return;
+ // If the user begins editing while the remote draft is loading, never overwrite her changes.
+ const initialState=JSON.stringify(models[key]);
  try{
    const response=await fetch('/admin-api/draft?slug='+encodeURIComponent(event.slug),{credentials:'same-origin',cache:'no-store'});
    const data=await response.json().catch(()=>({}));
    if(currentKey!==key)return;
+   if(JSON.stringify(models[key])!==initialState)return;
    if(response.ok&&data.found&&data.draft){
      const d=data.draft;
      models[key]={...source,...d,sourceSlug:event.slug,sourceSha:event.sha||'',sourceType:'github'};
@@ -781,5 +796,5 @@ window.BKAdmin={page,toast,rememberChange,openSourceEvent};
 </script>
 <script src="/admin-konzept/management.js?v=1"></script>
 <script src="/admin-konzept/auth.js?v=1"></script>
-<script src="/admin-konzept/real-events.js?v=2"></script>
+<script src="/admin-konzept/real-events.js?v=3"></script>
 </body></html>
