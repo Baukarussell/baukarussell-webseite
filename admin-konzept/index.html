@@ -95,6 +95,38 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 .partner-preview-item a{color:#685b44;text-decoration:underline;text-underline-offset:3px}
 @media(max-width:620px){.partner-line{grid-template-columns:115px minmax(0,1fr) 34px}.cover-control{flex-direction:column;align-items:start}.cover-control img{width:100%;height:150px}}
 
+
+/* Purpose-built overview separate from the Events collection */
+.dashboard-meta{font-size:11px;color:#90928b}
+.hub-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:34px}
+.hub-card{display:flex;align-items:center;text-align:left;gap:16px;min-height:126px;width:100%;padding:23px;border:1px solid var(--edge);border-radius:12px;background:#fff;color:var(--ink);transition:transform .2s,box-shadow .2s,border-color .2s}
+.hub-card:hover{transform:translateY(-2px);box-shadow:0 9px 28px #0000000c;border-color:#d9c7af}
+.hub-symbol{flex:0 0 auto;width:46px;height:46px;display:grid;place-items:center;border-radius:11px;font-size:23px;background:#f5f1e9;color:#9e825d}
+.hub-text{display:grid;gap:8px;flex:1;min-width:0}.hub-text strong{font:500 24px/1.05 'Cormorant Garamond',Georgia,serif}.hub-text small{font-size:11px;color:#8e9089;line-height:1.55}
+.hub-arrow{align-self:flex-start;font-size:14px;color:#afa18a}
+.hub-muted{background:#fdfbf7}
+.mini-status{font:500 9px Inter,Arial,sans-serif;color:#a1845c;border:1px solid #e8dccb;padding:3px 6px;vertical-align:middle;white-space:nowrap;border-radius:5px;margin-left:4px}
+.dashboard-lower{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.insight-panel{padding:26px 28px 23px;background:#fff;border:1px solid var(--edge);border-radius:12px}
+.insight-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:19px}
+.insight-head .eyebrow{margin-bottom:6px}
+.insight-head h2{font:500 28px 'Cormorant Garamond',Georgia,serif;margin:0}
+.demo-note{font-size:10px;color:#a08d70;white-space:nowrap}
+.insight-row{display:flex;align-items:center;gap:12px;border-top:1px solid var(--edge);padding:15px 0;color:#666b63;font-size:12px}
+.insight-row strong{font-size:15px;font-weight:600;color:#343831;margin-left:auto}
+.insight-row .metric-text{font-size:11px;color:#9e825d}
+.metric-dot{width:8px;height:8px;border-radius:50%;background:#b5b3ad}
+.published-dot{background:#6c9476}.draft-dot{background:#be995d}
+.analytics-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.analytics-stats div{background:#f9f7f3;padding:17px;border-radius:8px}
+.analytics-stats small{display:block;color:#8b8e87;font-size:11px;margin-bottom:6px}
+.analytics-stats strong{font-size:26px;font-weight:400;color:#999b95}
+.analytics-explain{color:#94968d;font-size:11px;line-height:1.7;min-height:47px;margin:16px 0}
+.quiet-link{border:0;padding:7px 0;background:transparent;color:#9b784d;font-size:11px;font-weight:600;cursor:pointer;text-align:left}
+.quiet-link:hover{text-decoration:underline}
+@media(max-width:1200px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){.hub-grid,.dashboard-lower{grid-template-columns:1fr}.hub-card{min-height:100px}}
+
 </style>
 </head>
 <body>
@@ -115,14 +147,45 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <main class="main">
 <section id="dashboard">
 <div class="eyebrow">WILLKOMMEN IM REDAKTIONSBEREICH</div>
-<div class="hero-heading"><div><h1>Inhalte einfach verwalten.</h1><p class="sub">Alle Bereiche deiner Webseite an einem übersichtlichen Ort.</p></div><button class="btn dark" id="dash-add">＋ Neues Event</button></div>
-<div class="notice"><strong>Interaktiver Designentwurf.</strong> Hier kannst du die Bedienung ausprobieren. Änderungen werden noch nicht in GitHub gespeichert oder veröffentlicht.</div>
-<div class="stats"><div class="stat"><div class="si">▦</div><div><strong>1</strong><span>Veröffentlichtes Event</span></div></div><div class="stat"><div class="si">✎</div><div><strong>1</strong><span>Event als Entwurf</span></div></div><div class="stat"><div class="si">▤</div><div><strong>Inaktiv</strong><span>Projekte bleiben verborgen</span></div></div></div>
-<div class="section-head"><h2>Deine Events</h2><div class="filter"><button class="selected" data-filter="all">Alle</button><button data-filter="published">Veröffentlicht</button><button data-filter="draft">Entwürfe</button></div></div>
+<div class="hero-heading"><div><h1>Guten Morgen. Willkommen zurück.</h1><p class="sub">Dein zentraler Überblick über die Baukarussell Webseite.</p></div><button class="btn dark" id="dash-add">＋ Neues Event</button></div>
+<div class="notice"><strong>Interaktiver Designentwurf:</strong> Alle Bereiche und Kennzahlen dieser Seite sind Vorschauen. Noch keine Verbindung zu Live Statistiken oder echten Veröffentlichungen.</div>
+<div class="section-head"><h2>Deine Verwaltung auf einen Blick</h2><span class="dashboard-meta">Alle Bereiche direkt öffnen</span></div>
+<div class="hub-grid">
+<button type="button" class="hub-card" data-hub-target="events"><span class="hub-symbol">▦</span><span class="hub-text"><strong>Events</strong><small>Veranstaltungen, Entwürfe und Galerien</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card" data-hub-target="members"><span class="hub-symbol">♧</span><span class="hub-text"><strong>Mitglieder</strong><small>Firmenprofile und Logos verwalten</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card" data-hub-target="projects"><span class="hub-symbol">▤</span><span class="hub-text"><strong>Projekte <span class="mini-status">Inaktiv</span></strong><small>Für später vorbereitet</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card" data-hub-target="media"><span class="hub-symbol">▧</span><span class="hub-text"><strong>Medien</strong><small>Fotos und Dateien organisieren</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card" data-hub-target="pages"><span class="hub-symbol">▤</span><span class="hub-text"><strong>Seiten</strong><small>Startseite, Über uns und Kontakt</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card hub-muted" data-hub-target="statistics"><span class="hub-symbol">▥</span><span class="hub-text"><strong>Statistik <span class="mini-status">Geplant</span></strong><small>Besuche und Seitenaufrufe im Blick</small></span><span class="hub-arrow">↗</span></button>
+</div>
+<div class="dashboard-lower">
+<section class="insight-panel">
+<div class="insight-head"><div><div class="eyebrow">INHALTE</div><h2>Redaktionsübersicht</h2></div><span class="demo-note">Beispieldaten</span></div>
+<div class="insight-row"><span class="metric-dot published-dot"></span><span>Veröffentlichte Events</span><strong>1</strong></div>
+<div class="insight-row"><span class="metric-dot draft-dot"></span><span>Events als Entwurf</span><strong>1</strong></div>
+<div class="insight-row"><span class="metric-dot inactive-dot"></span><span>Projektbereich</span><strong class="metric-text">Inaktiv</strong></div>
+<button type="button" class="quiet-link" data-hub-target="events">Alle Events ansehen ↗</button>
+</section>
+<section class="insight-panel analytics-panel">
+<div class="insight-head"><div><div class="eyebrow">WEBSITE</div><h2>Besucherstatistik</h2></div><span class="demo-note">Noch nicht verbunden</span></div>
+<div class="analytics-stats">
+<div><small>Besucher</small><strong>—</strong></div>
+<div><small>Seitenaufrufe</small><strong>—</strong></div>
+</div>
+<p class="analytics-explain">Später können hier echte Daten aus Cloudflare Web Analytics angezeigt werden. Derzeit werden keine Besucherzahlen erfasst oder angezeigt.</p>
+<button type="button" class="quiet-link" data-hub-target="statistics">Statistik planen ↗</button>
+</section>
+</div>
+</section>
+<section id="events" class="hidden">
+<div class="eyebrow">INHALTE / EVENTS</div>
+<div class="hero-heading"><div><h1>Events verwalten.</h1><p class="sub">Veranstaltungen erstellen, bearbeiten und im Blick behalten.</p></div><button type="button" class="btn dark" id="events-add">＋ Neues Event</button></div>
+<div class="section-head"><h2>Alle Veranstaltungen</h2><div class="filter"><button class="selected" data-filter="all">Alle</button><button data-filter="published">Veröffentlicht</button><button data-filter="draft">Entwürfe</button></div></div>
 <div class="cards" id="cards">
 <article class="event" data-status="published"><div class="event-photo"><img src="/logos/baukarussellxmontblanc-00148.jpg" alt="Montblanc Event"><span class="tag">Veröffentlicht</span></div><div class="event-body"><div class="date">22. OKTOBER 2026</div><h3>Baukarussell x Montblanc</h3><p>Eleganz trifft auf besondere Begegnungen</p><div class="event-bottom"><span>Montblanc Boutique Zürich</span><button data-open="montblanc">Bearbeiten ↗</button></div></div></article>
 <article class="event" data-status="draft"><div class="event-photo"><img src="/logos/baukarussellxmontblanc-00148.jpg" alt="Test Event"><span class="tag draft">Entwurf</span></div><div class="event-body"><div class="date">20. NOVEMBER 2026</div><h3>Baukarussell Test Event</h3><p>Ein besonderer Abend voller Begegnungen</p><div class="event-bottom"><span>Zürich</span><button data-open="test">Bearbeiten ↗</button></div></div></article>
 </div>
+
 </section>
 <section id="editor" class="hidden">
 <button class="back" id="edit-back">← Zurück zur Übersicht</button>
