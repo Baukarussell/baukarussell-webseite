@@ -88,6 +88,7 @@ function newMember(){
 }
 function editMember(memberId){
  chosenMember=memberId;
+ $('member-editor').dataset.historyKey='member:'+memberId;
  const m=memberItem();if(!m)return;
  $('member-editor-title').textContent=m.name||'Neues Mitglied';
  $('member-name').value=m.name;$('member-url').value=m.url;
@@ -211,7 +212,8 @@ function renderProjects(){
 function projectItem(){return projects.find(x=>x.id===chosenProject)}
 function newProject(){const obj={id:id(),title:'',date:'',location:'',description:''};projects.push(obj);save('bk-demo-projects-v1',projects);editProject(obj.id);}
 function editProject(projectId){
- chosenProject=projectId;const p=projectItem();if(!p)return;
+ chosenProject=projectId;
+ $('project-editor').dataset.historyKey='project:'+projectId;const p=projectItem();if(!p)return;
  $('project-name').value=p.title||'';$('project-date').value=p.date||'';$('project-location').value=p.location||'';$('project-description').value=p.description||'';
  projectPreview();api.page('project-editor');
 }
@@ -254,7 +256,8 @@ function newRegistration(){
  registrations.push(item);save('bk-demo-registrations-v1',registrations);editRegistration(item.id);
 }
 function editRegistration(regId){
- chosenRegistration=regId;const reg=registrationItem();if(!reg)return;
+ chosenRegistration=regId;
+ $('registration-editor').dataset.historyKey='registration:'+regId;const reg=registrationItem();if(!reg)return;
  for(const field of ['title','date','time','location','description','deadline','capacity'])$('reg-'+field).value=reg[field]||'';
  renderRegistrationPreview();api.page('registration-editor');
 }
