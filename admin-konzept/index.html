@@ -15,7 +15,7 @@
 .nav{display:flex;align-items:center;gap:12px;color:#60645e;width:100%;text-align:left;background:none;border:0;padding:13px 15px;margin-bottom:4px;border-radius:9px;font-weight:500;transition:.2s}
 .nav:hover{background:var(--soft);color:var(--ink)}.nav.active{background:#f1eee7;color:#252722;font-weight:600}.nav .ico{font-size:18px;width:22px;text-align:center;line-height:1}.nav .pill{margin-left:auto;font-size:9px;color:#988569;border:1px solid #e5dfd6;padding:3px 6px;border-radius:5px}
 .sidebar-end{margin-top:auto;border-top:1px solid var(--edge);padding:21px 12px 0}.sidebar-end small{color:#a0a098}.identity{display:flex;align-items:center;gap:10px;margin-top:12px}.avatar{width:34px;height:34px;border-radius:50%;background:#ede6db;display:grid;place-items:center;color:#98774e;font-weight:600}
-.page{min-width:0}.topbar{min-height:74px;background:#fff;border-bottom:1px solid var(--edge);display:flex;align-items:center;justify-content:space-between;padding:15px 40px;gap:15px}.crumb{color:#8b8e87;font-size:12px}.crumb strong{color:#343832}.topright{display:flex;align-items:center;gap:16px;color:#74776e;font-size:12px}.topright .circle{width:33px;height:33px;border-radius:50%;border:1px solid var(--edge);display:grid;place-items:center}
+.page{min-width:0}.topbar{min-height:88px;background:#fff;border-bottom:1px solid var(--edge);display:flex;align-items:center;justify-content:space-between;padding:15px 40px;gap:15px}.crumb{color:#8b8e87;font-size:12px}.crumb strong{color:#343832}.topright{display:flex;align-items:center;gap:16px;color:#74776e;font-size:12px}.topright .circle{width:33px;height:33px;border-radius:50%;border:1px solid var(--edge);display:grid;place-items:center}
 .main{padding:42px clamp(20px,4.5vw,62px) 70px;max-width:1650px;margin:0 auto}.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.22em;font-size:10px;font-weight:700;margin-bottom:12px}
 .hero-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:29px}
 h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margin:0 0 8px}.sub{color:#868982;line-height:1.7;margin:0}
@@ -43,20 +43,20 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 
 /* Polished admin proportions. Prevent branding overflow and slogan wrapping. */
 @media(min-width:901px){
-  .layout{grid-template-columns:254px minmax(0,1fr)}
-  .sidebar{width:254px}
+  .layout{grid-template-columns:285px minmax(0,1fr)}
+  .sidebar{width:285px}
 }
-.brand{min-width:0;max-width:100%;overflow:hidden;padding:13px 5px 39px}
-.brand strong{display:block;font-size:23px;line-height:1.08;letter-spacing:.045em;white-space:nowrap}
-.brand small{font-size:7.5px;letter-spacing:.13em;white-space:nowrap;line-height:1.5;margin-top:7px}
-.nav{font-size:13px}
+.brand{min-width:0;max-width:100%;overflow:hidden;padding:13px 8px 42px}
+.brand strong{display:block;font-size:27px;line-height:1.08;letter-spacing:.028em;white-space:nowrap}
+.brand small{font-size:8px;letter-spacing:.12em;white-space:nowrap;line-height:1.5;margin-top:7px}
+.nav{font-size:13px;min-height:47px}
 .field label{font-size:12px}
 .field input,.field textarea{font-size:13px}
 @media(min-width:901px) and (max-width:1200px){
- .layout{grid-template-columns:228px minmax(0,1fr)}
- .sidebar{width:228px}
- .brand strong{font-size:21px;letter-spacing:.025em}
- .brand small{font-size:7px;letter-spacing:.095em}
+ .layout{grid-template-columns:250px minmax(0,1fr)}
+ .sidebar{width:250px}
+ .brand strong{font-size:23px;letter-spacing:.025em}
+ .brand small{font-size:7.5px;letter-spacing:.095em}
 }
 @media(max-width:900px){
  .brand{min-width:147px;width:auto;margin-right:auto;padding:7px 5px}
@@ -96,7 +96,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <section id="editor" class="hidden">
 <button class="back" id="edit-back">← Zurück zur Übersicht</button>
 <div class="hero-heading"><div><div class="eyebrow">EVENTS / BEARBEITEN</div><h1 id="editor-heading">Event bearbeiten</h1><p class="sub" id="editor-subtitle">Übersichtlich bearbeiten und die Vorschau sofort sehen.</p></div><div class="editor-actions"><button class="btn" id="demo-save">Entwurf sichern</button><button class="btn dark" id="demo-publish">Veröffentlichen</button></div></div>
-<div class="notice">Designvorschau: Alle Änderungen bleiben nur auf dieser Seite und werden <strong>nicht</strong> auf der echten Webseite gespeichert.</div>
+<div class="notice">Designvorschau: Änderungen bleiben beim Wechsel zwischen den Bereichen in diesem Browserfenster erhalten. <strong>Keine echte Speicherung oder Veröffentlichung.</strong> Neue Fotodateien können beim Neuladen verloren gehen.</div>
 <div class="edit-layout">
 <section class="panel">
 <div class="panel-head"><h2>Event gestalten</h2><p>Alle Informationen an einem Ort.</p></div>
@@ -114,7 +114,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <div class="media-grid" id="gallery-editor"></div>
 <label class="upload-box" for="upload-input"><span style="font-size:23px">＋</span><strong>Mehrere Fotos gleichzeitig auswählen</strong><small>JPG, PNG oder WebP · Designvorschau</small></label>
 <input id="upload-input" type="file" accept="image/*" multiple class="hidden">
-<p class="help">Neue Fotos sind in diesem Entwurf nur während der aktuellen Sitzung sichtbar.</p>
+<p class="help">Neu ausgewählte Fotos bleiben beim Wechsel zwischen den Menüs erhalten, aber noch nicht dauerhaft auf dem Server. Beim Neuladen können sie verloren gehen.</p>
 <div style="border-top:1px solid var(--edge);margin:26px 0"></div>
 <div class="tile-head"><strong>Partner & Mitwirkende</strong><small>Optional</small></div>
 <div id="partner-list"></div><button class="btn small" id="partner-add">＋ Person oder Partner hinzufügen</button>
@@ -144,7 +144,12 @@ const models={
 montblanc:{title:'Baukarussell x Montblanc',slogan:'Eleganz trifft auf besondere Begegnungen',date:'2026-10-22',time:'18:00',location:'Montblanc Boutique Zürich',text:'Ein Abend, der von zeitloser Eleganz, inspirierenden Gesprächen und wertvollen Begegnungen geprägt war.\n\nIn der exklusiven Atmosphäre der Montblanc Boutique durften wir gemeinsam mit unseren Gästen besondere Momente erleben und unser Netzwerk in stilvollem Rahmen pflegen.\n\nEin herzliches Dankeschön an Montblanc für die wundervolle Gastfreundschaft und die ausgezeichnete Zusammenarbeit sowie an alle Gäste, Partner und Mitglieder, die diesen Abend mit ihrer Präsenz bereichert haben.',cover:photo,images:[photo,photo2],partners:['Montblanc Boutique Zürich']},
 test:{title:'Baukarussell Test Event',slogan:'Ein besonderer Abend voller Begegnungen',date:'2026-11-20',time:'18:00',location:'Zürich',text:'Dies ist ein Testevent zur Überprüfung der neuen Baukarussell Webseite und des Redaktionssystems.',cover:photo,images:[photo],partners:[]}
 };
-let current=null,align='left',dragIndex=null;
+let current=null,currentKey=null,align='left',dragIndex=null;
+const sessionKey='bk-admin-konzept-drafts-v2';
+let hasTemporaryPhotoChanges=false;
+try { const restored=JSON.parse(sessionStorage.getItem(sessionKey)||'{}'); for (const [key,val] of Object.entries(restored)) { if (val && typeof val==='object' && Array.isArray(val.images)) models[key]=val; } } catch (_) { /* Browser storage may be unavailable. */ }
+function rememberChange() { try { const snapshot={}; for (const [key,val] of Object.entries(models)) snapshot[key]={...val,images:val.images.filter(src=>!String(src).startsWith('blob:'))}; sessionStorage.setItem(sessionKey,JSON.stringify(snapshot)); } catch (_) { /* Keep working in memory. */ } }
+window.addEventListener('beforeunload',function(event){if(hasTemporaryPhotoChanges){event.preventDefault();event.returnValue='';}});
 let toastTimer=null;
 function toast(message){const t=$('toast');t.textContent=message;t.classList.remove('hidden');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add('hidden'),3500);}
 function page(name){$('dashboard').classList.toggle('hidden',name!=='dashboard');$('editor').classList.toggle('hidden',name!=='editor');$('placeholder').classList.toggle('hidden',name!=='placeholder');$('crumb').textContent=name==='editor'?'Event bearbeiten':name==='dashboard'?'Übersicht':name;
@@ -152,7 +157,7 @@ function page(name){$('dashboard').classList.toggle('hidden',name!=='dashboard')
  window.scrollTo(0,0);}
 function back(){page('dashboard');}
 function setTab(name){all('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$('tab-info').classList.toggle('hidden',name!=='info');$('tab-gallery').classList.toggle('hidden',name!=='gallery');}
-function openEditor(key){current=structuredClone(models[key]||{title:'Neues Event',slogan:'',date:'',time:'18:00',location:'',text:'',cover:photo,images:[],partners:[]});
+function openEditor(key){currentKey=key;if(!models[key])models[key]={title:'Neues Event',slogan:'',date:'',time:'18:00',location:'',text:'',cover:photo,images:[],partners:[]};current=models[key];
 $('e-title').value=current.title;$('e-slogan').value=current.slogan;$('e-date').value=current.date;$('e-time').value=current.time;$('e-location').value=current.location;$('e-text').value=current.text;$('cover-small').src=current.cover;$('p-image').src=current.cover;$('editor-heading').textContent=key==='new'?'Neues Event':'Event bearbeiten';setTab('info');render();page('editor');}
 function render(){if(!current)return;
 $('p-title').textContent=current.title||'Eventname';
@@ -165,9 +170,9 @@ $('p-text').textContent=current.text;$('p-text').style.textAlign=align;
 $('gallery-preview').replaceChildren(...current.images.map(src=>{const im=document.createElement('img');im.src=src;im.alt='Event Impression';return im;}));
 const editor=$('gallery-editor');editor.replaceChildren();
 current.images.forEach((src,i)=>{
-const tile=document.createElement('div');tile.className='media-tile';tile.draggable=true;tile.title='Zum Sortieren ziehen';const img=document.createElement('img');img.src=src;img.alt='Galeriefoto '+(i+1);tile.append(img);const remove=document.createElement('button');remove.className='corner';remove.textContent='×';remove.title='Foto aus Entwurf entfernen';remove.onclick=()=>{current.images.splice(i,1);render();};tile.append(remove);
-tile.addEventListener('dragstart',()=>{dragIndex=i;tile.classList.add('dragging')});tile.addEventListener('dragend',()=>tile.classList.remove('dragging'));tile.addEventListener('dragover',event=>event.preventDefault());tile.addEventListener('drop',event=>{event.preventDefault();if(dragIndex===null||dragIndex===i)return;const moved=current.images.splice(dragIndex,1)[0];current.images.splice(i,0,moved);dragIndex=null;render();});editor.append(tile);});
-const part=$('partner-list');part.replaceChildren();current.partners.forEach((name,i)=>{const row=document.createElement('div');row.className='partner';const input=document.createElement('input');input.value=name;input.placeholder='Name oder Unternehmen';input.oninput=()=>current.partners[i]=input.value;const remove=document.createElement('button');remove.textContent='×';remove.title='Entfernen';remove.onclick=()=>{current.partners.splice(i,1);render();};row.append(input,remove);part.append(row);});
+const tile=document.createElement('div');tile.className='media-tile';tile.draggable=true;tile.title='Zum Sortieren ziehen';const img=document.createElement('img');img.src=src;img.alt='Galeriefoto '+(i+1);tile.append(img);const remove=document.createElement('button');remove.className='corner';remove.textContent='×';remove.title='Foto aus Entwurf entfernen';remove.onclick=()=>{current.images.splice(i,1);rememberChange();render();};tile.append(remove);
+tile.addEventListener('dragstart',()=>{dragIndex=i;tile.classList.add('dragging')});tile.addEventListener('dragend',()=>tile.classList.remove('dragging'));tile.addEventListener('dragover',event=>event.preventDefault());tile.addEventListener('drop',event=>{event.preventDefault();if(dragIndex===null||dragIndex===i)return;const moved=current.images.splice(dragIndex,1)[0];current.images.splice(i,0,moved);dragIndex=null;rememberChange();render();});editor.append(tile);});
+const part=$('partner-list');part.replaceChildren();current.partners.forEach((name,i)=>{const row=document.createElement('div');row.className='partner';const input=document.createElement('input');input.value=name;input.placeholder='Name oder Unternehmen';input.oninput=()=>{current.partners[i]=input.value;rememberChange();};const remove=document.createElement('button');remove.textContent='×';remove.title='Entfernen';remove.onclick=()=>{current.partners.splice(i,1);rememberChange();render();};row.append(input,remove);part.append(row);});
 }
 function placeholder(key){const labels={members:['Mitglieder','Firmenprofile, Logos und Kontaktdaten komfortabel verwalten.'],projects:['Projekte','Projekte bleiben auf der Webseite verborgen, bis ihr sie ausdrücklich aktiviert.'],media:['Medien','Fotos und Logos hochladen, organisieren und wiederverwenden.'],pages:['Seiten','Startseite, Über uns und Kontakt visuell bearbeiten.']};$('placeholder-title').textContent=labels[key][0];$('placeholder-text').textContent=labels[key][1];page(key);$('placeholder').classList.remove('hidden');}
 all('.nav').forEach(b=>b.onclick=()=>{let p=b.dataset.page;if(p==='dashboard'||p==='events'){page('dashboard');document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n===b));}else placeholder(p)});
@@ -175,11 +180,11 @@ $('brand').onclick=e=>{e.preventDefault();back()};$('dash-add').onclick=()=>open
 $('edit-back').onclick=back;$('placeholder-back').onclick=back;
 all('[data-filter]').forEach(b=>b.onclick=()=>{all('[data-filter]').forEach(t=>t.classList.toggle('selected',t===b));all('.event').forEach(card=>card.classList.toggle('hidden',b.dataset.filter!=='all'&&card.dataset.status!==b.dataset.filter));});
 all('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
-['title','slogan','date','time','location','text'].forEach(key=>{$('e-'+key).addEventListener('input',e=>{current[key]=e.target.value;render()})});
-all('[data-align]').forEach(b=>b.onclick=()=>{align=b.dataset.align;all('[data-align]').forEach(x=>x.classList.toggle('active',x===b));render()});
-$('partner-add').onclick=()=>{current.partners.push('');render();$('partner-list').lastElementChild.querySelector('input').focus();};
-$('upload-input').onchange=e=>{const files=Array.from(e.target.files||[]).filter(f=>f.type.startsWith('image/'));if(!files.length)return;files.forEach(f=>{current.images.push(URL.createObjectURL(f))});render();e.target.value='';toast(files.length+' Foto(s) in der Designvorschau hinzugefügt.');};
-$('demo-save').onclick=()=>toast('Nur Konzept: Hier wird noch nichts in GitHub gespeichert.');
+['title','slogan','date','time','location','text'].forEach(key=>{$('e-'+key).addEventListener('input',e=>{current[key]=e.target.value;rememberChange();render()})});
+all('[data-align]').forEach(b=>b.onclick=()=>{align=b.dataset.align;rememberChange();all('[data-align]').forEach(x=>x.classList.toggle('active',x===b));render()});
+$('partner-add').onclick=()=>{current.partners.push('');rememberChange();render();$('partner-list').lastElementChild.querySelector('input').focus();};
+$('upload-input').onchange=e=>{const files=Array.from(e.target.files||[]).filter(f=>f.type.startsWith('image/'));if(!files.length)return;files.forEach(f=>{current.images.push(URL.createObjectURL(f))});hasTemporaryPhotoChanges=true;rememberChange();render();e.target.value='';toast(files.length+' Foto(s) in der Designvorschau hinzugefügt.');};
+$('demo-save').onclick=()=>rememberChange();toast('Demoentwurf in diesem Browserfenster gemerkt. Kein Speichern auf GitHub. Neue Fotos bleiben vorläufig.');
 $('demo-publish').onclick=()=>toast('Nur Konzept: Kein Inhalt wird veröffentlicht.');
 })();
 </script>
