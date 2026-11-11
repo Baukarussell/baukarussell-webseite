@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+/* Baukarussell's editorial theme for the existing Decap editor.
+   Functional controls, labels and permissions are deliberately unchanged. */
+:root{
+  --bk-ink:#202320;
+  --bk-cream:#f8f6f1;
+  --bk-paper:#fffefa;
+  --bk-border:#e8e2d8;
+  --bk-gold:#a68759;
+  --bk-muted:#73736f;
+}
+html,body,#root{
+  background:var(--bk-cream)!important;
+  color:var(--bk-ink)!important;
+}
+body,button,input,textarea,select{
+  font-family:'Inter','Helvetica Neue',Arial,sans-serif!important;
+}
+body{
+  -webkit-font-smoothing:antialiased;
+  font-size:14px;
+}
+h1,h2,h3{
+  letter-spacing:-.015em;
+}
+a{
+  text-decoration-thickness:1px;
+  text-underline-offset:3px;
+}
+a:hover{color:var(--bk-gold);}
+button,[role="button"],input[type="submit"]{
+  border-radius:8px!important;
+  transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease!important;
+}
+button:hover:not(:disabled),[role="button"]:hover{
+  box-shadow:0 2px 12px rgba(41,39,33,.09);
+}
+button:focus-visible,[role="button"]:focus-visible,a:focus-visible,
+input:focus-visible,textarea:focus-visible,select:focus-visible{
+  outline:2px solid var(--bk-gold)!important;
+  outline-offset:2px!important;
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]),
+textarea,select{
+  background:#fff!important;
+  color:var(--bk-ink)!important;
+  border:1px solid var(--bk-border)!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+input:not([type="checkbox"]):focus,textarea:focus,select:focus{
+  border-color:var(--bk-gold)!important;
+  box-shadow:0 0 0 3px rgba(166,135,89,.13)!important;
+}
+::selection{background:rgba(166,135,89,.25);color:#161616;}
+/* Main navigation and editorial workspace */
+header,[role="banner"]{
+  background:var(--bk-paper)!important;
+  border-bottom:1px solid var(--bk-border)!important;
+}
+main,[role="main"]{
+  background:var(--bk-cream)!important;
+}
+aside,[role="complementary"]{
+  border-color:var(--bk-border)!important;
+}
+/* Editorial information cards, preview panes and modal surfaces */
+[role="dialog"]{
+  border-radius:14px!important;
+  box-shadow:0 25px 85px rgba(24,24,20,.18)!important;
+}
+[role="dialog"] button,[role="menuitem"],[role="tab"]{
+  border-radius:7px!important;
+}
+[role="tab"][aria-selected="true"]{
+  color:#8c6b3c!important;
+  border-color:var(--bk-gold)!important;
+}
+[aria-current="page"],[aria-selected="true"]{
+  border-color:var(--bk-gold);
+}
+label{
+  letter-spacing:.015em;
+}
+hr{border-color:var(--bk-border)!important;}
+/* Improve scanning for list rows and images without overriding sizing */
+img{
+  max-width:100%;
+}
+@media (prefers-reduced-motion:reduce){
+  button,[role="button"],input,textarea,select{transition:none!important}
+}
