@@ -8,6 +8,10 @@ backend:
 # Das hier ist der Schalter für "Entwurf speichern" (Preview Workflow)
 publish_mode: editorial_workflow
 
+logo:
+  src: /admin/brand.svg
+  show_in_header: true
+
 media_folder: "logos" 
 public_folder: "/logos"
 
