@@ -188,7 +188,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 
 </section>
 <section id="editor" class="hidden">
-<button class="back" id="edit-back">← Zurück zur Übersicht</button>
+<button class="back" id="edit-back">← Zurück zu Events</button>
 <div class="hero-heading"><div><div class="eyebrow">EVENTS / BEARBEITEN</div><h1 id="editor-heading">Event bearbeiten</h1><p class="sub" id="editor-subtitle">Übersichtlich bearbeiten und die Vorschau sofort sehen.</p></div><div class="editor-actions"><button class="btn" id="demo-save">Entwurf sichern</button><button class="btn dark" id="demo-publish">Veröffentlichen</button></div></div>
 <div class="notice">Designvorschau: Änderungen bleiben beim Wechsel zwischen den Bereichen in diesem Browserfenster erhalten. <strong>Keine echte Speicherung oder Veröffentlichung.</strong> Neue Fotodateien können beim Neuladen verloren gehen.</div>
 <div class="edit-layout">
@@ -263,16 +263,17 @@ function toast(message){const t=$('toast');t.textContent=message;t.classList.rem
 function page(name){
  const leavingEditor=!$('editor').classList.contains('hidden') && name!=='editor';
  if(leavingEditor)editorScrollY=window.scrollY;
- const editing=name==='editor', dashboard=name==='dashboard', placeholder=!editing&&!dashboard;
+ const editing=name==='editor', dashboard=name==='dashboard', events=name==='events', placeholder=!editing&&!dashboard&&!events;
  $('dashboard').classList.toggle('hidden',!dashboard);
+ $('events').classList.toggle('hidden',!events);
  $('editor').classList.toggle('hidden',!editing);
  $('placeholder').classList.toggle('hidden',!placeholder);
- $('crumb').textContent=editing?'Event bearbeiten':dashboard?'Übersicht':name;
- all('.nav').forEach(b=>b.classList.toggle('active',dashboard?b.dataset.page==='dashboard':editing?b.dataset.page==='events':b.dataset.page===name));
+ $('crumb').textContent=editing?'Event bearbeiten':dashboard?'Übersicht':events?'Events':name;
+ all('.nav').forEach(b=>b.classList.toggle('active',dashboard?b.dataset.page==='dashboard':(editing||events)?b.dataset.page==='events':b.dataset.page===name));
  if(editing){requestAnimationFrame(()=>window.scrollTo(0,editorScrollY));}
  else window.scrollTo(0,0);
 }
-function back(){editorResume=false;page('dashboard');}
+function back(){editorResume=false;page('events');}
 function setTab(name){all('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$('tab-info').classList.toggle('hidden',name!=='info');$('tab-gallery').classList.toggle('hidden',name!=='gallery');}
 function openEditor(key){currentKey=key;editorResume=true;editorScrollY=0;if(!models[key])models[key]={title:'Neues Event',slogan:'',date:'',time:'18:00',location:'',text:'',cover:photo,images:[],partners:[]};current=models[key];current.partners=Array.isArray(current.partners)?current.partners.map(p=>typeof p==='string'?{role:'partner',name:p,url:''}:{role:p.role||'partner',name:p.name||'',url:p.url||''}):[];align=current.textAlign||'left';all('[data-align]').forEach(b=>b.classList.toggle('active',b.dataset.align===align));
 $('e-title').value=current.title;$('e-slogan').value=current.slogan;$('e-date').value=current.date;$('e-time').value=current.time;$('e-location').value=current.location;$('e-text').value=current.text;$('cover-small').src=current.cover;$('p-image').src=current.cover;$('editor-heading').textContent=key==='new'?'Neues Event':'Event bearbeiten';setTab('info');render();page('editor');}
@@ -384,12 +385,21 @@ all('.nav').forEach(b=>b.onclick=()=>{
   // Resume the exact event, editor tab, gallery order and scroll location.
   page('editor');
  }else if(p==='dashboard'||p==='events'){
-  page('dashboard');
-  all('.nav').forEach(n=>n.classList.toggle('active',n===b));
+  page(p);
  }else placeholder(p);
 });
-$('brand').onclick=e=>{e.preventDefault();back()};$('dash-add').onclick=()=>openEditor('new');all('[data-open]').forEach(b=>b.onclick=()=>openEditor(b.dataset.open));
-$('edit-back').onclick=back;$('placeholder-back').onclick=back;$('placeholder-resume').onclick=()=>{if(editorResume&&currentKey)page('editor');};
+all('[data-hub-target]').forEach(button=>button.onclick=()=>{
+ const dest=button.dataset.hubTarget;
+ if(dest==='statistics'){
+  $('placeholder-title').textContent='Besucherstatistik';
+  $('placeholder-text').textContent='Echte Besuchszahlen können nach einer späteren Verbindung mit Cloudflare Web Analytics angezeigt werden. Aktuell ist keine Statistik verbunden.';
+  $('placeholder-resume').classList.toggle('hidden',!(editorResume&&currentKey));
+  page('statistics');
+ }else if(dest==='events')page('events');
+ else placeholder(dest);
+});
+$('brand').onclick=e=>{e.preventDefault();page('dashboard')};$('dash-add').onclick=()=>openEditor('new');$('events-add').onclick=()=>openEditor('new');all('[data-open]').forEach(b=>b.onclick=()=>openEditor(b.dataset.open));
+$('edit-back').onclick=back;$('placeholder-back').onclick=()=>page('dashboard');$('placeholder-resume').onclick=()=>{if(editorResume&&currentKey)page('editor');};
 all('[data-filter]').forEach(b=>b.onclick=()=>{all('[data-filter]').forEach(t=>t.classList.toggle('selected',t===b));all('.event').forEach(card=>card.classList.toggle('hidden',b.dataset.filter!=='all'&&card.dataset.status!==b.dataset.filter));});
 all('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 all('[data-format]').forEach(b=>b.onclick=()=>formatSelection(b.dataset.format));
