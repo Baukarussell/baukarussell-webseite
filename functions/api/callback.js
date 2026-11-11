@@ -1,4 +1,4 @@
-import {handleBkAdminCallback} from '../_lib/bk-admin-callback.js';
+import {handleBkAdminCallback} from '../../src/admin/bk-admin-callback.js';
 
 export async function onRequest(context) {
     const { request, env } = context;
