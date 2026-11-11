@@ -1,6 +1,6 @@
 import {
   STATE_COOKIE, VERIFIER_COOKIE, cookie, randomString, redirect, json
-} from '../_lib/bk-admin-auth.js';
+} from '../../src/admin/bk-admin-auth.js';
 
 export async function onRequestGet({request,env}) {
   if(!env.GITHUB_CLIENT_ID||!env.GITHUB_CLIENT_SECRET) {
