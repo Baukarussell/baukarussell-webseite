@@ -213,7 +213,15 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <section id="events" class="hidden">
 <div class="eyebrow">INHALTE / EVENTS</div>
 <div class="hero-heading"><div><h1>Events verwalten.</h1><p class="sub">Veranstaltungen erstellen, bearbeiten und im Blick behalten.</p></div><button type="button" class="btn dark" id="events-add">＋ Neues Event</button></div>
-<div class="section-head"><h2>Alle Veranstaltungen</h2><div class="filter"><button class="selected" data-filter="all">Alle</button><button data-filter="published">Veröffentlicht</button><button data-filter="draft">Entwürfe</button></div></div>
+<section id="real-events-panel" class="real-events-panel" aria-label="Echte GitHub Eventdateien">
+<div class="real-events-header">
+<div><div class="eyebrow">GITHUB / TESTBRANCH</div><h2>Eventdateien aus GitHub</h2><p>Nur lesender Zugriff auf die vorhandenen Eventdateien. Es wird nichts gespeichert oder veröffentlicht.</p></div>
+<button type="button" class="btn small" id="real-events-refresh">↻ Erneut prüfen</button>
+</div>
+<div class="real-events-state" id="real-events-state" role="status">Verbindungsprüfung noch ausstehend.</div>
+<div id="real-events-list" class="real-events-grid"></div>
+</section>
+<div class="section-head"><div><h2>Designentwürfe</h2><p class="help">Die folgenden Beispielkarten gehören zur interaktiven Vorschau und sind nicht mit den GitHub Dateien verbunden.</p></div><div class="filter"><button class="selected" data-filter="all">Alle</button><button data-filter="published">Veröffentlicht</button><button data-filter="draft">Entwürfe</button></div></div>
 <div class="cards" id="cards">
 <article class="event" data-status="published"><div class="event-photo"><img src="/logos/baukarussellxmontblanc-00148.jpg" alt="Montblanc Event"><span class="tag">Veröffentlicht</span></div><div class="event-body"><div class="date">22. OKTOBER 2026</div><h3>Baukarussell x Montblanc</h3><p>Eleganz trifft auf besondere Begegnungen</p><div class="event-bottom"><span>Montblanc Boutique Zürich</span><button data-open="montblanc">Bearbeiten ↗</button></div></div></article>
 <article class="event" data-status="draft"><div class="event-photo"><img src="/logos/baukarussellxmontblanc-00148.jpg" alt="Test Event"><span class="tag draft">Entwurf</span></div><div class="event-body"><div class="date">20. NOVEMBER 2026</div><h3>Baukarussell Test Event</h3><p>Ein besonderer Abend voller Begegnungen</p><div class="event-bottom"><span>Zürich</span><button data-open="test">Bearbeiten ↗</button></div></div></article>
@@ -649,4 +657,5 @@ window.BKAdmin={page,toast,rememberChange};
 </script>
 <script src="/admin-konzept/management.js?v=1"></script>
 <script src="/admin-konzept/auth.js?v=1"></script>
+<script src="/admin-konzept/real-events.js?v=1"></script>
 </body></html>
