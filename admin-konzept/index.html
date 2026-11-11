@@ -401,15 +401,23 @@ function page(name){
  const leavingEditor=!$('editor').classList.contains('hidden') && name!=='editor';
  if(leavingEditor)editorScrollY=window.scrollY;
  const editing=name==='editor', dashboard=name==='dashboard', events=name==='events', pages=name==='pages', pageEditor=name==='page-editor';
- const placeholder=!editing&&!dashboard&&!events&&!pages&&!pageEditor;
+ const modules=['members','member-editor','projects','project-editor','registrations','registration-editor'];
+ const placeholder=!editing&&!dashboard&&!events&&!pages&&!pageEditor&&!modules.includes(name);
  $('dashboard').classList.toggle('hidden',!dashboard);
  $('events').classList.toggle('hidden',!events);
  $('pages-list').classList.toggle('hidden',!pages);
  $('page-editor').classList.toggle('hidden',!pageEditor);
+ $('members-list').classList.toggle('hidden',name!=='members');
+ $('member-editor').classList.toggle('hidden',name!=='member-editor');
+ $('projects-list').classList.toggle('hidden',name!=='projects');
+ $('project-editor').classList.toggle('hidden',name!=='project-editor');
+ $('registrations-list').classList.toggle('hidden',name!=='registrations');
+ $('registration-editor').classList.toggle('hidden',name!=='registration-editor');
  $('editor').classList.toggle('hidden',!editing);
  $('placeholder').classList.toggle('hidden',!placeholder);
- $('crumb').textContent=editing?'Event bearbeiten':pageEditor?'Seite bearbeiten':dashboard?'Übersicht':events?'Events':pages?'Seiten':name;
- all('.nav').forEach(b=>b.classList.toggle('active',dashboard?b.dataset.page==='dashboard':(editing||events)?b.dataset.page==='events':(pages||pageEditor)?b.dataset.page==='pages':b.dataset.page===name));
+ const currentNav=(editing||events)?'events':(pages||pageEditor)?'pages':name==='member-editor'?'members':name==='project-editor'?'projects':name==='registration-editor'?'registrations':name;
+ $('crumb').textContent=editing?'Event bearbeiten':pageEditor?'Seite bearbeiten':dashboard?'Übersicht':currentNav==='members'?'Mitglieder':currentNav==='projects'?'Projekte':currentNav==='registrations'?'Anmeldungen':currentNav==='events'?'Events':currentNav==='pages'?'Seiten':name;
+ all('.nav').forEach(b=>b.classList.toggle('active',b.dataset.page===currentNav));
  if(editing){requestAnimationFrame(()=>window.scrollTo(0,editorScrollY));}
  else window.scrollTo(0,0);
 }
@@ -524,7 +532,7 @@ all('.nav').forEach(b=>b.onclick=()=>{
  if(p==='events'&&editorResume&&currentKey){
   // Resume the exact event, editor tab, gallery order and scroll location.
   page('editor');
- }else if(p==='dashboard'||p==='events'||p==='pages'){
+ }else if(['dashboard','events','pages','members','projects','registrations'].includes(p)){
   page(p);
  }else placeholder(p);
 });
@@ -535,12 +543,12 @@ all('[data-hub-target]').forEach(button=>button.onclick=()=>{
   $('placeholder-text').textContent='Echte Besuchszahlen können nach einer späteren Verbindung mit Cloudflare Web Analytics angezeigt werden. Aktuell ist keine Statistik verbunden.';
   $('placeholder-resume').classList.toggle('hidden',!(editorResume&&currentKey));
   page('statistics');
- }else if(dest==='events'||dest==='pages')page(dest);
+ }else if(['events','pages','members','projects','registrations'].includes(dest))page(dest);
  else placeholder(dest);
 });
 $('brand').onclick=e=>{e.preventDefault();page('dashboard')};
 function previewPage(){if(!currentPageKey)return;const item=pageContent[currentPageKey];item.title=$('page-title-field').value;item.text=$('page-text-field').value;$('page-preview-title').textContent=item.title;$('page-preview-text').textContent=item.text;try{sessionStorage.setItem('bk-admin-pages-demo-v1',JSON.stringify(pageContent))}catch(_){/* unavailable */}}
-function editPage(key){if(!pageContent[key])return;currentPageKey=key;$('page-edit-heading').textContent=pageContent[key].title;$('page-title-field').value=pageContent[key].title;$('page-text-field').value=pageContent[key].text;previewPage();page('page-editor')}
+function editPage(key){if(!pageContent[key])return;currentPageKey=key;$('page-editor').dataset.key=key;$('page-edit-heading').textContent=pageContent[key].title;$('page-title-field').value=pageContent[key].title;$('page-text-field').value=pageContent[key].text;previewPage();page('page-editor');if(window.BKManagement&&window.BKManagement.renderAbout)window.BKManagement.renderAbout();}
 all('[data-page-edit]').forEach(b=>b.onclick=()=>editPage(b.dataset.pageEdit));
 $('page-edit-back').onclick=()=>page('pages');$('page-title-field').addEventListener('input',previewPage);$('page-text-field').addEventListener('input',previewPage);
 $('page-save-demo').onclick=()=>{previewPage();toast('Nur Demo: Text im Browser gemerkt. Noch nicht auf der Webseite gespeichert.');};$('events-add').onclick=()=>openEditor('new');all('[data-open]').forEach(b=>b.onclick=()=>openEditor(b.dataset.open));
@@ -556,6 +564,7 @@ $('cover-upload').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f||
 $('upload-input').onchange=e=>{const files=Array.from(e.target.files||[]).filter(f=>f.type.startsWith('image/'));if(!files.length)return;files.forEach(f=>{current.images.push(URL.createObjectURL(f))});hasTemporaryPhotoChanges=true;rememberChange();render();e.target.value='';toast(files.length+' Foto(s) in der Designvorschau hinzugefügt.');};
 $('demo-save').onclick=()=>{rememberChange();toast('Demoentwurf in diesem Browserfenster gemerkt. Kein Speichern auf GitHub. Neue Fotos bleiben vorläufig.');};
 $('demo-publish').onclick=()=>toast('Nur Konzept: Kein Inhalt wird veröffentlicht.');
+window.BKAdmin={page,toast,rememberChange};
 })();
 </script>
 <script src="/admin-konzept/management.js?v=1"></script>
