@@ -1,6 +1,6 @@
 import {
   openSession,requireCsrf,SESSION_COOKIE,clearCookie,json
-} from '../_lib/bk-admin-auth.js';
+} from '../../src/admin/bk-admin-auth.js';
 
 export async function onRequestPost({request,env}) {
   const session=await openSession(request,env);
