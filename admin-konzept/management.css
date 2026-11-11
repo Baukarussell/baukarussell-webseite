@@ -116,3 +116,19 @@
  .sidebar .nav .ico{display:inline-flex!important}
  .sidebar .nav .ico svg{width:17px;height:17px}
 }
+
+
+/* Real GitHub authorization status, clearly distinct from the mock editor. */
+.connection-panel{display:flex;align-items:center;gap:15px;padding:20px 21px;background:#fff;border:1px solid #e4dfd4;border-radius:12px;margin:19px 0 32px;box-shadow:0 6px 22px rgba(0,0,0,.018)}
+.connection-icon{display:grid;place-items:center;width:42px;height:42px;flex:0 0 42px;border-radius:11px;background:#f7f3e9;color:#97754d;font-size:24px}
+.connection-copy{flex:1;min-width:0}
+.connection-copy strong{font-size:12px;line-height:1.5}
+.connection-copy p{font-size:11px;color:#868b84;margin:4px 0}
+.connection-copy small{font-size:10px;color:#a49b8b;line-height:1.5}
+.connection-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.connection-actions .btn{white-space:nowrap;text-align:center;font-size:11px;min-height:35px;display:inline-flex;align-items:center;justify-content:center}
+.connection-panel.is-connected{border-color:#bfd4c6;background:#fcfefc}
+.connection-panel.is-connected .connection-icon{background:#eaf4ed;color:#497358}
+.connection-panel.is-error{border-color:#e9d0bd}
+@media(max-width:950px){.connection-panel{flex-wrap:wrap}.connection-actions{width:100%;justify-content:flex-start;margin-left:57px}}
+@media(max-width:550px){.connection-panel{padding:17px;gap:10px}.connection-icon{width:34px;height:34px;flex-basis:34px}.connection-actions{margin:0;width:100%}}
