@@ -255,7 +255,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 </section>
 <section id="member-editor" class="hidden">
 <button type="button" class="back" id="member-back">← Zurück zu Mitglieder</button>
-<div class="hero-heading"><div><div class="eyebrow">MITGLIEDER / BEARBEITEN</div><h1 id="member-editor-title">Mitglied bearbeiten.</h1><p class="sub">Alle Angaben und das Firmenlogo an einem Ort.</p></div><div class="manager-actions"><button type="button" class="btn" id="member-save-demo">Entwurf merken</button><button type="button" class="btn" id="member-remove">Mitglied entfernen</button></div></div>
+<div class="hero-heading"><div><div class="eyebrow">MITGLIEDER / BEARBEITEN</div><h1 id="member-editor-title">Mitglied bearbeiten.</h1><p class="sub">Alle Angaben und das Firmenlogo an einem Ort.</p></div><div class="manager-actions"><button type="button" class="btn hidden" id="member-save-demo">Entwurf merken</button><button type="button" class="btn" id="member-remove">Mitglied entfernen</button></div></div>
 <div class="notice"><strong>Designvorschau:</strong> Änderungen wirken sich nicht auf die aktuelle Webseite aus. Ein Entfernen hier löscht kein Mitglied auf der öffentlichen Webseite.</div>
 <div class="edit-layout">
 <div class="panel"><div class="panel-head"><h2>Firmenprofil</h2><p>Basisinformationen für die Mitgliederübersicht.</p></div><div class="panel-body">
@@ -291,7 +291,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 </section>
 <section id="project-editor" class="hidden">
 <button class="back" type="button" id="project-back">← Zurück zu Projekte</button>
-<div class="hero-heading"><div><div class="eyebrow">PROJEKTE / INTERNER ENTWURF</div><h1>Projekt bearbeiten.</h1><p class="sub">Projektinformationen vorbereiten, ohne sie öffentlich anzuzeigen.</p></div><button type="button" class="btn" id="project-save-demo">Entwurf merken</button></div>
+<div class="hero-heading"><div><div class="eyebrow">PROJEKTE / INTERNER ENTWURF</div><h1>Projekt bearbeiten.</h1><p class="sub">Projektinformationen vorbereiten, ohne sie öffentlich anzuzeigen.</p></div><button type="button" class="btn hidden" id="project-save-demo">Entwurf merken</button></div>
 <div class="notice">Auch bei ausgefüllten Projektinformationen wird nichts veröffentlicht.</div>
 <div class="edit-layout"><div class="panel"><div class="panel-head"><h2>Projektdaten</h2><p>Für eine spätere Nutzung vorbereitet.</p></div><div class="panel-body">
 <div class="field"><label for="project-name">Projekttitel</label><input id="project-name" type="text"></div>
@@ -311,7 +311,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 </section>
 <section id="registration-editor" class="hidden">
 <button type="button" class="back" id="registration-back">← Zurück zu Anmeldungen</button>
-<div class="hero-heading"><div><div class="eyebrow">EVENTANMELDUNGEN / BEARBEITEN</div><h1>Einladung gestalten.</h1><p class="sub">Flyer, Termin und Registrierungsinformationen für einen Anlass.</p></div><div class="manager-actions"><button type="button" class="btn" id="registration-save-demo">Entwurf merken</button><button type="button" class="btn" id="registration-remove">Entwurf entfernen</button></div></div>
+<div class="hero-heading"><div><div class="eyebrow">EVENTANMELDUNGEN / BEARBEITEN</div><h1>Einladung gestalten.</h1><p class="sub">Flyer, Termin und Registrierungsinformationen für einen Anlass.</p></div><div class="manager-actions"><button type="button" class="btn hidden" id="registration-save-demo">Entwurf merken</button><button type="button" class="btn" id="registration-remove">Entwurf entfernen</button></div></div>
 <div class="no-real-data"><strong>Demo ohne echte Anmeldungen:</strong> Bitte hier noch keine persönlichen Gästedaten eingeben. Onlineformular, Versand, QR Code und Export benötigen zuerst eine sichere technische Anbindung.</div>
 <div class="edit-layout">
 <div class="panel"><div class="panel-head"><h2>Event und Anmeldung</h2><p>Jede Einladung kann unabhängig bearbeitet werden.</p></div><div class="panel-body">
@@ -352,7 +352,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 </section>
 <section id="page-editor" class="hidden">
 <button class="back" id="page-edit-back">← Zurück zur Startseite</button>
-<div class="hero-heading"><div><div class="eyebrow">SEITEN / BEARBEITEN</div><h1 id="page-edit-heading">Seite bearbeiten</h1><p class="sub">Inhalte unkompliziert ändern und rechts ansehen.</p></div><button class="btn" id="page-save-demo" type="button">Entwurf merken</button></div>
+<div class="hero-heading"><div><div class="eyebrow">SEITEN / BEARBEITEN</div><h1 id="page-edit-heading">Seite bearbeiten</h1><p class="sub">Inhalte unkompliziert ändern und rechts ansehen.</p></div><button class="btn hidden" id="page-save-demo" type="button">Entwurf merken</button></div>
 <div class="notice"><strong>Nur Konzept:</strong> Änderungen hier werden nicht auf der Webseite gespeichert. Impressum und Datenschutz sollten vor einer späteren Veröffentlichung rechtlich geprüft werden.</div>
 <div class="edit-layout">
 <div class="panel"><div class="panel-head"><h2>Seiteninhalt</h2><p>Titel und Text dieser Seite im Entwurf bearbeiten.</p></div>
@@ -525,6 +525,7 @@ function back(){page('events');}
 function setTab(name){all('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$('tab-info').classList.toggle('hidden',name!=='info');$('tab-gallery').classList.toggle('hidden',name!=='gallery');}
 function openEditor(key){
  currentKey=key;editorScrollY=0;
+ $('editor').dataset.historyKey='event:'+key;
  if(!models[key])models[key]={title:'Neues Event',slogan:'',date:'',time:'18:00',location:'',text:'',cover:photo,images:[],partners:[]};
  current=models[key];
  current.partners=Array.isArray(current.partners)?current.partners.map(p=>typeof p==='string'?{role:'partner',name:p,url:''}:{role:p.role||'partner',name:p.name||'',url:p.url||''}):[];
@@ -535,6 +536,7 @@ function openEditor(key){
  const source=Boolean(current.sourceSlug);
  $('editor-heading').textContent=source?'GitHub Event bearbeiten':key==='new'?'Neues Event':'Event bearbeiten';
  $('demo-save').textContent=source?'Entwurf speichern':'Lokal merken';
+ $('demo-save').classList.toggle('hidden',!source);
  $('source-draft-banner').classList.toggle('hidden',!source);
  $('editor-notice').textContent=source
   ?'Echte GitHub Quelldatei im Editor. Änderungen werden nicht veröffentlicht. Der private Entwurfsspeicher muss in Cloudflare eingerichtet sein, damit Speichern dauerhaft funktioniert.'
@@ -747,7 +749,8 @@ function formatSelection(kind){
  else if(kind==='link')replacement='['+(selected||'Linktext')+'](https://example.com)';
  else return;
  area.setRangeText(replacement,start,end,'select');
- current.text=area.value;rememberChange();render();area.focus();
+ // Keep the Word-style Undo history in sync with formatting changes.
+ area.dispatchEvent(new Event('input',{bubbles:true}));area.focus();
 }
 
 function placeholder(key){const labels={members:['Mitglieder','Firmenprofile, Logos und Kontaktdaten komfortabel verwalten.'],projects:['Projekte','Projekte bleiben auf der Webseite verborgen, bis ihr sie ausdrücklich aktiviert.'],media:['Medien','Fotos und Logos hochladen, organisieren und wiederverwenden.'],registrations:['Eventanmeldungen','Geplant: Einladungsseiten, Flyer, QR Code, Registrierungsformulare, automatische Bestätigungen und Gästelisten. Noch nicht verfügbar.']};const result=labels[key]||['Bereich','Dieser Verwaltungsbereich ist noch nicht verfügbar.'];$('placeholder-title').textContent=result[0];$('placeholder-text').textContent=result[1];page(key);}
@@ -801,6 +804,7 @@ for(const id of Object.values(siteFields))$(id).addEventListener('input',updateS
 function editPage(key){
  if(!pageContent[key])return;
  currentPageKey=key;$('page-editor').dataset.key=key;
+ $('page-editor').dataset.historyKey='page:'+key;
  $('page-edit-heading').textContent=pageContent[key].title;
  $('page-title-field').value=pageContent[key].title;
  $('page-text-field').value=pageContent[key].text;
@@ -831,4 +835,5 @@ window.BKAdmin={page,toast,rememberChange,openSourceEvent};
 <script src="/admin-konzept/management.js?v=1"></script>
 <script src="/admin-konzept/auth.js?v=1"></script>
 <script src="/admin-konzept/real-events.js?v=3"></script>
+<script src="/admin-konzept/undo.js?v=1"></script>
 </body></html>
