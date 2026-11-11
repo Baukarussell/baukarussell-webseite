@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Baukarussell | Admin Konzept</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f6f2;--white:#fff;--ink:#232521;--muted:#898982;--gold:#b19165;--edge:#e9e6df;--soft:#f3f0eb;--dark:#242725;--green:#547361}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:13px}button,input,textarea{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:3px}button:disabled{opacity:.45;cursor:not-allowed}h1,h2,h3,p{margin-top:0}
+.layout{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
+.sidebar{background:#fff;border-right:1px solid var(--edge);padding:31px 16px 24px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{text-align:center;padding:13px 10px 45px;display:block}.brand strong{font:600 27px 'Cormorant Garamond',Georgia,serif;letter-spacing:.13em}.brand small{display:block;font-size:8px;letter-spacing:.3em;color:#a38a67;margin-top:5px}
+.menu-label{font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:#999a93;padding:0 16px;margin:8px 0 14px}
+.nav{display:flex;align-items:center;gap:12px;color:#60645e;width:100%;text-align:left;background:none;border:0;padding:13px 15px;margin-bottom:4px;border-radius:9px;font-weight:500;transition:.2s}
+.nav:hover{background:var(--soft);color:var(--ink)}.nav.active{background:#f1eee7;color:#252722;font-weight:600}.nav .ico{font-size:18px;width:22px;text-align:center;line-height:1}.nav .pill{margin-left:auto;font-size:9px;color:#988569;border:1px solid #e5dfd6;padding:3px 6px;border-radius:5px}
+.sidebar-end{margin-top:auto;border-top:1px solid var(--edge);padding:21px 12px 0}.sidebar-end small{color:#a0a098}.identity{display:flex;align-items:center;gap:10px;margin-top:12px}.avatar{width:34px;height:34px;border-radius:50%;background:#ede6db;display:grid;place-items:center;color:#98774e;font-weight:600}
+.page{min-width:0}.topbar{min-height:74px;background:#fff;border-bottom:1px solid var(--edge);display:flex;align-items:center;justify-content:space-between;padding:15px 40px;gap:15px}.crumb{color:#8b8e87;font-size:12px}.crumb strong{color:#343832}.topright{display:flex;align-items:center;gap:16px;color:#74776e;font-size:12px}.topright .circle{width:33px;height:33px;border-radius:50%;border:1px solid var(--edge);display:grid;place-items:center}
+.main{padding:42px clamp(20px,4.5vw,62px) 70px;max-width:1650px;margin:0 auto}.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.22em;font-size:10px;font-weight:700;margin-bottom:12px}
+.hero-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:29px}
+h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margin:0 0 8px}.sub{color:#868982;line-height:1.7;margin:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:41px;background:#fff;border:1px solid var(--edge);color:#30332f;border-radius:8px;padding:0 16px;font-size:12px;font-weight:600;transition:.18s}.btn:hover{border-color:#baa88b;box-shadow:0 4px 15px #00000008}.btn.dark{background:var(--dark);color:white;border-color:var(--dark)}.btn.dark:hover{background:#40433d}.btn.ghost{background:transparent}.btn.gold{background:#ae8d5b;color:white;border-color:#ae8d5b}.btn.small{min-height:33px;padding:0 11px;font-size:11px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0 0 35px}
+.stat{background:white;border:1px solid var(--edge);border-radius:12px;padding:24px 25px;display:flex;gap:18px;align-items:center}.stat .si{border-radius:11px;background:#f5f1e9;width:42px;height:42px;display:grid;place-items:center;color:#9b815c;font-size:19px}.stat strong{display:block;font-size:22px;font-weight:500;margin-bottom:5px}.stat span{font-size:11px;color:#848780}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:15px}.section-head h2{font:500 29px 'Cormorant Garamond',Georgia,serif;margin:0}
+.filter{display:flex;gap:6px;border:1px solid var(--edge);padding:4px;background:white;border-radius:9px}.filter button{background:transparent;border:0;color:#8c8d86;font-size:11px;padding:8px 12px;border-radius:6px}.filter button.selected{background:#f4f0e9;color:#2c302a;font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.event{background:white;border:1px solid var(--edge);border-radius:12px;overflow:hidden;transition:.2s}.event:hover{transform:translateY(-2px);box-shadow:0 9px 30px #0000000e}.event-photo{position:relative;aspect-ratio:16/10;background:#eee9e3;overflow:hidden}.event-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}.event:hover .event-photo img{transform:scale(1.035)}.tag{position:absolute;top:14px;left:14px;border-radius:6px;background:white;color:#46614f;font-size:10px;padding:7px 10px;font-weight:600}.tag.draft{color:#8f7448;background:#faf4e9}.event-body{padding:20px 20px 22px}.event-body .date{font-size:10px;color:#b09165;letter-spacing:.14em;margin-bottom:11px}.event-body h3{font:500 25px/1.12 'Cormorant Garamond',Georgia,serif;margin:0 0 11px}.event-body p{font-size:11px;color:#888a84;line-height:1.7;margin:0 0 20px}.event-bottom{border-top:1px solid var(--edge);padding-top:15px;display:flex;justify-content:space-between;align-items:center}.event-bottom span{font-size:11px;color:#858881}.event-bottom button{border:0;background:none;color:#3e4941;font-size:12px;font-weight:600;padding:5px}
+.notice{background:#fcf7ed;border:1px solid #ebddc5;color:#8d7347;border-radius:8px;padding:10px 14px;font-size:11px;line-height:1.7;margin-bottom:21px}
+.editor-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.back{border:none;background:transparent;color:#767a72;padding:0 0 14px;font-size:12px}
+.edit-layout{display:grid;grid-template-columns:minmax(370px,1fr) minmax(330px,.93fr);gap:24px;align-items:start}
+.panel{background:#fff;border:1px solid var(--edge);border-radius:12px;overflow:hidden}.panel-head{padding:22px 26px 16px;border-bottom:1px solid var(--edge)}.panel-head h2{font:500 27px 'Cormorant Garamond',Georgia,serif;margin:0}.panel-head p{font-size:11px;color:#92958c;margin:7px 0 0}.panel-body{padding:25px 26px 30px}.field{margin:0 0 21px}.field label{display:block;margin:0 0 9px;font-size:11px;font-weight:600;color:#555b53}.field label .optional{font-size:10px;color:#aaa;font-weight:400;margin-left:6px}.field input,.field textarea{display:block;width:100%;padding:13px;border:1px solid #e4e5df;border-radius:7px;outline:none;font-size:12px;color:#30342e;background:#fff}.field input:focus,.field textarea:focus{border-color:#ae9063;box-shadow:0 0 0 3px #b49d741c}.field textarea{height:152px;resize:vertical;line-height:1.7}.fields-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.editor-tabs{display:flex;gap:2px;border-bottom:1px solid var(--edge);padding:0 25px}.editor-tabs button{padding:16px 15px;border:none;background:transparent;color:#90918c;border-bottom:2px solid transparent;font-size:12px}.editor-tabs button.active{border-color:var(--gold);color:#333931;font-weight:600}
+.toolbar{display:flex;gap:5px;border:1px solid #e4e5df;border-radius:7px 7px 0 0;padding:9px;background:#fafaf8}.toolbar button{background:none;border:none;border-radius:5px;color:#70746d;padding:7px 10px;min-width:35px}.toolbar button.active{background:#ebe7df;color:#222}.field .toolbar+textarea{border-top:0;border-radius:0 0 7px 7px}
+.tile-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.tile-head strong{font-size:12px}.tile-head small{color:#999}
+.media-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.media-tile{position:relative;aspect-ratio:1;background:#f4f0e9;border-radius:7px;overflow:hidden;cursor:grab;touch-action:auto}.media-tile img{width:100%;height:100%;object-fit:cover}.media-tile.dragging{opacity:.38}.media-tile .corner{position:absolute;top:7px;right:7px;background:#fff;border:0;border-radius:5px;width:23px;height:23px}.upload-box{width:100%;min-height:106px;border:1px dashed #d7c7af;border-radius:8px;background:#fcfaf6;display:grid;place-items:center;padding:17px;text-align:center;cursor:pointer;color:#a0875f}.upload-box strong{display:block;color:#5b5d56;margin-top:6px;font-size:11px}.upload-box small{font-size:10px}.partner{display:flex;gap:9px;align-items:center;margin-bottom:11px}.partner input{flex:1;border:1px solid #e4e5df;border-radius:7px;padding:11px;min-width:0}.partner button{border:0;background:#f8f2eb;border-radius:6px;padding:10px;color:#9a7650}.help{color:#979b92;font-size:10px;line-height:1.65;margin:10px 0 0}
+.preview{position:sticky;top:22px;background:white;border:1px solid var(--edge);border-radius:12px;overflow:hidden}.preview-top{display:flex;justify-content:space-between;align-items:center;padding:16px 21px;border-bottom:1px solid var(--edge)}.preview-top span{font-size:12px;font-weight:600}.preview-top small{color:#8c9189;font-size:10px}.preview-image{height:250px;background:#eee9e2}.preview-image img{width:100%;height:100%;object-fit:cover}.preview-copy{text-align:center;padding:30px 27px 22px}.preview-copy small{letter-spacing:.19em;font-size:9px;color:var(--gold)}.preview-copy h2{font:500 clamp(29px,3vw,44px)/1.1 'Cormorant Garamond',Georgia,serif;margin:13px 0 5px}.preview-copy h3{font:400 23px 'Cormorant Garamond',Georgia,serif;margin:0}.preview-copy p{font-size:11px;color:#8e8e88}.preview-text{max-width:430px;margin:0 auto 26px;padding:0 24px;color:#62645d;font-size:11px;line-height:1.9;white-space:pre-line}.preview-gal{padding:0 24px 36px}.preview-gal h3{text-align:center;font:400 28px 'Cormorant Garamond',Georgia,serif}.preview-gal-images{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.preview-gal-images img{width:100%;aspect-ratio:4/3;object-fit:cover}.empty{color:#a1a29d;background:#f9f8f4;border-radius:9px;padding:30px;text-align:center}
+.toast{position:fixed;right:25px;bottom:24px;background:#30362f;color:white;padding:14px 18px;border-radius:9px;box-shadow:0 12px 30px #0002;max-width:350px;font-size:12px;z-index:30}.hidden{display:none!important}
+.mobile-head{display:none}
+@media(max-width:1200px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.edit-layout{grid-template-columns:minmax(330px,1fr) minmax(310px,1fr)}.main{padding:30px}.sidebar{width:214px}.layout{grid-template-columns:214px minmax(0,1fr)}}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static;height:auto;width:100%;padding:14px;flex-direction:row;align-items:center;gap:5px;overflow:auto}.brand{padding:7px 12px;margin-right:auto}.brand strong{font-size:20px}.menu-label,.sidebar-end{display:none}.nav{width:auto;margin:0;padding:11px 12px;white-space:nowrap}.nav .ico,.nav .pill{display:none}.topbar{padding:14px 25px}.edit-layout{grid-template-columns:1fr}.preview{position:static}.main{padding:27px 20px}}
+@media(max-width:620px){.cards,.stats{grid-template-columns:1fr}.sidebar{gap:1px}.nav{padding:10px 8px;font-size:11px}.brand{min-width:130px}.hero-heading{align-items:flex-start;flex-direction:column}.fields-2{grid-template-columns:1fr}.panel-body{padding:20px}.topbar{padding:14px 20px}.topright{display:none}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+<a class="brand" href="#" id="brand"><strong>BAUKARUSSELL</strong><small>NETWORKING À LA CARTE</small></a>
+<div class="menu-label">VERWALTUNG</div>
+<button class="nav active" data-page="dashboard"><span class="ico">◫</span>Übersicht</button>
+<button class="nav" data-page="events"><span class="ico">▦</span>Events</button>
+<button class="nav" data-page="members"><span class="ico">♧</span>Mitglieder</button>
+<button class="nav" data-page="projects"><span class="ico">▤</span>Projekte <span class="pill">Inaktiv</span></button>
+<button class="nav" data-page="media"><span class="ico">▧</span>Medien</button>
+<button class="nav" data-page="pages"><span class="ico">▤</span>Seiten</button>
+<div class="sidebar-end"><small>DESIGNKONZEPT · TEST</small><div class="identity"><span class="avatar">BK</span><span><strong>Redaktion</strong><br><small>Baukarussell Verein</small></span></div></div>
+</aside>
+<div class="page">
+<header class="topbar"><span class="crumb">Baukarussell / <strong id="crumb">Übersicht</strong></span><span class="topright">Nur Designvorschau <span class="circle">BK</span></span></header>
+<main class="main">
+<section id="dashboard">
+<div class="eyebrow">WILLKOMMEN IM REDAKTIONSBEREICH</div>
+<div class="hero-heading"><div><h1>Inhalte einfach verwalten.</h1><p class="sub">Alle Bereiche deiner Webseite an einem übersichtlichen Ort.</p></div><button class="btn dark" id="dash-add">＋ Neues Event</button></div>
+<div class="notice"><strong>Interaktiver Designentwurf.</strong> Hier kannst du die Bedienung ausprobieren. Änderungen werden noch nicht in GitHub gespeichert oder veröffentlicht.</div>
+<div class="stats"><div class="stat"><div class="si">▦</div><div><strong>1</strong><span>Veröffentlichtes Event</span></div></div><div class="stat"><div class="si">✎</div><div><strong>1</strong><span>Event als Entwurf</span></div></div><div class="stat"><div class="si">▤</div><div><strong>Inaktiv</strong><span>Projekte bleiben verborgen</span></div></div></div>
+<div class="section-head"><h2>Deine Events</h2><div class="filter"><button class="selected" data-filter="all">Alle</button><button data-filter="published">Veröffentlicht</button><button data-filter="draft">Entwürfe</button></div></div>
+<div class="cards" id="cards">
+<article class="event" data-status="published"><div class="event-photo"><img src="/logos/baukarussellxmontblanc-00148.jpg" alt="Montblanc Event"><span class="tag">Veröffentlicht</span></div><div class="event-body"><div class="date">22. OKTOBER 2026</div><h3>Baukarussell x Montblanc</h3><p>Eleganz trifft auf besondere Begegnungen</p><div class="event-bottom"><span>Montblanc Boutique Zürich</span><button data-open="montblanc">Bearbeiten ↗</button></div></div></article>
+<article class="event" data-status="draft"><div class="event-photo"><img src="/logos/baukarussellxmontblanc-00148.jpg" alt="Test Event"><span class="tag draft">Entwurf</span></div><div class="event-body"><div class="date">20. NOVEMBER 2026</div><h3>Baukarussell Test Event</h3><p>Ein besonderer Abend voller Begegnungen</p><div class="event-bottom"><span>Zürich</span><button data-open="test">Bearbeiten ↗</button></div></div></article>
+</div>
+</section>
+<section id="editor" class="hidden">
+<button class="back" id="edit-back">← Zurück zur Übersicht</button>
+<div class="hero-heading"><div><div class="eyebrow">EVENTS / BEARBEITEN</div><h1 id="editor-heading">Event bearbeiten</h1><p class="sub" id="editor-subtitle">Übersichtlich bearbeiten und die Vorschau sofort sehen.</p></div><div class="editor-actions"><button class="btn" id="demo-save">Entwurf sichern</button><button class="btn dark" id="demo-publish">Veröffentlichen</button></div></div>
+<div class="notice">Designvorschau: Alle Änderungen bleiben nur auf dieser Seite und werden <strong>nicht</strong> auf der echten Webseite gespeichert.</div>
+<div class="edit-layout">
+<section class="panel">
+<div class="panel-head"><h2>Event gestalten</h2><p>Alle Informationen an einem Ort.</p></div>
+<div class="editor-tabs"><button class="active" data-tab="info">Allgemein & Text</button><button data-tab="gallery">Galerie & Partner</button></div>
+<div class="panel-body" id="tab-info">
+<div class="field"><label for="e-title">Eventname</label><input id="e-title" placeholder="z.B. Baukarussell x Montblanc"></div>
+<div class="field"><label for="e-slogan">Leitsatz <span class="optional">Optional</span></label><input id="e-slogan" placeholder="Die besondere Überschrift des Abends"></div>
+<div class="fields-2"><div class="field"><label for="e-date">Datum</label><input id="e-date" type="date"></div><div class="field"><label for="e-time">Uhrzeit</label><input id="e-time" type="time"></div></div>
+<div class="field"><label for="e-location">Veranstaltungsort <span class="optional">Optional</span></label><input id="e-location" placeholder="z.B. Montblanc Boutique Zürich"></div>
+<div class="field"><label for="e-text">Beschreibung</label><div class="toolbar" aria-label="Textausrichtung"><button class="active" data-align="left" title="Linksbündig">≡</button><button data-align="center" title="Zentriert">☷</button><button data-align="justify" title="Blocksatz">▤</button></div><textarea id="e-text" placeholder="Schreibe hier deinen Eventbericht..."></textarea><p class="help">Die Ausrichtung kannst du hier ausprobieren. Die endgültige Textbearbeitung wird noch erweitert.</p></div>
+</div>
+<div class="panel-body hidden" id="tab-gallery">
+<div class="field"><label>Titelbild</label><div class="media-grid"><div class="media-tile"><img id="cover-small" src="/logos/baukarussellxmontblanc-00148.jpg" alt="Aktuelles Titelbild"></div></div><p class="help">Das Titelbild wird später direkt über die Mediathek austauschbar sein.</p></div>
+<div class="tile-head"><strong>Fotogalerie</strong><small>Ziehen zum Sortieren</small></div>
+<div class="media-grid" id="gallery-editor"></div>
+<label class="upload-box" for="upload-input"><span style="font-size:23px">＋</span><strong>Mehrere Fotos gleichzeitig auswählen</strong><small>JPG, PNG oder WebP · Designvorschau</small></label>
+<input id="upload-input" type="file" accept="image/*" multiple class="hidden">
+<p class="help">Neue Fotos sind in diesem Entwurf nur während der aktuellen Sitzung sichtbar.</p>
+<div style="border-top:1px solid var(--edge);margin:26px 0"></div>
+<div class="tile-head"><strong>Partner & Mitwirkende</strong><small>Optional</small></div>
+<div id="partner-list"></div><button class="btn small" id="partner-add">＋ Person oder Partner hinzufügen</button>
+<p class="help">Hier sollen später Unternehmen, Musik, Fotografie und Dankesworte flexibel gepflegt werden.</p>
+</div>
+</section>
+<section class="preview"><div class="preview-top"><span>Live Vorschau</span><small>Desktopansicht</small></div><div class="preview-image"><img id="p-image" src="/logos/baukarussellxmontblanc-00148.jpg" alt="Eventfoto"></div><div class="preview-copy"><small id="p-date"></small><h2 id="p-slogan"></h2><h3 id="p-title"></h3><p id="p-location"></p></div><div class="preview-text" id="p-text"></div><div class="preview-gal"><h3>Impressionen</h3><div class="preview-gal-images" id="gallery-preview"></div></div></section>
+</div>
+</section>
+<section id="placeholder" class="hidden">
+<button class="back" id="placeholder-back">← Zurück zur Übersicht</button>
+<div class="eyebrow">GEPLANTER VERWALTUNGSBEREICH</div><h1 id="placeholder-title">Mitglieder</h1>
+<p class="sub" id="placeholder-text">Dieser Bereich wird im nächsten Schritt ausgearbeitet.</p>
+<div style="margin-top:30px;background:white;border:1px solid var(--edge);border-radius:12px;padding:35px"><div class="empty">Vorschau des Menübereichs. Hier werden später die zugehörigen Funktionen eingebaut.</div></div>
+</section>
+</main>
+</div>
+</div>
+<div class="toast hidden" id="toast" role="status"></div>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id), all=(selector)=>Array.from(document.querySelectorAll(selector));
+const photo='/logos/baukarussellxmontblanc-00148.jpg';
+const photo2='/logos/baukarussellxmontblanc-00001.jpg';
+const models={
+montblanc:{title:'Baukarussell x Montblanc',slogan:'Eleganz trifft auf besondere Begegnungen',date:'2026-10-22',time:'18:00',location:'Montblanc Boutique Zürich',text:'Ein Abend, der von zeitloser Eleganz, inspirierenden Gesprächen und wertvollen Begegnungen geprägt war.\n\nIn der exklusiven Atmosphäre der Montblanc Boutique durften wir gemeinsam mit unseren Gästen besondere Momente erleben und unser Netzwerk in stilvollem Rahmen pflegen.\n\nEin herzliches Dankeschön an Montblanc für die wundervolle Gastfreundschaft und die ausgezeichnete Zusammenarbeit sowie an alle Gäste, Partner und Mitglieder, die diesen Abend mit ihrer Präsenz bereichert haben.',cover:photo,images:[photo,photo2],partners:['Montblanc Boutique Zürich']},
+test:{title:'Baukarussell Test Event',slogan:'Ein besonderer Abend voller Begegnungen',date:'2026-11-20',time:'18:00',location:'Zürich',text:'Dies ist ein Testevent zur Überprüfung der neuen Baukarussell Webseite und des Redaktionssystems.',cover:photo,images:[photo],partners:[]}
+};
+let current=null,align='left',dragIndex=null;
+let toastTimer=null;
+function toast(message){const t=$('toast');t.textContent=message;t.classList.remove('hidden');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add('hidden'),3500);}
+function page(name){$('dashboard').classList.toggle('hidden',name!=='dashboard');$('editor').classList.toggle('hidden',name!=='editor');$('placeholder').classList.toggle('hidden',name!=='placeholder');$('crumb').textContent=name==='editor'?'Event bearbeiten':name==='dashboard'?'Übersicht':name;
+ all('.nav').forEach(b=>b.classList.toggle('active',name==='dashboard'?b.dataset.page==='dashboard':name==='editor'?b.dataset.page==='events':b.dataset.page===name));
+ window.scrollTo(0,0);}
+function back(){page('dashboard');}
+function setTab(name){all('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$('tab-info').classList.toggle('hidden',name!=='info');$('tab-gallery').classList.toggle('hidden',name!=='gallery');}
+function openEditor(key){current=structuredClone(models[key]||{title:'Neues Event',slogan:'',date:'',time:'18:00',location:'',text:'',cover:photo,images:[],partners:[]});
+$('e-title').value=current.title;$('e-slogan').value=current.slogan;$('e-date').value=current.date;$('e-time').value=current.time;$('e-location').value=current.location;$('e-text').value=current.text;$('cover-small').src=current.cover;$('p-image').src=current.cover;$('editor-heading').textContent=key==='new'?'Neues Event':'Event bearbeiten';setTab('info');render();page('editor');}
+function render(){if(!current)return;
+$('p-title').textContent=current.title||'Eventname';
+$('p-slogan').textContent=current.slogan||current.title||'Eventtitel';
+$('p-title').style.display=current.slogan?'block':'none';
+$('p-location').textContent=current.location;
+let d=current.date?new Date(current.date+'T12:00:00'):null;
+$('p-date').textContent=d&&!isNaN(d.getTime())?new Intl.DateTimeFormat('de-CH',{day:'2-digit',month:'long',year:'numeric'}).format(d):'DATUM';
+$('p-text').textContent=current.text;$('p-text').style.textAlign=align;
+$('gallery-preview').replaceChildren(...current.images.map(src=>{const im=document.createElement('img');im.src=src;im.alt='Event Impression';return im;}));
+const editor=$('gallery-editor');editor.replaceChildren();
+current.images.forEach((src,i)=>{
+const tile=document.createElement('div');tile.className='media-tile';tile.draggable=true;tile.title='Zum Sortieren ziehen';const img=document.createElement('img');img.src=src;img.alt='Galeriefoto '+(i+1);tile.append(img);const remove=document.createElement('button');remove.className='corner';remove.textContent='×';remove.title='Foto aus Entwurf entfernen';remove.onclick=()=>{current.images.splice(i,1);render();};tile.append(remove);
+tile.addEventListener('dragstart',()=>{dragIndex=i;tile.classList.add('dragging')});tile.addEventListener('dragend',()=>tile.classList.remove('dragging'));tile.addEventListener('dragover',event=>event.preventDefault());tile.addEventListener('drop',event=>{event.preventDefault();if(dragIndex===null||dragIndex===i)return;const moved=current.images.splice(dragIndex,1)[0];current.images.splice(i,0,moved);dragIndex=null;render();});editor.append(tile);});
+const part=$('partner-list');part.replaceChildren();current.partners.forEach((name,i)=>{const row=document.createElement('div');row.className='partner';const input=document.createElement('input');input.value=name;input.placeholder='Name oder Unternehmen';input.oninput=()=>current.partners[i]=input.value;const remove=document.createElement('button');remove.textContent='×';remove.title='Entfernen';remove.onclick=()=>{current.partners.splice(i,1);render();};row.append(input,remove);part.append(row);});
+}
+function placeholder(key){const labels={members:['Mitglieder','Firmenprofile, Logos und Kontaktdaten komfortabel verwalten.'],projects:['Projekte','Projekte bleiben auf der Webseite verborgen, bis ihr sie ausdrücklich aktiviert.'],media:['Medien','Fotos und Logos hochladen, organisieren und wiederverwenden.'],pages:['Seiten','Startseite, Über uns und Kontakt visuell bearbeiten.']};$('placeholder-title').textContent=labels[key][0];$('placeholder-text').textContent=labels[key][1];page(key);$('placeholder').classList.remove('hidden');}
+all('.nav').forEach(b=>b.onclick=()=>{let p=b.dataset.page;if(p==='dashboard'||p==='events'){page('dashboard');document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n===b));}else placeholder(p)});
+$('brand').onclick=e=>{e.preventDefault();back()};$('dash-add').onclick=()=>openEditor('new');all('[data-open]').forEach(b=>b.onclick=()=>openEditor(b.dataset.open));
+$('edit-back').onclick=back;$('placeholder-back').onclick=back;
+all('[data-filter]').forEach(b=>b.onclick=()=>{all('[data-filter]').forEach(t=>t.classList.toggle('selected',t===b));all('.event').forEach(card=>card.classList.toggle('hidden',b.dataset.filter!=='all'&&card.dataset.status!==b.dataset.filter));});
+all('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+['title','slogan','date','time','location','text'].forEach(key=>{$('e-'+key).addEventListener('input',e=>{current[key]=e.target.value;render()})});
+all('[data-align]').forEach(b=>b.onclick=()=>{align=b.dataset.align;all('[data-align]').forEach(x=>x.classList.toggle('active',x===b));render()});
+$('partner-add').onclick=()=>{current.partners.push('');render();$('partner-list').lastElementChild.querySelector('input').focus();};
+$('upload-input').onchange=e=>{const files=Array.from(e.target.files||[]).filter(f=>f.type.startsWith('image/'));if(!files.length)return;files.forEach(f=>{current.images.push(URL.createObjectURL(f))});render();e.target.value='';toast(files.length+' Foto(s) in der Designvorschau hinzugefügt.');};
+$('demo-save').onclick=()=>toast('Nur Konzept: Hier wird noch nichts in GitHub gespeichert.');
+$('demo-publish').onclick=()=>toast('Nur Konzept: Kein Inhalt wird veröffentlicht.');
+})();
+</script>
+</body></html>
