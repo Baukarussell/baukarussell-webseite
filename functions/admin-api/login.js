@@ -14,7 +14,7 @@ export async function onRequestGet({request,env}) {
   const url=new URL('https://github.com/login/oauth/authorize');
   url.searchParams.set('client_id',env.GITHUB_CLIENT_ID);
   url.searchParams.set('redirect_uri',origin+'/api/callback');
-  url.searchParams.set('scope','repo');
+  url.searchParams.set('scope','public_repo');
   url.searchParams.set('state',state);
   url.searchParams.set('code_challenge',base64);
   url.searchParams.set('code_challenge_method','S256');
