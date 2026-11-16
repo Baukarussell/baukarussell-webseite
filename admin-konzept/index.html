@@ -147,6 +147,13 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 @media(max-width:900px){.topbar{height:auto;min-height:66px}.sidebar .brand{height:auto}.pages-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.pages-grid{grid-template-columns:1fr}.page-preview-content{padding:30px 21px}}
 
+/* Event gallery: number of images and accessible order controls (test only). */
+.gallery-photo-count{display:inline-block;margin-left:6px;color:#94816a;font-size:11px;font-weight:500}
+.gallery-order-controls{position:absolute;top:7px;left:7px;display:flex;gap:4px}
+.gallery-order-controls button{border:0;border-radius:5px;background:#fffdf8f0;color:#343934;min-width:28px;min-height:28px;font-size:15px;font-weight:600;cursor:pointer}
+.gallery-order-controls button:hover:not(:disabled){background:#fff}
+.gallery-order-controls button:disabled{opacity:.38;cursor:not-allowed}
+@media(max-width:620px){.tile-head{gap:8px;flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -215,7 +222,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <div class="hero-heading"><div><h1>Events verwalten.</h1><p class="sub">Veranstaltungen erstellen, bearbeiten und im Blick behalten.</p></div><button type="button" class="btn dark" id="events-add">＋ Neues Event</button></div>
 <section id="real-events-panel" class="real-events-panel" aria-label="Echte GitHub Eventdateien">
 <div class="real-events-header">
-<div><div class="eyebrow">GITHUB / TESTBRANCH</div><h2>Eventdateien aus GitHub</h2><p>Nur lesender Zugriff auf die vorhandenen Eventdateien. Es wird nichts gespeichert oder veröffentlicht.</p></div>
+<div><div class="eyebrow">GITHUB / TESTBRANCH</div><h2>Eventdateien aus GitHub</h2><p>Die Originaldateien bleiben unverändert. Im Editor können private Textentwürfe gespeichert werden. Nichts wird veröffentlicht.</p></div>
 <button type="button" class="btn small" id="real-events-refresh">↻ Erneut prüfen</button>
 </div>
 <div class="real-events-state" id="real-events-state" role="status">Verbindungsprüfung noch ausstehend.</div>
@@ -414,7 +421,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 </div>
 <div class="panel-body hidden" id="tab-gallery">
 <div class="field"><label>Titelbild</label><div class="cover-control"><img id="cover-small" src="/logos/baukarussellxmontblanc-00148.jpg" alt="Aktuelles Titelbild"><div><strong>Aktuelles Titelbild</strong><p class="help">Du kannst ein anderes Bild auswählen oder eines aus deiner Galerie als Titelbild festlegen.</p><button type="button" class="btn small" id="change-cover">Bild ändern</button><input id="cover-upload" type="file" accept="image/*" class="hidden"></div></div></div>
-<div class="tile-head"><strong>Fotogalerie</strong><small>Ziehen zum Sortieren</small></div>
+<div class="tile-head"><strong>Fotogalerie <span class="gallery-photo-count" id="gallery-photo-count" aria-live="polite">0 Fotos</span></strong><small>Ziehen oder mit den Pfeilen sortieren</small></div>
 <div class="media-grid" id="gallery-editor"></div>
 <label class="upload-box" for="upload-input"><span style="font-size:23px">＋</span><strong>Mehrere Fotos gleichzeitig auswählen</strong><small>JPG, PNG oder WebP · Designvorschau</small></label>
 <input id="upload-input" type="file" accept="image/*" multiple class="hidden">
@@ -539,7 +546,7 @@ function openEditor(key){
  $('demo-save').classList.toggle('hidden',!source);
  $('source-draft-banner').classList.toggle('hidden',!source);
  $('editor-notice').textContent=source
-  ?'Echte GitHub Quelldatei im Editor. Änderungen werden nicht veröffentlicht. Der private Entwurfsspeicher muss in Cloudflare eingerichtet sein, damit Speichern dauerhaft funktioniert.'
+  ?'GitHub Event als privater Entwurf. Texte und vorhandene Bildpfade lassen sich mit «Entwurf speichern» sichern. Neu ausgewählte Fotodateien bleiben vorerst nur in der Vorschau. Nichts wird veröffentlicht.'
   :'Designvorschau: Änderungen bleiben in diesem Browserfenster erhalten. Keine echte Speicherung oder Veröffentlichung. Neue Fotodateien können beim Neuladen verloren gehen.';
  setTab('info');render();page('editor');
  setEditorStatus(key,editorStatuses[key]||(restoredDraftKeys.has(key)?'local':'original'));
@@ -662,9 +669,23 @@ renderTextPreview();$('p-text').style.textAlign=align;
 $('cover-small').src=current.cover||photo;$('p-image').src=current.cover||photo;
 renderPartnerPreview();
 $('gallery-preview').replaceChildren(...current.images.map(src=>{const im=document.createElement('img');im.src=src;im.alt='Event Impression';return im;}));
+$('gallery-photo-count').textContent=current.images.length+' '+(current.images.length===1?'Foto':'Fotos');
 const editor=$('gallery-editor');editor.replaceChildren();
 current.images.forEach((src,i)=>{
 const tile=document.createElement('div');tile.className='media-tile';tile.draggable=true;tile.title='Zum Sortieren ziehen';const img=document.createElement('img');img.src=src;img.alt='Galeriefoto '+(i+1);tile.append(img);const asCover=document.createElement('button');asCover.type='button';asCover.className='as-cover';asCover.textContent=src===current.cover?'✓ Titelbild':'Als Titelbild';asCover.onclick=()=>{current.cover=src;rememberChange();render();toast('Titelbild in der Designvorschau geändert.');};tile.append(asCover);const remove=document.createElement('button');remove.className='corner';remove.textContent='×';remove.title='Foto aus Entwurf entfernen';remove.onclick=()=>{current.images.splice(i,1);rememberChange();render();};tile.append(remove);
+const order=document.createElement('div');order.className='gallery-order-controls';
+for(const [step,symbol,label] of [[-1,'←','Foto nach links verschieben'],[1,'→','Foto nach rechts verschieben']]){
+ const move=document.createElement('button');move.type='button';move.textContent=symbol;move.title=label;move.setAttribute('aria-label',label+' ('+(i+1)+' von '+current.images.length+')');
+ move.disabled=step===-1?i===0:i===current.images.length-1;
+ move.draggable=false;
+ move.onclick=ev=>{ev.stopPropagation();const j=i+step;if(j<0||j>=current.images.length)return;
+ [current.images[i],current.images[j]]=[current.images[j],current.images[i]];
+ rememberChange();render();
+ const nextTile=$('gallery-editor').children[j];nextTile?.querySelector('.gallery-order-controls button:nth-child('+(step===-1?1:2)+')')?.focus();
+ };
+ order.append(move);
+}
+tile.append(order);
 tile.addEventListener('dragstart',()=>{dragIndex=i;tile.classList.add('dragging')});tile.addEventListener('dragend',()=>tile.classList.remove('dragging'));tile.addEventListener('dragover',event=>event.preventDefault());tile.addEventListener('drop',event=>{event.preventDefault();if(dragIndex===null||dragIndex===i)return;const moved=current.images.splice(dragIndex,1)[0];current.images.splice(i,0,moved);dragIndex=null;rememberChange();render();});editor.append(tile);});
 const part=$('partner-list');part.replaceChildren();
 const roles={partner:'Eventpartner',music:'Musik',photo:'Fotografie',thanks:'Dankeschön',other:'Weitere'};
