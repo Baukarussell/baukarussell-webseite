@@ -12,16 +12,14 @@
 - Die Ansicht **Im Editor öffnen** kopiert eine Eventdatei in einen **isolierten Bearbeitungsentwurf**. GitHub Quelldateien werden dadurch nicht verändert.
 - Der Knopf **Entwurf speichern** für reale GitHub Events verwendet `PUT /admin-api/draft?slug=...` und ist durch Session, Benutzerrechte und CSRF abgesichert.
 
-## Noch nötige Cloudflare Einrichtung für dauerhaftes Speichern
+## Cloudflare KV: Einrichtung und Prüfung abgeschlossen
 
-1. Im Cloudflare Konto einen **Workers KV Namespace** mit beispielsweise dem Namen `baukarussell_admin_drafts_test` anlegen.
-2. Im **Pages Projekt `baukarussell-cms-test`** die **Settings → Bindings** öffnen.
-3. Als **KV namespace** das neu angelegte Namespace einbinden. **Variable name exakt `BK_ADMIN_DRAFTS`** eintragen.
-4. Das betroffene Pages Environment auswählen und das Testprojekt neu deployen.
-5. Mit dem GitHub Konto im Test Admin anmelden, Events öffnen, beim echten GitHub Event **Im Editor öffnen** anklicken, ein Textfeld ändern und **Entwurf speichern** anklicken.
-6. Nach dem Speichern sollte erscheinen: **Privater Entwurf gespeichert**. Der Entwurf wird bei erneutem Öffnen ohne vorhandenen lokalen Zwischenstand geladen.
+- `baukarussell_admin_drafts_test` wurde im Cloudflare Konto erstellt und für die Testseite als `BK_ADMIN_DRAFTS` gebunden.
+- Die Testseite wurde am 13. November 2026 neu bereitgestellt.
+- Der Vorstandstest am 13. November zeigte: **Entwurf speichern** meldete Erfolg und die gespeicherten Textdaten wurden in einem privaten Browserfenster wieder geladen.
+- Die Live Webseite hat weiterhin keine entsprechende Freigabe erhalten.
 
-Die KV Bindung darf **nur am Testprojekt** eingerichtet werden, bis wir die spätere Livefreigabe ausdrücklich planen.
+Die KV Bindung bleibt **nur im Testprojekt**. Eine spätere Livefreigabe erfolgt separat.
 
 ## Sicherheitsgrenzen
 
@@ -30,7 +28,7 @@ Die KV Bindung darf **nur am Testprojekt** eingerichtet werden, bis wir die spä
 - Der Editor hat keine echte Veröffentlichungsfunktion.
 - Die Dateien dürfen keine privaten Anmeldelisten oder personenbezogenen Gästedaten enthalten.
 - Neu im Browser hochgeladene Foto Dateien sind **nicht dauerhaft gespeichert**. Es werden nur bestehende, sichere Bildpfade in Textentwürfen akzeptiert.
-- Ein Klick auf **Entwurf speichern** zeigt eine klare Fehlermeldung, solange die KV Bindung fehlt. Ein lokaler Zwischenstand ersetzt keine dauerhafte Speicherung.
+- Falls die KV Bindung später fehlt oder nicht erreichbar ist, zeigt **Entwurf speichern** eine Fehlermeldung. Ein lokaler Zwischenstand ersetzt keine dauerhafte Speicherung.
 - KV ist *eventually consistent* und begrenzt die Schreibfrequenz pro Schlüssel. Aktuell wird deshalb nur manuell gespeichert; automatische Speicherung und Mehrbenutzerkonflikte benötigen später eine zusätzliche Lösung.
 - Der GitHub Dateistand wird im Entwurf mittels SHA mitgeführt; spätere Veröffentlichung muss den SHA vor einem Schreibvorgang auf Konflikte prüfen.
 
@@ -45,3 +43,11 @@ Das Admin Konzept bietet für **Events, Mitglieder, Projekte, Startseite und Unt
 - `Lokal merken` wurde für die Demo Eingabemasken ausgeblendet, da diese bereits automatisch in der Browsersitzung vorgemerkt werden.
 - **Entwurf speichern** bleibt ausschliesslich für echte GitHub Eventdaten sichtbar und benötigt die private Cloudflare KV Bindung. Die Funktion **Veröffentlichen** ist weiterhin nur eine Designvorschau.
 - Der Undo Verlauf geht beim vollständigen Neuladen des Tabs verloren. Die bestehenden Textentwürfe können dagegen aus Session Storage zurückkommen.
+
+## Fotoarchiv und R2, Stand November 2026
+
+- Der Vorstand hat ein vorsorgliches Betriebsbudget für die Webseite bewilligt.
+- Cloudflare R2 ist **noch nicht aktiviert**; es wird zunächst eine Zahlungsmöglichkeit des Vereins geklärt.
+- Bestehende und öffentlich erreichbare Bildpfade können in privaten Evententwürfen gespeichert werden. Neue, über die Upload Felder ausgewählte Fotodateien bleiben **nur in der Browser Vorschau** und sind nicht dauerhaft gespeichert.
+- Das Test Admin zeigt nun die Anzahl Galeriefotos und bietet zusätzlich zu Drag & Drop kleine Pfeile zum Ändern der Reihenfolge.
+- Diese Änderungen erfolgen nur auf dem Testbranch `presentation-recovery-2026-11-10`. Eine Veröffentlichung auf `main` und die Einrichtung einer R2 Anbindung stehen noch aus.
