@@ -7,10 +7,19 @@ import {
 
 const MAX_BYTES=80000;
 function validSlug(s){return typeof s==='string'&&/^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,119}$/.test(s)&&!s.includes('..');}
+function isAllowedPhotoPath(path) {
+  if (typeof path !== 'string' || path.length > 300) return false;
+  if (!/^\/(?:logos|events|uploads)\/(?:[a-zA-Z0-9_.\/()-]|%[0-9a-fA-F]{2})+$/.test(path)) return false;
+  if (/%(?:2f|5c)/i.test(path)) return false;
+  let decoded;
+  try { decoded = decodeURIComponent(path); } catch (_) { return false; }
+  if (decoded.includes('\\') || decoded.includes('?') || decoded.includes('#') || decoded.includes('//')) return false;
+  if (decoded.split('/').some(segment => segment === '..' || segment === '.')) return false;
+  return true;
+}
+
 function fileImage(s){
-  if(typeof s!=='string')return '';
-  if(!/^\/(?:logos|events|uploads)\/[a-zA-Z0-9_.\/%-]+$/.test(s)||s.includes('..')||s.length>300)return '';
-  return s;
+  return isAllowedPhotoPath(s) ? s : '';
 }
 function short(s,limit){
   if(typeof s!=='string')return null;
