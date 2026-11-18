@@ -16,6 +16,17 @@ function unquote(raw) {
   if(v.startsWith("'")&&v.endsWith("'"))return v.slice(1,-1).replace(/''/g,"'");
   return v;
 }
+function isAllowedPhotoPath(path) {
+  if (typeof path !== 'string' || path.length > 300) return false;
+  if (!/^\/(?:logos|events|uploads)\/(?:[a-zA-Z0-9_.\/()-]|%[0-9a-fA-F]{2})+$/.test(path)) return false;
+  if (/%(?:2f|5c)/i.test(path)) return false;
+  let decoded;
+  try { decoded = decodeURIComponent(path); } catch (_) { return false; }
+  if (decoded.includes('\\') || decoded.includes('?') || decoded.includes('#') || decoded.includes('//')) return false;
+  if (decoded.split('/').some(segment => segment === '..' || segment === '.')) return false;
+  return true;
+}
+
 function parseEvent(raw,filename,sha) {
   const match=raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
   if(!match)return null;
@@ -51,10 +62,8 @@ function parseEvent(raw,filename,sha) {
   if(!data.title)return null;
   const normalizeAsset=(value)=>{
     const v=String(value||'').trim();
-    if(!v||v.startsWith('data:')||v.startsWith('blob:'))return '';
     const normalized=v.startsWith('/')?v:'/'+v;
-    return /^\/(?:logos|uploads|events)\/[a-zA-Z0-9_\-./%]+$/.test(normalized)
-      && !normalized.includes('..') ? normalized : '';
+    return isAllowedPhotoPath(normalized) ? normalized : '';
   };
   return {
     slug:filename.slice(0,-3),
