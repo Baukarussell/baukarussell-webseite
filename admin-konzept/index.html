@@ -150,6 +150,9 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 /* Event gallery: GitHub photo import and accessible ordering (test only). */
 .github-gallery-import{background:#faf8f4;border:1px solid #eee6d7;border-radius:8px;padding:12px;margin-bottom:15px}
 .github-gallery-import .help{margin:7px 0 0}
+.github-gallery-status{font-size:11px;line-height:1.6;margin:10px 0 0;padding:9px 10px;border-radius:6px;background:#f4ede2;color:#795d37}
+.github-gallery-status[data-kind="success"]{background:#e8f3e9;color:#355f3e}
+.github-gallery-status[data-kind="error"]{background:#fff0e9;color:#8c432f}
 .gallery-photo-count{display:inline-block;margin-left:6px;color:#94816a;font-size:11px;font-weight:500}
 .gallery-order-controls{position:absolute;top:7px;left:7px;display:flex;gap:4px}
 .gallery-order-controls button{border:0;border-radius:5px;background:#fffdf8f0;color:#343934;min-width:28px;min-height:28px;font-size:15px;font-weight:600;cursor:pointer}
@@ -424,7 +427,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <div class="panel-body hidden" id="tab-gallery">
 <div class="field"><label>Titelbild</label><div class="cover-control"><img id="cover-small" src="/logos/baukarussellxmontblanc-00148.jpg" alt="Aktuelles Titelbild"><div><strong>Aktuelles Titelbild</strong><p class="help">Du kannst ein anderes Bild auswählen oder eines aus deiner Galerie als Titelbild festlegen.</p><button type="button" class="btn small" id="change-cover">Bild ändern</button><input id="cover-upload" type="file" accept="image/*" class="hidden"></div></div></div>
 <div class="tile-head"><strong>Fotogalerie <span class="gallery-photo-count" id="gallery-photo-count" aria-live="polite">0 Fotos</span></strong><small>Ziehen oder mit den Pfeilen sortieren</small></div>
-<div id="github-gallery-import" class="github-gallery-import hidden"><button type="button" class="btn small" id="github-gallery-sync">Fotos aus GitHub übernehmen</button><p class="help">Aktuelle Fotos aus GitHub laden. Texte bleiben unverändert. Danach «Entwurf speichern» klicken.</p></div>
+<div id="github-gallery-import" class="github-gallery-import hidden"><button type="button" class="btn small" id="github-gallery-sync">Fotos aus GitHub übernehmen</button><p class="help">Aktuelle Fotos aus GitHub laden. Texte bleiben unverändert. Danach «Entwurf speichern» klicken.</p><p id="github-gallery-status" class="github-gallery-status hidden" role="status" aria-live="polite"></p></div>
 <div class="media-grid" id="gallery-editor"></div>
 <label class="upload-box" for="upload-input"><span style="font-size:23px">＋</span><strong>Mehrere Fotos gleichzeitig auswählen</strong><small>JPG, PNG oder WebP · Designvorschau</small></label>
 <input id="upload-input" type="file" accept="image/*" multiple class="hidden">
@@ -606,9 +609,11 @@ async function openSourceEvent(event){
 }
 async function syncGithubGallery(){
  if(!current||!current.sourceSlug)return;
- const key=currentKey,slug=current.sourceSlug,button=$('github-gallery-sync');
+ const key=currentKey,slug=current.sourceSlug,button=$('github-gallery-sync'),status=$('github-gallery-status');
+ const showStatus=(message,success)=>{status.classList.remove('hidden');status.dataset.kind=success?'success':'error';status.textContent=message;};
  if(!window.confirm('Aktuelle GitHub Fotos übernehmen? Die bisherige Fotoreihenfolge im Entwurf wird ersetzt, deine Texte bleiben erhalten.'))return;
  button.disabled=true;button.textContent='Fotos werden geladen ...';
+ status.classList.remove('hidden');status.dataset.kind='loading';status.textContent='GitHub Fotos werden geladen ...';
  try{
   const response=await fetch('/admin-api/events',{credentials:'same-origin',cache:'no-store'});
   const result=await response.json().catch(()=>({}));
@@ -626,9 +631,12 @@ async function syncGithubGallery(){
   current.sourceSha=event.sha||current.sourceSha;
   rememberChange();render();
   $('source-draft-status').textContent=images.length+' Fotos aus GitHub übernommen. Texte unverändert. Jetzt «Entwurf speichern» klicken. Nichts veröffentlicht.';
+  showStatus(images.length+' Fotos übernommen, davon '+current.images.length+' in der Galerie. Bitte oben «Entwurf speichern» klicken.',true);
   toast(images.length+' Fotos übernommen. Bitte Entwurf speichern.');
  }catch(error){
-  $('source-draft-status').textContent=error.message||'GitHub Fotos konnten nicht geladen werden. Der Entwurf bleibt unverändert.';
+  const message=error.message||'GitHub Fotos konnten nicht geladen werden. Der Entwurf bleibt unverändert.';
+  $('source-draft-status').textContent=message;
+  showStatus(message,false);
   toast('Galerie konnte nicht geladen werden.');
  }finally{button.disabled=false;button.textContent='Fotos aus GitHub übernehmen';}
 }
