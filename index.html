@@ -47,12 +47,12 @@
   .about-text p:last-child { margin-bottom: 0; }
   
   .members-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; max-width: 1200px; margin: 0 auto; }
-  .member-card { display: flex; flex-direction: column; align-items: center; background: white; border: 1px solid #eee; padding: 30px 20px 20px; transition: all 0.4s ease; }
+  .member-card { display: flex; flex-direction: column; align-items: center; background: white; border: 1px solid rgba(184,148,95,.5); padding: 30px 20px 20px; transition: all 0.4s ease; }
   .member-card:hover { border-color: var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.08); transform: translateY(-4px); }
     .member-img { max-width: 100%; height: 90px; object-fit: contain; filter: grayscale(100%); opacity: 0.75; transition: all 0.4s ease; margin-bottom: 20px; }
   .member-card:hover .member-img { filter: grayscale(0%); opacity: 1; transform: scale(1.055); }
   @media (prefers-reduced-motion: reduce) { .member-img { transition: none; } .member-card:hover .member-img { transform: none; } }
-  .member-btn { display: inline-block; padding: 10px 20px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; color: var(--dark); border: 1px solid var(--dark); transition: all 0.3s; font-weight: 500; margin-top: auto; }
+  .member-btn { display: inline-block; padding: 10px 20px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; color: var(--dark); border: 1px solid var(--gold); transition: all 0.3s; font-weight: 500; margin-top: auto; }
   .member-btn:hover { background: var(--gold); border-color: var(--gold); color: white; }
       
   .projects-section { background: #f5f2ed; max-width: 100%; padding: 120px 60px; }
