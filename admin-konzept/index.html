@@ -169,7 +169,16 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 .member-media-status[data-kind="success"]{color:#32673e}
 .member-media-status[data-kind="error"]{color:#973b2f}
 .member-description-preview{font-size:12px;color:#74776f;overflow-wrap:anywhere;hyphens:auto}
-.member-description-preview p{margin:0;white-space:pre-line;color:inherit;font-size:inherit;text-align:inherit;line-height:inherit}
+.member-description-preview p{margin:0;white-space:pre-wrap;color:inherit;font-size:inherit;text-align:inherit;line-height:inherit;min-height:1em}
+.member-description-preview p.member-paragraph-heading{font-size:13px;font-weight:600;letter-spacing:.06em;color:#555a51}
+.member-paragraph-tools{margin:17px 0 0;padding:15px;background:#faf9f5;border:1px solid #e8e2d7;border-radius:9px}
+.member-paragraph-tools .tile-head{margin-bottom:4px}
+.member-paragraph-tools>label{display:block;color:#686d67;font-size:11px;font-weight:600;margin:12px 0 5px}
+.member-paragraph-tools>select{display:block;width:100%;background:white;padding:10px;border-radius:7px;border:1px solid #dddcd5;font-size:11px}
+.member-paragraph-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+.member-paragraph-options label{color:#686d67;font-size:10px;font-weight:500}
+.member-paragraph-options select{display:block;width:100%;background:white;margin-top:5px;padding:9px 5px;border-radius:6px;border:1px solid #dddcd5;font-size:11px}
+@media(max-width:540px){.member-paragraph-options{grid-template-columns:1fr}}
 .member-description-preview strong{font-weight:700}
 .member-description-preview em{font-style:italic}
 .member-description-preview a{display:inline;color:#94714b;text-decoration:underline;margin:0}
@@ -319,7 +328,19 @@ body.gallery-zoom-active{overflow:hidden}
 <label>Absatzabstand<select id="member-description-gap"><option value="0">Keiner</option><option value="8">Klein</option><option value="16">Normal</option><option value="24">Gross</option></select></label>
 </div>
 <textarea id="member-description" placeholder="Kurze Firmenbeschreibung"></textarea>
-<p class="help">Text markieren und B, I oder Link verwenden. Ausrichtung und Abstände direkt rechts in der Vorschau prüfen.</p></div>
+<p class="help">Einmal Enter = Zeilenumbruch. Zweimal Enter = neuer Absatz. Die Einstellungen oben gelten für den ganzen Text.</p>
+<div class="member-paragraph-tools">
+ <div class="tile-head"><strong>Einzelnen Absatz gestalten</strong><small>Nur dieser Absatz</small></div>
+ <p class="help">Klicke im Text auf einen Absatz oder wähle ihn unten aus. So kannst du zum Beispiel den Abstand nach der Überschrift separat einstellen.</p>
+ <label for="member-paragraph-select">Absatz auswählen</label>
+ <select id="member-paragraph-select" aria-label="Absatz für die einzelne Gestaltung wählen"></select>
+ <div class="member-paragraph-options">
+  <label>Darstellung<select id="member-paragraph-heading"><option value="normal">Normal</option><option value="heading">Überschrift</option></select></label>
+  <label>Ausrichtung<select id="member-paragraph-align"><option value="">Wie gesamter Text</option><option value="left">Linksbündig</option><option value="justify">Blocksatz</option><option value="center">Zentriert</option></select></label>
+  <label>Zeilenabstand<select id="member-paragraph-line"><option value="">Wie gesamter Text</option><option value="1.2">Sehr eng</option><option value="1.4">Eng</option><option value="1.6">Normal</option><option value="1.8">Grosszügig</option><option value="2">Weit</option></select></label>
+  <label>Abstand danach<select id="member-paragraph-gap"><option value="">Wie gesamter Text</option><option value="0">Keiner</option><option value="8">8 px</option><option value="16">16 px</option><option value="24">24 px</option><option value="32">32 px</option><option value="48">48 px</option></select></label>
+ </div>
+</div></div>
 <div class="fields-2"><div class="field"><label for="member-phone">Telefon <span class="optional">Optional</span></label><input id="member-phone" type="tel" placeholder="+41 ..."></div><div class="field"><label for="member-email">E-Mail <span class="optional">Optional</span></label><input id="member-email" type="email" placeholder="name@firma.ch"></div></div><div class="field"><label for="member-url">Webseite <span class="optional">Optional</span></label><input id="member-url" type="url" placeholder="https://..."></div>
 <div class="field"><label>Firmenlogo</label><div class="inline-upload"><img id="member-logo-thumb" src="/logos/onur.jpg" alt="Firmenlogo"><div><strong>Logo austauschen</strong><p>Das bestehende Logo bleibt erhalten, solange du kein neues hochlädst.</p><button class="btn small" id="member-logo-button" type="button">Logo hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-logo-input" class="hidden"></div></div><p class="member-media-status" id="member-logo-upload-status" role="status" aria-live="polite"></p><input class="member-image-path" id="member-logo-path" type="text" placeholder="/logos/firmenlogo.jpg" aria-label="Bereits gespeicherten Logopfad verwenden"><p class="help">Alternativ einen bestehenden GitHub Bildpfad eintragen.</p></div>
 <div class="field"><label>Profilfoto oder Firmenfoto <span class="optional">Optional</span></label><div class="inline-upload"><img id="member-photo-thumb" src="/admin/brand.svg" alt="Profilfoto"><div><strong>Personenfoto / Firmenbild</strong><p>Ein Foto zur Vorstellung der Person oder Firma. Das Logo bleibt separat.</p><button class="btn small" id="member-photo-button" type="button">Foto hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-photo-input" class="hidden"></div></div><p class="member-media-status" id="member-photo-upload-status" role="status" aria-live="polite">Noch kein Foto hochgeladen.</p><input class="member-image-path" id="member-photo-path" type="text" placeholder="/mitglieder/foto.jpg" aria-label="Bereits gespeicherten Profilbildpfad verwenden"><p class="help">JPG, PNG oder WebP, maximal 4 MB. Originale bleiben auf deinem Computer unverändert.</p></div>
