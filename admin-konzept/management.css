@@ -234,3 +234,8 @@
  .entity-icon img,.member-preview-logo img,.member-preview-photo-wrap img{transition:none}
  .entity-card:hover .entity-icon img,.member-preview-logo:hover img,.member-preview-photo-wrap img:hover{transform:none}
 }
+
+/* Baukarussell gold outline language: discreet across the test admin. */
+.entity-card,.entity-icon,.inline-upload,.inline-upload img,.inline-upload .preview-icon,.member-preview-logo,.cover-inline,.gallery-workspace{border-color:rgba(177,145,101,.45)}
+.member-social-row button,.member-preview-social a,.entity-controls .btn{border:1px solid rgba(177,145,101,.6)}
+.entity-card:hover,.member-preview-logo:hover,.inline-upload:hover{border-color:var(--gold)}
