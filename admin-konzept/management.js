@@ -224,7 +224,7 @@ function renderMembers(){
 }
 function memberItem(){return members.find(x=>x.id===chosenMember)}
 function newMember(){
- const item={id:id(),name:'',person:'',role:'',phone:'',email:'',url:'',description:'',logo:'',photo:'',socials:[],public:true};
+ const item={id:id(),name:'',person:'',role:'',street:'',postalCode:'',city:'',country:'',phone:'',email:'',url:'',description:'',logo:'',photo:'',photoFit:'contain',photoZoom:100,photoPositionX:50,photoPositionY:50,socials:[],public:true};
  members.push(item);save('bk-demo-members-v1',members);editMember(item.id);
 }
 function editMember(memberId){
@@ -240,6 +240,15 @@ function editMember(memberId){
  memberMediaStatus('photo',m.photo?'Gespeichertes Foto vorhanden.':'Noch kein Foto hochgeladen.');
  memberMediaStatus('logo','Das bestehende Logo wird nur bei einem neuen Upload ersetzt.');
  $('member-person').value=m.person||'';$('member-role').value=m.role||'';
+ $('member-street').value=m.street||'';
+ $('member-postal').value=m.postalCode||'';
+ $('member-city').value=m.city||'';
+ $('member-country').value=m.country||'';
+ $('member-photo-fit').value=m.photoFit||'contain';
+ $('member-photo-zoom').value=m.photoZoom??100;
+ $('member-photo-x').value=m.photoPositionX??50;
+ $('member-photo-y').value=m.photoPositionY??50;
+ updateMemberPhotoNumbers();
  $('member-phone').value=m.phone||'';$('member-email').value=m.email||'';
  if(!Array.isArray(m.socials))m.socials=[];
  $('member-logo-path').value=m.logo||'';
@@ -399,6 +408,13 @@ function memberPreview(){
  $('member-photo-thumb').src=m.photo||'/admin/brand.svg';
  $('member-preview-photo-wrap').classList.toggle('hidden',!m.photo);
  if(m.photo)$('member-preview-photo').src=m.photo;
+ for(const el of [$('member-photo-thumb'),$('member-preview-photo')]){
+  const x=m.photoPositionX??50,y=m.photoPositionY??50;
+  el.style.objectFit=m.photoFit||'contain';
+  el.style.objectPosition=x+'% '+y+'%';
+  el.style.transformOrigin=x+'% '+y+'%';
+  el.style.transform='scale('+((m.photoZoom??100)/100)+')';
+ }
  $('member-preview-person').textContent=[m.person,m.role].filter(Boolean).join(' · ');
  const contact=$('member-preview-contacts');contact.replaceChildren();
  function contactLink(text,href){
@@ -406,6 +422,8 @@ function memberPreview(){
   if(href){const a=make('a','',text);a.href=href;a.target=href.startsWith('http')?'_blank':'_self';if(a.target==='_blank')a.rel='noopener noreferrer';contact.append(a);}
   else contact.append(make('span','',text));
  }
+ const addressLines=[m.street,[m.postalCode,m.city].filter(Boolean).join(' '),m.country].filter(Boolean);
+ if(addressLines.length)contact.append(make('span','member-address',addressLines.join('\n')));
  if(m.phone)contactLink('☎ '+m.phone,'tel:'+String(m.phone).replace(/[^+\d]/g,''));
  if(m.email)contactLink('✉ '+m.email,'mailto:'+String(m.email).trim());
  if(m.url)contactLink('↗ Webseite ansehen',safeHref(m.url));
@@ -424,6 +442,10 @@ function changeMember(){
  const m=memberItem();if(!m)return;
  m.name=$('member-name').value;m.url=$('member-url').value;
  m.person=$('member-person').value;m.role=$('member-role').value;
+ m.street=$('member-street').value;
+ m.postalCode=$('member-postal').value;
+ m.city=$('member-city').value;
+ m.country=$('member-country').value;
  m.phone=$('member-phone').value;m.email=$('member-email').value;
  const newDescription=$('member-description').value;
  if(newDescription!==m.description){
@@ -434,13 +456,37 @@ function changeMember(){
  m.descriptionAlign=$('member-description-align').value;
  memberPreview();save('bk-demo-members-v1',members);
 }
+function updateMemberPhotoNumbers(){
+ $('member-photo-zoom-value').textContent=$('member-photo-zoom').value+' %';
+ $('member-photo-x-value').textContent=$('member-photo-x').value==='50'?'Mitte':$('member-photo-x').value+' %';
+ $('member-photo-y-value').textContent=$('member-photo-y').value==='50'?'Mitte':$('member-photo-y').value+' %';
+}
+function changeMemberPhotoView(){
+ const m=memberItem();if(!m)return;
+ m.photoFit=$('member-photo-fit').value;
+ m.photoZoom=Number($('member-photo-zoom').value);
+ m.photoPositionX=Number($('member-photo-x').value);
+ m.photoPositionY=Number($('member-photo-y').value);
+ updateMemberPhotoNumbers();
+ memberPreview();save('bk-demo-members-v1',members);
+}
+for(const key of ['member-photo-fit','member-photo-zoom','member-photo-x','member-photo-y'])$(key).addEventListener('input',changeMemberPhotoView);
+$('member-photo-reset').onclick=()=>{
+ $('member-photo-fit').value='contain';
+ $('member-photo-zoom').value='100';$('member-photo-x').value='50';$('member-photo-y').value='50';
+ changeMemberPhotoView();
+};
 $('member-add').onclick=newMember;
+$('member-add-from-editor').onclick=()=>{
+ if(cloudDirty.members&&!window.confirm('Die letzten Änderungen sind noch nicht als privater Entwurf gespeichert. Trotzdem neues Mitglied öffnen?'))return;
+ newMember();
+};
 $('member-back').onclick=()=>{renderMembers();api.page('members')};
 $('member-remove').onclick=()=>{const m=memberItem();if(!m)return;
  removeWithConfirm('Mitglied',m.name||'Neues Mitglied',()=>{
  members=members.filter(x=>x.id!==m.id);chosenMember=null;save('bk-demo-members-v1',members);renderMembers();api.page('members');
  });};
-['member-name','member-url','member-person','member-role','member-phone','member-email','member-description','member-public','member-description-align'].forEach(x=>$(x).addEventListener('input',changeMember));
+['member-name','member-url','member-person','member-role','member-street','member-postal','member-city','member-country','member-phone','member-email','member-description','member-public','member-description-align'].forEach(x=>$(x).addEventListener('input',changeMember));
 $('member-description-line').addEventListener('change',applyMemberLineHeight);
 $('member-description').addEventListener('click',showMemberCurrentLineHeight);
 $('member-description').addEventListener('keyup',showMemberCurrentLineHeight);
