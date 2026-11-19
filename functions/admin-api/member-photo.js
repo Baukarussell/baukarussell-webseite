@@ -28,7 +28,7 @@ export async function onRequestPost({request,env}){
   const raw=await request.formData();
   const file=raw.get('file');
   const kind=raw.get('kind');
-  if(kind!=='mitglied'||!(file instanceof File))return json({error:'Bitte ein Mitgliedsfoto wählen.'},400);
+  if(kind!=='mitglied'||!file||typeof file.arrayBuffer!=='function'||typeof file.size!=='number'||typeof file.name!=='string')return json({error:'Bitte ein Mitgliedsfoto wählen.'},400);
   if(file.size<100||file.size>MAX_FILE_BYTES)return json({error:'Foto zu gross. Bitte unter 4 MB verkleinern.'},413);
   const bytes=new Uint8Array(await file.arrayBuffer());
   const ext=fileExt(bytes);
@@ -52,5 +52,5 @@ export async function onRequestPost({request,env}){
   const saved=await response.json();
   if(!saved?.content?.sha)return json({error:'GitHub hat das Foto nicht bestätigt.'},502);
   return json({saved:true,url:'/'+path,filename,branch:BK_BRANCH,publicRepository:true,publishedOnWebsite:false});
- }catch(_){return json({error:'Foto konnte nicht hochgeladen werden.'},503)}
+ }catch(_){return json({error:'Foto konnte nicht hochgeladen werden. Bitte GitHub Anmeldung und Dateiformat prüfen.'},503)}
 }
