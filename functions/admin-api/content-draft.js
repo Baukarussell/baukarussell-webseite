@@ -30,11 +30,15 @@ function cleanItem(item,kind){
   return {id,title,date,location,description};
  }
  const fields={};
- const limits={name:240,person:200,role:180,phone:100,email:250,url:700,description:16000,logo:320,photo:320,descriptionAlign:12,descriptionLineHeight:5,descriptionParagraphGap:4};
+ const limits={name:240,person:200,role:180,phone:100,email:250,url:700,description:16000,logo:320,photo:320,street:240,postalCode:30,city:150,country:150,photoFit:12,descriptionAlign:12,descriptionLineHeight:5,descriptionParagraphGap:4};
  for(const [key,limit] of Object.entries(limits)){
-  const defaults={descriptionAlign:'left',descriptionLineHeight:'1.6',descriptionParagraphGap:'16'};
+  const defaults={photoFit:'contain',descriptionAlign:'left',descriptionLineHeight:'1.6',descriptionParagraphGap:'16'};
   const val=str(item[key]??defaults[key]??'',limit);if(val===null)return null;fields[key]=val;
  }
+ if(!['contain','cover'].includes(fields.photoFit))return null;
+ const photoZoom=item.photoZoom??100,photoPositionX=item.photoPositionX??50,photoPositionY=item.photoPositionY??50;
+ if(![photoZoom,photoPositionX,photoPositionY].every(n=>typeof n==='number'&&Number.isInteger(n)))return null;
+ if(photoZoom<80||photoZoom>160||photoPositionX<0||photoPositionX>100||photoPositionY<0||photoPositionY>100)return null;
  if(!['left','justify','center'].includes(fields.descriptionAlign))return null;
  if(!['1.4','1.6','1.8','2'].includes(fields.descriptionLineHeight))return null;
  if(!['0','8','16','24'].includes(fields.descriptionParagraphGap))return null;
@@ -62,7 +66,7 @@ function cleanItem(item,kind){
   if(platform===null||url===null||!validLink(url)||!/^[a-z0-9_-]+$/.test(platform))return null;
   socials.push({platform,url});
  }
- return {id,...fields,descriptionParagraphStyles,public:item.public!==false,socials};
+ return {id,...fields,photoZoom,photoPositionX,photoPositionY,descriptionParagraphStyles,public:item.public!==false,socials};
 }
 function normalized(data,kind){
  if(!Array.isArray(data)||data.length>(kind==='members'?90:100))return null;
