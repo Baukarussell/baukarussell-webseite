@@ -159,7 +159,7 @@ async function uploadMemberImage(field,originalFile){
    // Keep the selected image visible while Cloudflare deploys the new test asset.
    const local=URL.createObjectURL(file);
    $(isPhoto?'member-photo-thumb':'member-logo-thumb').src=local;
-   if(isPhoto){$('member-preview-photo').src=local;$('member-preview-photo-wrap').classList.remove('hidden');}
+   if(isPhoto){$('member-preview-photo').src=local;$('member-photo-direct').classList.remove('hidden');}
    else $('member-preview-logo').src=local;
   }
   memberMediaStatus(field,label+' auf GitHub gespeichert. Bitte jetzt oben «Entwurf speichern» wählen.','success');
@@ -244,11 +244,6 @@ function editMember(memberId){
  $('member-postal').value=m.postalCode||'';
  $('member-city').value=m.city||'';
  $('member-country').value=m.country||'';
- $('member-photo-fit').value=m.photoFit||'contain';
- $('member-photo-zoom').value=m.photoZoom??100;
- $('member-photo-x').value=m.photoPositionX??50;
- $('member-photo-y').value=m.photoPositionY??50;
- updateMemberPhotoNumbers();
  $('member-phone').value=m.phone||'';$('member-email').value=m.email||'';
  if(!Array.isArray(m.socials))m.socials=[];
  $('member-logo-path').value=m.logo||'';
@@ -406,15 +401,10 @@ function memberPreview(){
  renderMemberDescription(m);
  for(const elem of [$('member-preview-logo'),$('member-logo-thumb')]){elem.src=m.logo||'/admin/brand.svg';}
  $('member-photo-thumb').src=m.photo||'/admin/brand.svg';
- $('member-preview-photo-wrap').classList.toggle('hidden',!m.photo);
+ $('member-photo-direct').classList.toggle('hidden',!m.photo);
  if(m.photo)$('member-preview-photo').src=m.photo;
- for(const el of [$('member-photo-thumb'),$('member-preview-photo')]){
-  const x=m.photoPositionX??50,y=m.photoPositionY??50;
-  el.style.objectFit=m.photoFit||'contain';
-  el.style.objectPosition=x+'% '+y+'%';
-  el.style.transformOrigin=x+'% '+y+'%';
-  el.style.transform='scale('+((m.photoZoom??100)/100)+')';
- }
+ $('member-photo-crop-toggle').textContent=m.photoFit==='cover'?'Ganzes Foto zeigen':'Ausschnitt wählen';
+ applyMemberPhotoFrame(m);
  $('member-preview-person').textContent=[m.person,m.role].filter(Boolean).join(' · ');
  const contact=$('member-preview-contacts');contact.replaceChildren();
  function contactLink(text,href){
@@ -456,36 +446,62 @@ function changeMember(){
  m.descriptionAlign=$('member-description-align').value;
  memberPreview();save('bk-demo-members-v1',members);
 }
-function updateMemberPhotoNumbers(){
- $('member-photo-zoom-value').textContent=$('member-photo-zoom').value+' %';
- $('member-photo-x-value').textContent=$('member-photo-x').value==='50'?'Mitte':$('member-photo-x').value+' %';
- $('member-photo-y-value').textContent=$('member-photo-y').value==='50'?'Mitte':$('member-photo-y').value+' %';
+function applyMemberPhotoFrame(member){
+ if(!member)return;
+ const x=member.photoPositionX??50,y=member.photoPositionY??50;
+ for(const el of [$('member-photo-thumb'),$('member-preview-photo')]){
+  el.style.objectFit=member.photoFit||'contain';
+  el.style.objectPosition=x+'% '+y+'%';
+  el.style.transformOrigin=x+'% '+y+'%';
+  el.style.transform='scale('+((member.photoZoom??100)/100)+')';
+ }
 }
-function changeMemberPhotoView(){
- const m=memberItem();if(!m)return;
- m.photoFit=$('member-photo-fit').value;
- m.photoZoom=Number($('member-photo-zoom').value);
- m.photoPositionX=Number($('member-photo-x').value);
- m.photoPositionY=Number($('member-photo-y').value);
- updateMemberPhotoNumbers();
+$('member-photo-crop-toggle').onclick=()=>{
+ const m=memberItem();if(!m||!m.photo)return;
+ m.photoFit=m.photoFit==='cover'?'contain':'cover';
+ m.photoZoom=100;m.photoPositionX=50;m.photoPositionY=50;
  memberPreview();save('bk-demo-members-v1',members);
+};
+const movablePhoto=$('member-preview-photo-wrap');
+let photoGesture=null;
+function finishPhotoGesture(ev){
+ if(!photoGesture||ev.pointerId!==photoGesture.pointerId)return;
+ const gesture=photoGesture;photoGesture=null;
+ movablePhoto.classList.remove('is-dragging');
+ if(movablePhoto.hasPointerCapture?.(ev.pointerId))movablePhoto.releasePointerCapture(ev.pointerId);
+ if(gesture.changed)save('bk-demo-members-v1',members);
 }
-for(const key of ['member-photo-fit','member-photo-zoom','member-photo-x','member-photo-y'])$(key).addEventListener('input',changeMemberPhotoView);
-$('member-photo-reset').onclick=()=>{
- $('member-photo-fit').value='contain';
- $('member-photo-zoom').value='100';$('member-photo-x').value='50';$('member-photo-y').value='50';
- changeMemberPhotoView();
-};
+movablePhoto.addEventListener('pointerdown',ev=>{
+ const m=memberItem();
+ if(!m||!m.photo||ev.button!==0||photoGesture)return;
+ ev.preventDefault();
+ photoGesture={pointerId:ev.pointerId,memberId:m.id,startX:ev.clientX,startY:ev.clientY,x:m.photoPositionX??50,y:m.photoPositionY??50,changed:false};
+ movablePhoto.setPointerCapture(ev.pointerId);movablePhoto.classList.add('is-dragging');
+});
+movablePhoto.addEventListener('pointermove',ev=>{
+ const g=photoGesture;if(!g||g.pointerId!==ev.pointerId)return;
+ const m=memberItem();if(!m||m.id!==g.memberId)return;
+ const rect=movablePhoto.getBoundingClientRect();
+ const sign=m.photoFit==='cover'?-1:1;
+ const x=Math.max(0,Math.min(100,Math.round(g.x+sign*(ev.clientX-g.startX)/Math.max(1,rect.width)*100)));
+ const y=Math.max(0,Math.min(100,Math.round(g.y+sign*(ev.clientY-g.startY)/Math.max(1,rect.height)*100)));
+ if(x===m.photoPositionX&&y===m.photoPositionY)return;
+ m.photoPositionX=x;m.photoPositionY=y;g.changed=true;applyMemberPhotoFrame(m);
+});
+movablePhoto.addEventListener('pointerup',finishPhotoGesture);
+movablePhoto.addEventListener('pointercancel',finishPhotoGesture);
+movablePhoto.addEventListener('keydown',ev=>{
+ if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(ev.key))return;
+ const m=memberItem();if(!m||!m.photo)return;
+ ev.preventDefault();const sign=m.photoFit==='cover'?-1:1;
+ if(ev.key==='ArrowLeft')m.photoPositionX=Math.max(0,Math.min(100,(m.photoPositionX??50)-5*sign));
+ if(ev.key==='ArrowRight')m.photoPositionX=Math.max(0,Math.min(100,(m.photoPositionX??50)+5*sign));
+ if(ev.key==='ArrowUp')m.photoPositionY=Math.max(0,Math.min(100,(m.photoPositionY??50)-5*sign));
+ if(ev.key==='ArrowDown')m.photoPositionY=Math.max(0,Math.min(100,(m.photoPositionY??50)+5*sign));
+ applyMemberPhotoFrame(m);save('bk-demo-members-v1',members);
+});
 $('member-add').onclick=newMember;
-$('member-add-from-editor').onclick=()=>{
- if(cloudDirty.members&&!window.confirm('Die letzten Änderungen sind noch nicht als privater Entwurf gespeichert. Trotzdem neues Mitglied öffnen?'))return;
- newMember();
-};
 $('member-back').onclick=()=>{renderMembers();api.page('members')};
-$('member-remove').onclick=()=>{const m=memberItem();if(!m)return;
- removeWithConfirm('Mitglied',m.name||'Neues Mitglied',()=>{
- members=members.filter(x=>x.id!==m.id);chosenMember=null;save('bk-demo-members-v1',members);renderMembers();api.page('members');
- });};
 ['member-name','member-url','member-person','member-role','member-street','member-postal','member-city','member-country','member-phone','member-email','member-description','member-public','member-description-align'].forEach(x=>$(x).addEventListener('input',changeMember));
 $('member-description-line').addEventListener('change',applyMemberLineHeight);
 $('member-description').addEventListener('click',showMemberCurrentLineHeight);
