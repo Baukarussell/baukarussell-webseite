@@ -29,7 +29,7 @@ let projects=getSaved('bk-demo-projects-v1',[]);
 let registrations=getSaved('bk-demo-registrations-v1',[]);
 let aboutPhotos=getSaved('bk-demo-about-photos-v1',['/mitglieder.jpg']);
 let chosenMember=null,chosenProject=null,chosenRegistration=null;
-let selectedMemberParagraph=0;
+
 let dragAbout=null,temporaryUploads=false;
 const cloudKinds={members:'bk-demo-members-v1',projects:'bk-demo-projects-v1'};
 function hasSessionDraft(key){try{return sessionStorage.getItem(key)!==null;}catch(_){return false;}}
@@ -236,9 +236,7 @@ function editMember(memberId){
  $('member-description').value=m.description||'';$('member-public').checked=m.public!==false;
  $('member-description-align').value=m.descriptionAlign||'left';
  $('member-description-line').value=m.descriptionLineHeight||'1.6';
- $('member-description-gap').value=m.descriptionParagraphGap||'16';
- selectedMemberParagraph=0;
- renderParagraphControls(m);
+
  memberMediaStatus('photo',m.photo?'Gespeichertes Foto vorhanden.':'Noch kein Foto hochgeladen.');
  memberMediaStatus('logo','Das bestehende Logo wird nur bei einem neuen Upload ersetzt.');
  $('member-person').value=m.person||'';$('member-role').value=m.role||'';
@@ -297,86 +295,22 @@ function renderMemberInline(parent,plain){
  }
  if(from<plain.length)parent.append(document.createTextNode(plain.slice(from)));
 }
-function memberParagraphs(raw){
- return String(raw||'').replace(/\r\n?/g,'\n').split('\n\n');
-}
-function remapMemberParagraphStyles(oldText,newText,styles){
- const prev=memberParagraphs(oldText),next=memberParagraphs(newText);
- if(prev.length===next.length)return Array.isArray(styles)?styles:[];
- const old=Array.isArray(styles)?styles:[];
- const map=new Array(next.length).fill(null),matchedOld=new Set();
- // Keep formats attached to unchanged paragraphs when other paragraphs are inserted.
- let cursor=0;
- next.forEach((paragraph,i)=>{
-  for(let j=cursor;j<prev.length;j++){
-   if(paragraph!==prev[j])continue;
-   map[i]=old[j]||null;matchedOld.add(j);cursor=j+1;break;
-  }
- });
- // Preserve the edited paragraph style when it remains at the same position.
- next.forEach((paragraph,i)=>{
-  if(map[i]||i>=prev.length||matchedOld.has(i))return;
-  if(old[i]&&prev[i]!==paragraph)map[i]=old[i];
- });
- return map.map(x=>x||{});
-}
-function renderParagraphControls(member){
- const selector=$('member-paragraph-select');
- const texts=memberParagraphs($('member-description').value);
- selectedMemberParagraph=Math.min(Math.max(0,selectedMemberParagraph),texts.length-1);
- selector.replaceChildren();
- texts.forEach((paragraph,i)=>{
-  const option=make('option','',(i+1)+'. '+(paragraph.trim().replace(/\s+/g,' ').slice(0,60)||'(Leerzeile)'));
-  option.value=String(i);selector.append(option);
- });
- selector.value=String(selectedMemberParagraph);
- const style=(Array.isArray(member.descriptionParagraphStyles)?member.descriptionParagraphStyles:[])[selectedMemberParagraph]||{};
- $('member-paragraph-heading').value=style.heading===true?'heading':'normal';
- $('member-paragraph-align').value=style.align||'';
- $('member-paragraph-line').value=style.line||'';
- $('member-paragraph-gap').value=style.gap||'';
-}
-function selectMemberParagraphFromCursor(){
- const member=memberItem();if(!member)return;
- const field=$('member-description'),prefix=field.value.slice(0,field.selectionStart);
- selectedMemberParagraph=memberParagraphs(prefix).length-1;
- renderParagraphControls(member);
-}
-function updateMemberParagraphFormat(){
- const member=memberItem();if(!member)return;
- const styles=Array.isArray(member.descriptionParagraphStyles)?member.descriptionParagraphStyles.slice():[];
- while(styles.length<=selectedMemberParagraph)styles.push({});
- styles[selectedMemberParagraph]={
-  heading:$('member-paragraph-heading').value==='heading',
-  align:$('member-paragraph-align').value,
-  line:$('member-paragraph-line').value,
-  gap:$('member-paragraph-gap').value
- };
- member.descriptionParagraphStyles=styles;
- memberPreview();save(cloudKinds.members,members);
-}
 function renderMemberDescription(member){
  const root=$('member-preview-description');
  root.replaceChildren();
- const gap=Number(member.descriptionParagraphGap??'16');
- const paragraphs=memberParagraphs(member.description||'Firmenbeschreibung');
- const styles=Array.isArray(member.descriptionParagraphStyles)?member.descriptionParagraphStyles:[];
+ // One Enter inserts a separate paragraph; extra Enter presses create visible blank lines.
+ const paragraphs=String(member.description||'Firmenbeschreibung').replace(/\r\n?/g,'\n').split('\n');
  paragraphs.forEach((paragraph,index)=>{
   const p=make('p');
-  const config=styles[index]||{};
-  p.style.textAlign=config.align||member.descriptionAlign||'left';
-  p.style.lineHeight=config.line||member.descriptionLineHeight||'1.6';
-  p.style.marginBottom=index===paragraphs.length-1?'0':(config.gap!==undefined&&config.gap!==''?Number(config.gap):gap)+'px';
-  if(config.heading===true)p.classList.add('member-paragraph-heading');
-  renderMemberInline(p,paragraph||'\u00a0');root.append(p);
+  p.style.textAlign=member.descriptionAlign||'left';
+  p.style.lineHeight=member.descriptionLineHeight||'1.6';
+  p.style.marginBottom=index===paragraphs.length-1?'0':'12px';
+  renderMemberInline(p,paragraph||'\u00a0');
+  root.append(p);
  });
 }
 function formatMemberSelection(kind){
  const field=$('member-description');field.focus();
- if(kind==='paragraph'){
-  field.setRangeText('\n\n',field.selectionStart,field.selectionEnd,'end');
-  changeMember();field.focus();return;
- }
  const selected=field.value.slice(field.selectionStart,field.selectionEnd);
  let before='',after='',content=selected;
  if(kind==='bold'){before='**';after='**';if(!content)content='Text';}
@@ -429,19 +363,10 @@ function changeMember(){
  m.name=$('member-name').value;m.url=$('member-url').value;
  m.person=$('member-person').value;m.role=$('member-role').value;
  m.phone=$('member-phone').value;m.email=$('member-email').value;
- const incomingDescription=$('member-description').value;
- if(incomingDescription!==m.description){
-  m.descriptionParagraphStyles=remapMemberParagraphStyles(m.description||'',incomingDescription,m.descriptionParagraphStyles||[]);
-  m.description=incomingDescription;
- } 
+ m.description=$('member-description').value;
  m.public=$('member-public').checked;
  m.descriptionAlign=$('member-description-align').value;
  m.descriptionLineHeight=$('member-description-line').value;
- m.descriptionParagraphGap=$('member-description-gap').value;
- if(document.activeElement===$('member-description')){
-  selectedMemberParagraph=memberParagraphs($('member-description').value.slice(0,$('member-description').selectionStart)).length-1;
- }
- renderParagraphControls(m);
  memberPreview();save('bk-demo-members-v1',members);
 }
 $('member-add').onclick=newMember;
@@ -450,12 +375,8 @@ $('member-remove').onclick=()=>{const m=memberItem();if(!m)return;
  removeWithConfirm('Mitglied',m.name||'Neues Mitglied',()=>{
  members=members.filter(x=>x.id!==m.id);chosenMember=null;save('bk-demo-members-v1',members);renderMembers();api.page('members');
  });};
-['member-name','member-url','member-person','member-role','member-phone','member-email','member-description','member-public','member-description-align','member-description-line','member-description-gap'].forEach(x=>$(x).addEventListener('input',changeMember));
+['member-name','member-url','member-person','member-role','member-phone','member-email','member-description','member-public','member-description-align','member-description-line'].forEach(x=>$(x).addEventListener('input',changeMember));
 document.querySelectorAll('[data-member-format]').forEach(button=>button.onclick=()=>formatMemberSelection(button.dataset.memberFormat));
-$('member-paragraph-select').onchange=()=>{selectedMemberParagraph=Number($('member-paragraph-select').value)||0;renderParagraphControls(memberItem());};
-for(const id of ['member-paragraph-heading','member-paragraph-align','member-paragraph-line','member-paragraph-gap'])$(id).onchange=updateMemberParagraphFormat;
-$('member-description').addEventListener('click',selectMemberParagraphFromCursor);
-$('member-description').addEventListener('keyup',selectMemberParagraphFromCursor);
 $('member-save-demo').onclick=()=>{changeMember();renderMembers();saveCloudCollection('members');};
 $('member-save-cloud').onclick=()=>saveCloudCollection('members');
 $('member-social-add').onclick=()=>{
