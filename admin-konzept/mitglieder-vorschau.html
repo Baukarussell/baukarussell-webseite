@@ -159,7 +159,11 @@
 .detail-photo img{object-fit:contain;object-position:center center;transition:transform .2s ease}
 .detail-hero.no-photo{grid-template-columns:1fr;max-width:960px}
 .contact-line.member-address{white-space:pre-line}
-.contact-info .contact-line.member-address{font-size:15px;line-height:1.8;margin-bottom:19px}
+.contact-info .contact-line.member-address{font-size:15px;line-height:1.8;margin-bottom:10px}
+.contact-copy{display:inline-block;margin:2px 0 8px;padding:8px 14px;background:transparent;border:1px solid var(--gold);color:#8b6840;border-radius:3px;font:500 12px Inter,Arial,sans-serif;cursor:pointer;transition:border-color .2s,background .2s}
+.contact-copy:hover{background:#f9f3e8;border-color:#947140}
+.copy-feedback{font-size:11px;margin-left:10px;color:#6d7a63}
+
 .contact-section-detail{margin-top:28px}
 .contact-info .contact-line a{text-decoration:none}
 .contact-info .contact-line a:hover{text-decoration:underline}
@@ -176,6 +180,12 @@
 .back-link{border:0;background:transparent;cursor:pointer}
 .preview-disclaimer{font-size:11px;text-align:center;color:#8f7654;padding:12px;background:#f3ebdd;border-bottom:1px solid #eadac2}
 #profile-view.hidden+section{display:none}
+/* Restrained gold accents repeated throughout the member website preview. */
+.detail-photo,.contact-logo{outline:1px solid rgba(184,148,95,.45);outline-offset:5px}
+.mini-member,.all-members-grid button.mini-member{border-color:rgba(184,148,95,.4)!important}
+.mini-member:hover,.all-members-grid button.mini-member:hover{border-color:var(--gold)!important}
+.cta-buttons .btn,.social-icons .social-icon{border:1px solid rgba(184,148,95,.7)!important}
+.contact-info .contact-website{border-color:var(--gold)}
 @media(max-width:1100px){.detail-hero{align-items:start}.detail-photo{max-width:450px;width:100%}}
 @media(max-width:900px){.detail-description-wrap p{font-size:14px}.contact-section-detail{margin-top:0}}
 @media(max-width:640px){.detail-hero{gap:27px}.detail-person{margin-bottom:14px}.detail-description-wrap p{line-height:1.7;margin-bottom:12px}.all-members.listing-view{padding-top:120px}}
@@ -276,7 +286,7 @@
   }catch(_){return ''}
  }
  function inline(parent,value){
-  const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*\*(.+?)\*\*|\*(.+?)\*/g;
+  const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*\*\*(.+?)\*\*\*|\*\*(.+?)\*\*|\*(.+?)\*/g;
   let from=0,match;
   while((match=re.exec(value))!==null){
    if(match.index>from)parent.append(document.createTextNode(value.slice(from,match.index)));
@@ -285,8 +295,10 @@
     if(href){
      const a=make('a','',match[1]);a.href=href;a.target='_blank';a.rel='noopener noreferrer';parent.append(a);
     }else parent.append(document.createTextNode(match[0]));
-   }else if(match[3]!==undefined)parent.append(make('strong','',match[3]));
-   else parent.append(make('em','',match[4]));
+   }else if(match[3]!==undefined){
+    const bold=make('strong');bold.append(make('em','',match[3]));parent.append(bold);
+   }else if(match[4]!==undefined)parent.append(make('strong','',match[4]));
+   else parent.append(make('em','',match[5]));
    from=re.lastIndex;
   }
   if(from<value.length)parent.append(document.createTextNode(value.slice(from)));
@@ -359,13 +371,11 @@
   if(image){
    const photo=$('profile-photo');
    photo.src=image;photo.alt=(member.name||'Mitglied')+' Profilfoto';
-   const x=Number.isFinite(member.photoPositionX)?member.photoPositionX:50;
-   const y=Number.isFinite(member.photoPositionY)?member.photoPositionY:50;
-   const zoom=Number.isFinite(member.photoZoom)?Math.max(.8,Math.min(1.6,member.photoZoom/100)):1;
-   photo.style.objectFit=member.photoFit==='cover'?'cover':'contain';
-   photo.style.objectPosition=x+'% '+y+'%';
-   photo.style.transformOrigin=x+'% '+y+'%';
-   photo.style.transform='scale('+zoom+')';
+   // Always show the whole photo without stored cropping or scaling.
+   photo.style.objectFit='contain';
+   photo.style.objectPosition='center';
+   photo.style.transformOrigin='';
+   photo.style.transform='';
   }
   $('profile-logo').src=memberLogo(member);
   $('profile-logo').alt=(member.name||'Mitglied')+' Logo';
@@ -380,8 +390,18 @@
    const a=make('a','btn btn-secondary','E-Mail senden');a.href='mailto:'+member.email;$('profile-actions').append(a);
   }
   $('profile-contact-lines').replaceChildren();
-  const address=[member.street,[member.postalCode,member.city].filter(Boolean).join(' '),member.country].filter(Boolean);
-  if(address.length)$('profile-contact-lines').append(make('div','contact-line member-address',address.join('\n')));
+  const address=[member.name,member.street,[member.postalCode,member.city].filter(Boolean).join(' '),member.country].filter(Boolean);
+  if([member.street,member.postalCode,member.city,member.country].some(Boolean)){
+   const fullAddress=address.join('\n');
+   $('profile-contact-lines').append(make('div','contact-line member-address',fullAddress));
+   const copy=make('button','contact-copy','Adresse kopieren');copy.type='button';
+   const feedback=make('span','copy-feedback','');
+   copy.onclick=async()=>{
+    try{await navigator.clipboard.writeText(fullAddress);feedback.textContent='Kopiert';}
+    catch(_){feedback.textContent='Bitte Adresse markieren und kopieren.';}
+   };
+   $('profile-contact-lines').append(copy,feedback);
+  }
   if(member.phone){
    const line=make('div','contact-line');
    line.append(document.createTextNode('T '));
