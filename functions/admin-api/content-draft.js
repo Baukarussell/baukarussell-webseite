@@ -40,6 +40,19 @@ function cleanItem(item,kind){
  if(!['0','8','16','24'].includes(fields.descriptionParagraphGap))return null;
  if(!validPicture(fields.logo)||!validPicture(fields.photo)||!validLink(fields.url,true))return null;
  if(fields.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email))return null;
+ const rawParagraphStyles=item.descriptionParagraphStyles??[];
+ if(!Array.isArray(rawParagraphStyles)||rawParagraphStyles.length>120)return null;
+ const descriptionParagraphStyles=[];
+ for(const value of rawParagraphStyles){
+  if(!value||typeof value!=='object'||Array.isArray(value))return null;
+  const align=str(value.align??'',12),line=str(value.line??'',5),gap=str(value.gap??'',4);
+  if(align===null||line===null||gap===null)return null;
+  if(!['','left','justify','center'].includes(align)
+    ||!['','1.2','1.4','1.6','1.8','2'].includes(line)
+    ||!['','0','8','16','24','32','48'].includes(gap)
+    ||(value.heading!==undefined&&typeof value.heading!=='boolean'))return null;
+  descriptionParagraphStyles.push({align,line,gap,heading:value.heading===true});
+ }
  const social=Array.isArray(item.socials)?item.socials:[];
  if(social.length>24)return null;
  const socials=[];
@@ -49,7 +62,7 @@ function cleanItem(item,kind){
   if(platform===null||url===null||!validLink(url)||!/^[a-z0-9_-]+$/.test(platform))return null;
   socials.push({platform,url});
  }
- return {id,...fields,public:item.public!==false,socials};
+ return {id,...fields,descriptionParagraphStyles,public:item.public!==false,socials};
 }
 function normalized(data,kind){
  if(!Array.isArray(data)||data.length>(kind==='members'?90:100))return null;
