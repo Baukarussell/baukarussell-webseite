@@ -169,17 +169,15 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 .member-media-status[data-kind="success"]{color:#32673e}
 .member-media-status[data-kind="error"]{color:#973b2f}
 .member-address-fields{margin:15px 0 20px;padding:17px 15px 2px;background:#fbfaf7;border:1px solid #ece8e0;border-radius:9px}
-.member-photo-settings{border:1px solid #ece8e0;background:#faf9f6;border-radius:9px;padding:15px;margin:16px 0 3px;display:grid;gap:8px}
-.member-photo-settings>strong{font-weight:600;font-size:12px}
-.member-photo-settings>label,.member-photo-position-row label{font-size:11px;color:#78756d}
-.member-photo-settings select{background:white;border:1px solid #dedbd4;padding:9px;border-radius:6px;font-size:12px;width:100%}
-.member-photo-settings input[type=range]{width:100%;accent-color:#9c8264}
-.member-photo-settings output{float:right;font-size:11px;color:#9b7d54}
-.member-photo-position-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.member-photo-settings button{justify-self:start;margin-top:6px}
-.member-preview-photo-wrap{overflow:hidden;width:185px;height:235px;border-radius:8px}
-.member-preview-photo-wrap img{width:100%;height:100%;max-width:none;object-fit:contain;border:0;border-radius:0;transition:transform .2s ease}
-@media(max-width:550px){.member-photo-position-row{grid-template-columns:1fr}}
+.member-photo-direct{margin:0 auto 18px;width:185px;max-width:100%}
+.member-photo-direct .member-preview-photo-wrap{position:relative;display:block;overflow:hidden;width:185px;max-width:100%;height:235px;margin:0;border-radius:8px;cursor:grab;touch-action:none;background:#f5f2ed;outline-offset:4px}
+.member-photo-direct .member-preview-photo-wrap.is-dragging{cursor:grabbing}
+.member-photo-direct .member-preview-photo-wrap img{display:block;width:100%;height:100%;object-fit:contain;max-width:none;border:0;border-radius:0;pointer-events:none;user-select:none}
+.member-photo-drag-handle{pointer-events:none;position:absolute;bottom:10px;right:10px;width:29px;height:29px;border-radius:50%;background:#fffdf5e8;display:grid;place-items:center;color:#4e493d;border:1px solid #e2d8c6;box-shadow:0 1px 5px #0001;font-size:19px;line-height:1}
+.member-photo-quick-actions{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 0}
+.member-photo-quick-actions span{font-size:10px;color:#8a8175;line-height:1.4}
+.member-photo-quick-actions .btn{font-size:10px;padding:7px 9px;white-space:nowrap}
+@media(prefers-reduced-motion:reduce){.member-photo-direct .member-preview-photo-wrap img{transition:none!important}}
 .member-description-preview{font-size:12px;color:#74776f;overflow-wrap:anywhere;hyphens:auto}
 .member-description-preview p{margin:0;white-space:pre-wrap;color:inherit;font-size:inherit;text-align:inherit;line-height:inherit;min-height:1em}
 .member-description-preview strong{font-weight:700}
@@ -312,7 +310,7 @@ body.gallery-zoom-active{overflow:hidden}
 </section>
 <section id="member-editor" class="hidden">
 <button type="button" class="back" id="member-back">← Zurück zu Mitglieder</button>
-<div class="hero-heading"><div><div class="eyebrow">MITGLIEDER / BEARBEITEN</div><h1 id="member-editor-title">Mitglied bearbeiten.</h1><p class="sub">Alle Angaben und das Firmenlogo an einem Ort.</p></div><div class="manager-actions"><a class="btn" href="/admin-konzept/mitglieder-vorschau.html" target="_blank" rel="noopener noreferrer">Website Vorschau</a><button type="button" class="btn" id="member-save-demo">Entwurf speichern</button><button type="button" class="btn dark" id="member-add-from-editor">＋ Neues Mitglied</button><button type="button" class="btn" id="member-remove">Mitglied entfernen</button></div></div>
+<div class="hero-heading"><div><div class="eyebrow">MITGLIEDER / BEARBEITEN</div><h1 id="member-editor-title">Mitglied bearbeiten.</h1><p class="sub">Alle Angaben und das Firmenlogo an einem Ort.</p></div><div class="manager-actions"><a class="btn" href="/admin-konzept/mitglieder-vorschau.html" target="_blank" rel="noopener noreferrer">Website Vorschau</a><button type="button" class="btn" id="member-save-demo">Entwurf speichern</button></div></div>
 <div class="notice">Änderungen hier bleiben privat, bis wir sie ausdrücklich veröffentlichen. Fotos werden bereits beim Hochladen im öffentlichen GitHub Testbranch gespeichert. Bitte nur freigegebene Bilder verwenden.</div><p class="cloud-save-status" id="member-save-status-editor" role="status" aria-live="polite">Noch nicht als privater Entwurf gespeichert.</p>
 <div class="edit-layout">
 <div class="panel"><div class="panel-head"><h2>Firmenprofil</h2><p>Basisinformationen für die Mitgliederübersicht.</p></div><div class="panel-body">
@@ -341,22 +339,7 @@ body.gallery-zoom-active{overflow:hidden}
 <div class="fields-2"><div class="field"><label for="member-phone">Telefon <span class="optional">Optional</span></label><input id="member-phone" type="tel" placeholder="+41 ..."></div><div class="field"><label for="member-email">E-Mail <span class="optional">Optional</span></label><input id="member-email" type="email" placeholder="name@firma.ch"></div></div><div class="field"><label for="member-url">Webseite <span class="optional">Optional</span></label><input id="member-url" type="url" placeholder="https://..."></div>
 <div class="field"><label>Firmenlogo</label><div class="inline-upload"><img id="member-logo-thumb" src="/logos/onur.jpg" alt="Firmenlogo"><div><strong>Logo austauschen</strong><p>Das bestehende Logo bleibt erhalten, solange du kein neues hochlädst.</p><button class="btn small" id="member-logo-button" type="button">Logo hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-logo-input" class="hidden"></div></div><p class="member-media-status" id="member-logo-upload-status" role="status" aria-live="polite"></p><input class="member-image-path" id="member-logo-path" type="text" placeholder="/logos/firmenlogo.jpg" aria-label="Bereits gespeicherten Logopfad verwenden"><p class="help">Alternativ einen bestehenden GitHub Bildpfad eintragen.</p></div>
 <div class="field"><label>Profilfoto oder Firmenfoto <span class="optional">Optional</span></label><div class="inline-upload"><img id="member-photo-thumb" src="/admin/brand.svg" alt="Profilfoto"><div><strong>Personenfoto / Firmenbild</strong><p>Ein Foto zur Vorstellung der Person oder Firma. Das Logo bleibt separat.</p><button class="btn small" id="member-photo-button" type="button">Foto hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-photo-input" class="hidden"></div></div><p class="member-media-status" id="member-photo-upload-status" role="status" aria-live="polite">Noch kein Foto hochgeladen.</p><input class="member-image-path" id="member-photo-path" type="text" placeholder="/mitglieder/foto.jpg" aria-label="Bereits gespeicherten Profilbildpfad verwenden"><p class="help">JPG, PNG oder WebP, maximal 4 MB. Originale bleiben auf deinem Computer unverändert.</p>
-<div class="member-photo-settings">
- <strong>Foto anpassen</strong>
- <p class="help">Hier änderst du nur die Darstellung auf der Webseite. Das Original bleibt unverändert.</p>
- <label for="member-photo-fit">Bilddarstellung</label>
- <select id="member-photo-fit">
-  <option value="contain">Ganzes Foto zeigen</option>
-  <option value="cover">Bildausschnitt füllen</option>
- </select>
- <label for="member-photo-zoom">Bildgrösse <output id="member-photo-zoom-value">100 %</output></label>
- <input id="member-photo-zoom" type="range" min="80" max="160" step="5" value="100">
- <div class="member-photo-position-row">
-  <div><label for="member-photo-x">Horizontal <output id="member-photo-x-value">Mitte</output></label><input id="member-photo-x" type="range" min="0" max="100" step="5" value="50"></div>
-  <div><label for="member-photo-y">Vertikal <output id="member-photo-y-value">Mitte</output></label><input id="member-photo-y" type="range" min="0" max="100" step="5" value="50"></div>
- </div>
- <button type="button" class="btn small" id="member-photo-reset">Foto zentrieren und ganz anzeigen</button>
-</div></div>
+</div>
 <div class="member-social-editor">
 <div class="tile-head"><strong>Social Media & weitere Links</strong><small>Reihenfolge frei wählen</small></div>
 <p class="help">Die Hauptwebseite wird oben eingetragen und in der Vorschau nur einmal angezeigt. Hier kannst du LinkedIn, YouTube oder weitere Profile hinzufügen.</p>
@@ -365,7 +348,16 @@ body.gallery-zoom-active{overflow:hidden}
 </div>
 <div class="field"><label class="check-row"><input id="member-public" type="checkbox" checked> Mitglied auf der Webseite anzeigen</label><p class="help">Der Entwurf wird nicht automatisch veröffentlicht. Die spätere Sichtbarkeit wird beim Veröffentlichen berücksichtigt.</p></div>
 </div></div>
-<div class="panel"><div class="panel-head"><h2>Profilvorschau</h2><p>Firmenkarte, wie sie später erscheinen könnte.</p></div><div class="manager-preview"><div class="member-preview-logo"><img id="member-preview-logo" src="/logos/onur.jpg" alt="Logo Vorschau"></div><div id="member-preview-photo-wrap" class="member-preview-photo-wrap hidden"><img id="member-preview-photo" src="" alt="Profilfoto"></div>
+<div class="panel"><div class="panel-head"><h2>Profilvorschau</h2><p>Firmenkarte, wie sie später erscheinen könnte.</p></div><div class="manager-preview"><div class="member-preview-logo"><img id="member-preview-logo" src="/logos/onur.jpg" alt="Logo Vorschau"></div><div class="member-photo-direct hidden" id="member-photo-direct">
+ <div id="member-preview-photo-wrap" class="member-preview-photo-wrap" tabindex="0" role="group" aria-label="Profilfoto mit der Maus ziehen, um es zu verschieben. Auch die Pfeiltasten sind möglich.">
+  <img id="member-preview-photo" src="" alt="Profilfoto" draggable="false">
+  <span class="member-photo-drag-handle" aria-hidden="true">✥</span>
+ </div>
+ <div class="member-photo-quick-actions">
+  <span>Foto mit der Maus verschieben</span>
+  <button type="button" id="member-photo-crop-toggle" class="btn small">Ausschnitt wählen</button>
+ </div>
+</div>
 <h2 id="member-preview-name"></h2>
 <div id="member-preview-person" class="member-preview-person"></div>
 <div id="member-preview-description" class="member-description-preview"></div>
