@@ -30,10 +30,14 @@ function cleanItem(item,kind){
   return {id,title,date,location,description};
  }
  const fields={};
- const limits={name:240,person:200,role:180,phone:100,email:250,url:700,description:16000,logo:320,photo:320};
+ const limits={name:240,person:200,role:180,phone:100,email:250,url:700,description:16000,logo:320,photo:320,descriptionAlign:12,descriptionLineHeight:5,descriptionParagraphGap:4};
  for(const [key,limit] of Object.entries(limits)){
-  const val=str(item[key]||'',limit);if(val===null)return null;fields[key]=val;
+  const defaults={descriptionAlign:'left',descriptionLineHeight:'1.6',descriptionParagraphGap:'16'};
+  const val=str(item[key]??defaults[key]??'',limit);if(val===null)return null;fields[key]=val;
  }
+ if(!['left','justify','center'].includes(fields.descriptionAlign))return null;
+ if(!['1.4','1.6','1.8','2'].includes(fields.descriptionLineHeight))return null;
+ if(!['0','8','16','24'].includes(fields.descriptionParagraphGap))return null;
  if(!validPicture(fields.logo)||!validPicture(fields.photo)||!validLink(fields.url,true))return null;
  if(fields.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email))return null;
  const social=Array.isArray(item.socials)?item.socials:[];
