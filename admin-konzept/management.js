@@ -31,7 +31,8 @@ let aboutPhotos=getSaved('bk-demo-about-photos-v1',['/mitglieder.jpg']);
 let chosenMember=null,chosenProject=null,chosenRegistration=null;
 let dragAbout=null,temporaryUploads=false;
 const cloudKinds={members:'bk-demo-members-v1',projects:'bk-demo-projects-v1'};
-const hasPreviousLocal={members:sessionStorage.getItem(cloudKinds.members)!==null,projects:sessionStorage.getItem(cloudKinds.projects)!==null};
+function hasSessionDraft(key){try{return sessionStorage.getItem(key)!==null;}catch(_){return false;}}
+const hasPreviousLocal={members:hasSessionDraft(cloudKinds.members),projects:hasSessionDraft(cloudKinds.projects)};
 const cloudLoaded={members:false,projects:false},cloudLoading={members:false,projects:false},cloudDirty={members:false,projects:false};
 let restoringCloud=false;
 function cloudStatus(kind,message,status){
