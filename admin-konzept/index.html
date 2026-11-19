@@ -159,6 +159,21 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 .gallery-order-controls button:hover:not(:disabled){background:#fff}
 .gallery-order-controls button:disabled{opacity:.38;cursor:not-allowed}
 @media(max-width:620px){.tile-head{gap:8px;flex-wrap:wrap}}
+.member-text-tools{display:flex;gap:7px;margin:0 0 12px}
+.member-text-tools button{border:1px solid #dfded8;border-radius:6px;background:#faf9f5;min-width:32px;padding:7px 10px;font-size:12px;cursor:pointer}
+.member-text-tools button:hover{background:#f0ede5}
+.member-text-settings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:11px}
+.member-text-settings label{font-size:10px;color:#7a7f77;font-weight:500}
+.member-text-settings select{width:100%;margin-top:5px;padding:9px 6px;border:1px solid #e4e5df;border-radius:6px;background:#fff;color:#373b35;font-size:11px}
+.member-media-status{margin:7px 0 9px!important;font-size:11px;line-height:1.6;color:#8f8065}
+.member-media-status[data-kind="success"]{color:#32673e}
+.member-media-status[data-kind="error"]{color:#973b2f}
+.member-description-preview{font-size:12px;color:#74776f;overflow-wrap:anywhere;hyphens:auto}
+.member-description-preview p{margin:0;white-space:pre-line;color:inherit;font-size:inherit;text-align:inherit;line-height:inherit}
+.member-description-preview strong{font-weight:700}
+.member-description-preview em{font-style:italic}
+.member-description-preview a{display:inline;color:#94714b;text-decoration:underline;margin:0}
+@media(max-width:600px){.member-text-settings{grid-template-columns:1fr 1fr}.member-text-settings label:last-child{grid-column:1/-1}}
 .cloud-save-status{margin:10px 0 18px;color:#6b634e;background:#f9f5ec;border:1px solid #ebdfc9;border-radius:8px;padding:10px 12px;font-size:11px;line-height:1.7}
 .cloud-save-status[data-kind="ok"]{background:#e9f4e9;color:#356345;border-color:#d1e8d0}
 .cloud-save-status[data-kind="error"]{background:#fdf0ec;color:#8a4632;border-color:#f1d7cc}
@@ -292,10 +307,22 @@ body.gallery-zoom-active{overflow:hidden}
 <div class="field"><label for="member-name">Firmenname</label><input id="member-name" type="text" placeholder="Firmenname"></div>
 
 <div class="fields-2"><div class="field"><label for="member-person">Ansprechperson <span class="optional">Optional</span></label><input id="member-person" placeholder="Vorname Nachname"></div><div class="field"><label for="member-role">Funktion / Position <span class="optional">Optional</span></label><input id="member-role" placeholder="z.B. Geschäftsführung"></div></div>
-<div class="field"><label for="member-description">Beschreibung <span class="optional">Optional</span></label><textarea id="member-description" placeholder="Kurze Firmenbeschreibung"></textarea></div>
+<div class="field"><label for="member-description">Beschreibung <span class="optional">Optional</span></label>
+<div class="member-text-tools" role="toolbar" aria-label="Beschreibung formatieren">
+<button type="button" data-member-format="bold" title="Markierten Text fett">B</button>
+<button type="button" data-member-format="italic" title="Markierten Text kursiv"><em>I</em></button>
+<button type="button" data-member-format="link" title="Link einfügen">Link</button>
+</div>
+<div class="member-text-settings">
+<label>Textausrichtung<select id="member-description-align"><option value="left">Linksbündig</option><option value="justify">Blocksatz</option><option value="center">Zentriert</option></select></label>
+<label>Zeilenabstand<select id="member-description-line"><option value="1.4">Eng</option><option value="1.6">Normal</option><option value="1.8">Grosszügig</option><option value="2">Weit</option></select></label>
+<label>Absatzabstand<select id="member-description-gap"><option value="0">Keiner</option><option value="8">Klein</option><option value="16">Normal</option><option value="24">Gross</option></select></label>
+</div>
+<textarea id="member-description" placeholder="Kurze Firmenbeschreibung"></textarea>
+<p class="help">Text markieren und B, I oder Link verwenden. Ausrichtung und Abstände direkt rechts in der Vorschau prüfen.</p></div>
 <div class="fields-2"><div class="field"><label for="member-phone">Telefon <span class="optional">Optional</span></label><input id="member-phone" type="tel" placeholder="+41 ..."></div><div class="field"><label for="member-email">E-Mail <span class="optional">Optional</span></label><input id="member-email" type="email" placeholder="name@firma.ch"></div></div><div class="field"><label for="member-url">Webseite <span class="optional">Optional</span></label><input id="member-url" type="url" placeholder="https://..."></div>
-<div class="field"><label>Firmenlogo</label><div class="inline-upload"><img id="member-logo-thumb" src="/logos/onur.jpg" alt="Firmenlogo"><div><strong>Logo austauschen</strong><p>JPG, PNG oder WebP auswählen.</p><button class="btn small" id="member-logo-button" type="button">Logo hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-logo-input" class="hidden"></div></div><input class="member-image-path" id="member-logo-path" type="text" placeholder="/logos/firmenlogo.jpg" aria-label="Bereits gespeicherten Logopfad verwenden"><p class="help">Alternativ einen bestehenden GitHub Bildpfad eintragen.</p></div>
-<div class="field"><label>Profilfoto oder Firmenfoto <span class="optional">Optional</span></label><div class="inline-upload"><img id="member-photo-thumb" src="/admin/brand.svg" alt="Profilfoto"><div><strong>Personenfoto / Firmenbild</strong><p>Ein Foto zur Vorstellung der Person oder Firma. Das Logo bleibt separat.</p><button class="btn small" id="member-photo-button" type="button">Foto hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-photo-input" class="hidden"></div></div><input class="member-image-path" id="member-photo-path" type="text" placeholder="/mitglieder/foto.jpg" aria-label="Bereits gespeicherten Profilbildpfad verwenden"><p class="help">JPG, PNG oder WebP, maximal 4 MB. Originale bleiben auf deinem Computer unverändert.</p></div>
+<div class="field"><label>Firmenlogo</label><div class="inline-upload"><img id="member-logo-thumb" src="/logos/onur.jpg" alt="Firmenlogo"><div><strong>Logo austauschen</strong><p>Das bestehende Logo bleibt erhalten, solange du kein neues hochlädst.</p><button class="btn small" id="member-logo-button" type="button">Logo hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-logo-input" class="hidden"></div></div><p class="member-media-status" id="member-logo-upload-status" role="status" aria-live="polite"></p><input class="member-image-path" id="member-logo-path" type="text" placeholder="/logos/firmenlogo.jpg" aria-label="Bereits gespeicherten Logopfad verwenden"><p class="help">Alternativ einen bestehenden GitHub Bildpfad eintragen.</p></div>
+<div class="field"><label>Profilfoto oder Firmenfoto <span class="optional">Optional</span></label><div class="inline-upload"><img id="member-photo-thumb" src="/admin/brand.svg" alt="Profilfoto"><div><strong>Personenfoto / Firmenbild</strong><p>Ein Foto zur Vorstellung der Person oder Firma. Das Logo bleibt separat.</p><button class="btn small" id="member-photo-button" type="button">Foto hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-photo-input" class="hidden"></div></div><p class="member-media-status" id="member-photo-upload-status" role="status" aria-live="polite">Noch kein Foto hochgeladen.</p><input class="member-image-path" id="member-photo-path" type="text" placeholder="/mitglieder/foto.jpg" aria-label="Bereits gespeicherten Profilbildpfad verwenden"><p class="help">JPG, PNG oder WebP, maximal 4 MB. Originale bleiben auf deinem Computer unverändert.</p></div>
 <div class="member-social-editor">
 <div class="tile-head"><strong>Social Media & weitere Links</strong><small>Reihenfolge frei wählen</small></div>
 <p class="help">Plattform auswählen, Link eintragen, mit den Pfeilen sortieren. In der Vorschau erscheinen kleine anklickbare Symbole.</p>
@@ -307,7 +334,7 @@ body.gallery-zoom-active{overflow:hidden}
 <div class="panel"><div class="panel-head"><h2>Profilvorschau</h2><p>Firmenkarte, wie sie später erscheinen könnte.</p></div><div class="manager-preview"><div class="member-preview-logo"><img id="member-preview-logo" src="/logos/onur.jpg" alt="Logo Vorschau"></div><div id="member-preview-photo-wrap" class="member-preview-photo-wrap hidden"><img id="member-preview-photo" src="" alt="Profilfoto"></div>
 <h2 id="member-preview-name"></h2>
 <div id="member-preview-person" class="member-preview-person"></div>
-<p id="member-preview-description"></p>
+<div id="member-preview-description" class="member-description-preview"></div>
 <div id="member-preview-contacts" class="member-preview-contacts"></div>
 <div id="member-preview-social" class="member-preview-social"></div></div></div>
 </div></section>
