@@ -159,6 +159,11 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 .gallery-order-controls button:hover:not(:disabled){background:#fff}
 .gallery-order-controls button:disabled{opacity:.38;cursor:not-allowed}
 @media(max-width:620px){.tile-head{gap:8px;flex-wrap:wrap}}
+.cloud-save-status{margin:10px 0 18px;color:#6b634e;background:#f9f5ec;border:1px solid #ebdfc9;border-radius:8px;padding:10px 12px;font-size:11px;line-height:1.7}
+.cloud-save-status[data-kind="ok"]{background:#e9f4e9;color:#356345;border-color:#d1e8d0}
+.cloud-save-status[data-kind="error"]{background:#fdf0ec;color:#8a4632;border-color:#f1d7cc}
+.member-image-path{display:block;width:100%;margin-top:8px;border:1px solid #e4e5df;border-radius:7px;padding:10px 12px;font-size:11px}
+@media(max-width:740px){#members-list .manager-actions,#projects-list .manager-actions{flex-wrap:wrap}}
 /* Safe full-size photo inspection in test editor only. */
 #gallery-editor .media-tile>img{cursor:zoom-in}
 #gallery-editor .gallery-open{position:absolute;bottom:42px;right:7px;z-index:2;min-width:30px;min-height:30px;border:0;border-radius:5px;background:#fffdf8ee;color:#303530;font-size:18px;line-height:1;cursor:zoom-in}
@@ -273,15 +278,15 @@ body.gallery-zoom-active{overflow:hidden}
 
 <section id="members-list" class="hidden">
 <div class="eyebrow">INHALTE / MITGLIEDER</div>
-<div class="hero-heading"><div><h1>Mitglieder verwalten.</h1><p class="sub">Jedes Mitglied mit eigenem Logo, Firmenprofil und Webseite.</p></div><button type="button" class="btn dark" id="member-add">＋ Neues Mitglied</button></div>
-<div class="notice">Die bestehenden elf Mitglieder wurden als Ausgangspunkt aus der aktuellen Webseite übernommen. <strong>Änderungen hier sind nur im Designentwurf sichtbar.</strong></div>
+<div class="hero-heading"><div><h1>Mitglieder verwalten.</h1><p class="sub">Jedes Mitglied mit eigenem Logo, Firmenprofil und Webseite.</p></div><div class="manager-actions"><button type="button" class="btn" id="member-save-cloud">Alle Mitglieder als Entwurf speichern</button><button type="button" class="btn dark" id="member-add">＋ Neues Mitglied</button></div></div>
+<div class="notice">Die elf bisherigen Mitgliedsfirmen sind als Ausgangspunkt vorhanden. <strong>Deine Angaben lassen sich als privater Entwurf in Cloudflare speichern.</strong> Auf der Webseite wird dadurch nichts veröffentlicht.</div><p class="cloud-save-status" id="member-save-status-list" role="status" aria-live="polite">Noch nicht als privater Entwurf gespeichert.</p>
 <div class="manager-info"><strong id="member-count">11</strong> Mitglieder im Entwurf · Firmen hinzufügen, bearbeiten oder entfernen</div>
 <div class="entity-grid" id="member-cards"></div>
 </section>
 <section id="member-editor" class="hidden">
 <button type="button" class="back" id="member-back">← Zurück zu Mitglieder</button>
-<div class="hero-heading"><div><div class="eyebrow">MITGLIEDER / BEARBEITEN</div><h1 id="member-editor-title">Mitglied bearbeiten.</h1><p class="sub">Alle Angaben und das Firmenlogo an einem Ort.</p></div><div class="manager-actions"><button type="button" class="btn hidden" id="member-save-demo">Entwurf merken</button><button type="button" class="btn" id="member-remove">Mitglied entfernen</button></div></div>
-<div class="notice"><strong>Designvorschau:</strong> Änderungen wirken sich nicht auf die aktuelle Webseite aus. Ein Entfernen hier löscht kein Mitglied auf der öffentlichen Webseite.</div>
+<div class="hero-heading"><div><div class="eyebrow">MITGLIEDER / BEARBEITEN</div><h1 id="member-editor-title">Mitglied bearbeiten.</h1><p class="sub">Alle Angaben und das Firmenlogo an einem Ort.</p></div><div class="manager-actions"><button type="button" class="btn" id="member-save-demo">Entwurf speichern</button><button type="button" class="btn" id="member-remove">Mitglied entfernen</button></div></div>
+<div class="notice">Änderungen hier bleiben privat, bis wir sie ausdrücklich veröffentlichen. Fotos werden bereits beim Hochladen im öffentlichen GitHub Testbranch gespeichert. Bitte nur freigegebene Bilder verwenden.</div><p class="cloud-save-status" id="member-save-status-editor" role="status" aria-live="polite">Noch nicht als privater Entwurf gespeichert.</p>
 <div class="edit-layout">
 <div class="panel"><div class="panel-head"><h2>Firmenprofil</h2><p>Basisinformationen für die Mitgliederübersicht.</p></div><div class="panel-body">
 <div class="field"><label for="member-name">Firmenname</label><input id="member-name" type="text" placeholder="Firmenname"></div>
@@ -289,15 +294,15 @@ body.gallery-zoom-active{overflow:hidden}
 <div class="fields-2"><div class="field"><label for="member-person">Ansprechperson <span class="optional">Optional</span></label><input id="member-person" placeholder="Vorname Nachname"></div><div class="field"><label for="member-role">Funktion / Position <span class="optional">Optional</span></label><input id="member-role" placeholder="z.B. Geschäftsführung"></div></div>
 <div class="field"><label for="member-description">Beschreibung <span class="optional">Optional</span></label><textarea id="member-description" placeholder="Kurze Firmenbeschreibung"></textarea></div>
 <div class="fields-2"><div class="field"><label for="member-phone">Telefon <span class="optional">Optional</span></label><input id="member-phone" type="tel" placeholder="+41 ..."></div><div class="field"><label for="member-email">E-Mail <span class="optional">Optional</span></label><input id="member-email" type="email" placeholder="name@firma.ch"></div></div><div class="field"><label for="member-url">Webseite <span class="optional">Optional</span></label><input id="member-url" type="url" placeholder="https://..."></div>
-<div class="field"><label>Firmenlogo</label><div class="inline-upload"><img id="member-logo-thumb" src="/logos/onur.jpg" alt="Firmenlogo"><div><strong>Logo austauschen</strong><p>JPG, PNG oder WebP auswählen.</p><button class="btn small" id="member-logo-button" type="button">Logo auswählen</button><input type="file" accept="image/*" id="member-logo-input" class="hidden"></div></div></div>
-<div class="field"><label>Profilfoto oder Firmenfoto <span class="optional">Optional</span></label><div class="inline-upload"><img id="member-photo-thumb" src="/admin/brand.svg" alt="Profilfoto"><div><strong>Personenfoto / Firmenbild</strong><p>Ein Foto zur Vorstellung der Person oder Firma. Das Logo bleibt separat.</p><button class="btn small" id="member-photo-button" type="button">Foto auswählen</button><input type="file" accept="image/*" id="member-photo-input" class="hidden"></div></div></div>
+<div class="field"><label>Firmenlogo</label><div class="inline-upload"><img id="member-logo-thumb" src="/logos/onur.jpg" alt="Firmenlogo"><div><strong>Logo austauschen</strong><p>JPG, PNG oder WebP auswählen.</p><button class="btn small" id="member-logo-button" type="button">Logo hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-logo-input" class="hidden"></div></div><input class="member-image-path" id="member-logo-path" type="text" placeholder="/logos/firmenlogo.jpg" aria-label="Bereits gespeicherten Logopfad verwenden"><p class="help">Alternativ einen bestehenden GitHub Bildpfad eintragen.</p></div>
+<div class="field"><label>Profilfoto oder Firmenfoto <span class="optional">Optional</span></label><div class="inline-upload"><img id="member-photo-thumb" src="/admin/brand.svg" alt="Profilfoto"><div><strong>Personenfoto / Firmenbild</strong><p>Ein Foto zur Vorstellung der Person oder Firma. Das Logo bleibt separat.</p><button class="btn small" id="member-photo-button" type="button">Foto hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-photo-input" class="hidden"></div></div><input class="member-image-path" id="member-photo-path" type="text" placeholder="/mitglieder/foto.jpg" aria-label="Bereits gespeicherten Profilbildpfad verwenden"><p class="help">JPG, PNG oder WebP, maximal 4 MB. Originale bleiben auf deinem Computer unverändert.</p></div>
 <div class="member-social-editor">
 <div class="tile-head"><strong>Social Media & weitere Links</strong><small>Reihenfolge frei wählen</small></div>
 <p class="help">Plattform auswählen, Link eintragen, mit den Pfeilen sortieren. In der Vorschau erscheinen kleine anklickbare Symbole.</p>
 <div id="member-social-rows"></div>
 <button type="button" class="btn small" id="member-social-add">＋ Link hinzufügen</button>
 </div>
-<div class="field"><label class="check-row"><input id="member-public" type="checkbox" checked> Mitglied auf der Webseite anzeigen</label><p class="help">Dieser Schalter wird erst im echten Admin eine Veröffentlichung beeinflussen.</p></div>
+<div class="field"><label class="check-row"><input id="member-public" type="checkbox" checked> Mitglied auf der Webseite anzeigen</label><p class="help">Der Entwurf wird nicht automatisch veröffentlicht. Die spätere Sichtbarkeit wird beim Veröffentlichen berücksichtigt.</p></div>
 </div></div>
 <div class="panel"><div class="panel-head"><h2>Profilvorschau</h2><p>Firmenkarte, wie sie später erscheinen könnte.</p></div><div class="manager-preview"><div class="member-preview-logo"><img id="member-preview-logo" src="/logos/onur.jpg" alt="Logo Vorschau"></div><div id="member-preview-photo-wrap" class="member-preview-photo-wrap hidden"><img id="member-preview-photo" src="" alt="Profilfoto"></div>
 <h2 id="member-preview-name"></h2>
@@ -309,15 +314,15 @@ body.gallery-zoom-active{overflow:hidden}
 
 <section id="projects-list" class="hidden">
 <div class="eyebrow">INHALTE / PROJEKTE</div>
-<div class="hero-heading"><div><h1>Projekte verwalten.</h1><p class="sub">Projekte intern vorbereiten. Die öffentliche Webseite zeigt derzeit keine Projekte.</p></div><button type="button" class="btn dark" id="project-add">＋ Neues Projekt</button></div>
-<div class="notice">Der Projektbereich bleibt im Admin verfügbar. <strong>Projekte werden aus diesem Entwurf nicht veröffentlicht.</strong> Erst nach einer bewussten Freigabe könnte später ein öffentlicher Projektbereich aktiviert werden.</div>
+<div class="hero-heading"><div><h1>Projekte verwalten.</h1><p class="sub">Projekte intern vorbereiten. Die öffentliche Webseite zeigt derzeit keine Projekte.</p></div><div class="manager-actions"><button type="button" class="btn" id="project-save-cloud">Projekte als Entwurf speichern</button><button type="button" class="btn dark" id="project-add">＋ Neues Projekt</button></div></div>
+<div class="notice">Der Projektbereich bleibt im Admin verfügbar. Die Inhalte können privat in Cloudflare gespeichert werden, werden aber nicht auf der Webseite veröffentlicht.</div><p class="cloud-save-status" id="project-save-status-list" role="status" aria-live="polite">Noch nicht als privater Entwurf gespeichert.</p>
 <div class="entity-grid" id="project-cards"></div>
 <div class="entity-empty" id="project-empty"><div class="empty-icon">▤</div><h3>Noch keine Projekte vorhanden.</h3><p>Der Bereich darf vorerst leer bleiben. Wenn ihr später Projekte zeigen möchtet, kannst du sie hier vorbereiten.</p><button class="btn" type="button" id="project-empty-add">＋ Neues Projekt</button></div>
 </section>
 <section id="project-editor" class="hidden">
 <button class="back" type="button" id="project-back">← Zurück zu Projekte</button>
-<div class="hero-heading"><div><div class="eyebrow">PROJEKTE / INTERNER ENTWURF</div><h1>Projekt bearbeiten.</h1><p class="sub">Projektinformationen vorbereiten, ohne sie öffentlich anzuzeigen.</p></div><button type="button" class="btn hidden" id="project-save-demo">Entwurf merken</button></div>
-<div class="notice">Auch bei ausgefüllten Projektinformationen wird nichts veröffentlicht.</div>
+<div class="hero-heading"><div><div class="eyebrow">PROJEKTE / INTERNER ENTWURF</div><h1>Projekt bearbeiten.</h1><p class="sub">Projektinformationen vorbereiten, ohne sie öffentlich anzuzeigen.</p></div><button type="button" class="btn" id="project-save-demo">Entwurf speichern</button></div>
+<div class="notice">Auch bei ausgefüllten Projektinformationen wird nichts veröffentlicht.</div><p class="cloud-save-status" id="project-save-status-editor" role="status" aria-live="polite">Noch nicht als privater Entwurf gespeichert.</p>
 <div class="edit-layout"><div class="panel"><div class="panel-head"><h2>Projektdaten</h2><p>Für eine spätere Nutzung vorbereitet.</p></div><div class="panel-body">
 <div class="field"><label for="project-name">Projekttitel</label><input id="project-name" type="text"></div>
 <div class="field"><label for="project-date">Datum <span class="optional">Optional</span></label><input id="project-date" type="date"></div>
