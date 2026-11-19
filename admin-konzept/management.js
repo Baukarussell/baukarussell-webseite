@@ -295,16 +295,74 @@ function renderMemberInline(parent,plain){
  }
  if(from<plain.length)parent.append(document.createTextNode(plain.slice(from)));
 }
+const MEMBER_LINE_GAPS={'1.4':8,'1.6':12,'1.8':18,'2':24};
+function memberLineIndex(text,position){
+ return text.slice(0,Math.max(0,position)).split('\n').length-1;
+}
+function rebaseMemberLineStyles(before,after,original){
+ const oldLines=String(before||'').replace(/\r\n?/g,'\n').split('\n');
+ const newLines=String(after||'').replace(/\r\n?/g,'\n').split('\n');
+ const src=Array.isArray(original)?original:[];
+ if(oldLines.length===newLines.length)return src;
+ const next=new Array(newLines.length);
+ let head=0;
+ while(head<oldLines.length&&head<newLines.length&&oldLines[head]===newLines[head]){
+  next[head]=src[head]||{};head++;
+ }
+ let tailOld=oldLines.length-1,tailNew=newLines.length-1;
+ while(tailOld>=head&&tailNew>=head&&oldLines[tailOld]===newLines[tailNew]){
+  next[tailNew]=src[tailOld]||{};tailOld--;tailNew--;
+ }
+ for(let i=head;i<=tailNew;i++){
+  next[i]=i-head<=tailOld-head?src[i]||{}:{};
+ }
+ return next.map(value=>value||{});
+}
+function applyMemberLineHeight(){
+ const m=memberItem();if(!m)return;
+ const field=$('member-description'),lineSelect=$('member-description-line');
+ const value=lineSelect.value;
+ const text=field.value.replace(/\r\n?/g,'\n'),start=field.selectionStart,end=field.selectionEnd;
+ const first=memberLineIndex(text,start);
+ // End exactly at the start of another line does not include that next line.
+ const last=memberLineIndex(text,end>start?end-1:end);
+ const styles=Array.isArray(m.descriptionParagraphStyles)?m.descriptionParagraphStyles.slice():[];
+ while(styles.length<text.split('\n').length)styles.push({});
+ const whole=text.length>0&&start===0&&end===text.length;
+ if(whole){
+  m.descriptionLineHeight=value;
+  for(let i=0;i<styles.length;i++){styles[i]={...styles[i],line:'',gap:''};}
+ }else{
+  for(let i=first;i<=last;i++)styles[i]={...styles[i],line:value,gap:''};
+ }
+ m.descriptionParagraphStyles=styles;
+ // Keep the cursor and any text selection so the next adjustment remains easy.
+ field.focus();
+ field.setSelectionRange(start,end);
+ memberPreview();save(cloudKinds.members,members);
+}
+function showMemberCurrentLineHeight(){
+ const m=memberItem();if(!m)return;
+ const field=$('member-description'),text=field.value.replace(/\r\n?/g,'\n');
+ const selectedAll=text.length>0&&field.selectionStart===0&&field.selectionEnd===text.length;
+ const lineIndex=memberLineIndex(text,field.selectionStart);
+ const individual=Array.isArray(m.descriptionParagraphStyles)?m.descriptionParagraphStyles[lineIndex]:null;
+ $('member-description-line').value=!selectedAll&&individual?.line?individual.line:(m.descriptionLineHeight||'1.6');
+}
 function renderMemberDescription(member){
  const root=$('member-preview-description');
  root.replaceChildren();
- // One Enter inserts a separate paragraph; extra Enter presses create visible blank lines.
+ // One Enter creates one visible line break. The selected Zeilenabstand controls
+ // the space after that line without changing unrelated lines.
  const paragraphs=String(member.description||'Firmenbeschreibung').replace(/\r\n?/g,'\n').split('\n');
+ const overrides=Array.isArray(member.descriptionParagraphStyles)?member.descriptionParagraphStyles:[];
  paragraphs.forEach((paragraph,index)=>{
   const p=make('p');
+  const style=overrides[index]||{};
+  const line=style.line||member.descriptionLineHeight||'1.6';
   p.style.textAlign=member.descriptionAlign||'left';
-  p.style.lineHeight=member.descriptionLineHeight||'1.6';
-  p.style.marginBottom=index===paragraphs.length-1?'0':'12px';
+  p.style.lineHeight=line;
+  p.style.marginBottom=index===paragraphs.length-1?'0':(MEMBER_LINE_GAPS[line]??12)+'px';
   renderMemberInline(p,paragraph||'\u00a0');
   root.append(p);
  });
@@ -363,10 +421,13 @@ function changeMember(){
  m.name=$('member-name').value;m.url=$('member-url').value;
  m.person=$('member-person').value;m.role=$('member-role').value;
  m.phone=$('member-phone').value;m.email=$('member-email').value;
- m.description=$('member-description').value;
+ const newDescription=$('member-description').value;
+ if(newDescription!==m.description){
+  m.descriptionParagraphStyles=rebaseMemberLineStyles(m.description||'',newDescription,m.descriptionParagraphStyles);
+  m.description=newDescription;
+ }
  m.public=$('member-public').checked;
  m.descriptionAlign=$('member-description-align').value;
- m.descriptionLineHeight=$('member-description-line').value;
  memberPreview();save('bk-demo-members-v1',members);
 }
 $('member-add').onclick=newMember;
@@ -375,7 +436,11 @@ $('member-remove').onclick=()=>{const m=memberItem();if(!m)return;
  removeWithConfirm('Mitglied',m.name||'Neues Mitglied',()=>{
  members=members.filter(x=>x.id!==m.id);chosenMember=null;save('bk-demo-members-v1',members);renderMembers();api.page('members');
  });};
-['member-name','member-url','member-person','member-role','member-phone','member-email','member-description','member-public','member-description-align','member-description-line'].forEach(x=>$(x).addEventListener('input',changeMember));
+['member-name','member-url','member-person','member-role','member-phone','member-email','member-description','member-public','member-description-align'].forEach(x=>$(x).addEventListener('input',changeMember));
+$('member-description-line').addEventListener('change',applyMemberLineHeight);
+$('member-description').addEventListener('click',showMemberCurrentLineHeight);
+$('member-description').addEventListener('keyup',showMemberCurrentLineHeight);
+$('member-description').addEventListener('select',showMemberCurrentLineHeight);
 document.querySelectorAll('[data-member-format]').forEach(button=>button.onclick=()=>formatMemberSelection(button.dataset.memberFormat));
 $('member-save-demo').onclick=()=>{changeMember();renderMembers();saveCloudCollection('members');};
 $('member-save-cloud').onclick=()=>saveCloudCollection('members');
