@@ -352,20 +352,24 @@ function showMemberCurrentLineHeight(){
 function renderMemberDescription(member){
  const root=$('member-preview-description');
  root.replaceChildren();
- // One Enter creates one visible line break. The selected Zeilenabstand controls
- // the space after that line without changing unrelated lines.
- const paragraphs=String(member.description||'Firmenbeschreibung').replace(/\r\n?/g,'\n').split('\n');
+ // Match the visitor preview: a single Enter breaks a line, while an empty
+ // line separates paragraphs. Empty lines do not create stacked blank blocks.
+ const rows=String(member.description||'Firmenbeschreibung').replace(/\r\n?/g,'\n').split('\n');
  const overrides=Array.isArray(member.descriptionParagraphStyles)?member.descriptionParagraphStyles:[];
- paragraphs.forEach((paragraph,index)=>{
-  const p=make('p');
-  const style=overrides[index]||{};
-  const line=style.line||member.descriptionLineHeight||'1.6';
-  p.style.textAlign=member.descriptionAlign||'left';
-  p.style.lineHeight=line;
-  p.style.marginBottom=index===paragraphs.length-1?'0':(MEMBER_LINE_GAPS[line]??12)+'px';
-  renderMemberInline(p,paragraph||'\u00a0');
-  root.append(p);
+ let para=null;
+ rows.forEach((line,index)=>{
+  if(!line.trim()){para=null;return;}
+  if(!para){para=make('p');para.style.marginBottom='12px';root.append(para);}
+  const span=make('span');
+  span.style.display='block';
+  span.style.whiteSpace='pre-wrap';
+  span.style.textAlign=member.descriptionAlign||'left';
+  span.style.lineHeight=overrides[index]?.line||member.descriptionLineHeight||'1.6';
+  renderMemberInline(span,line);
+  para.append(span);
  });
+ const last=root.lastElementChild;
+ if(last)last.style.marginBottom='0';
 }
 function formatMemberSelection(kind){
  const field=$('member-description');field.focus();
