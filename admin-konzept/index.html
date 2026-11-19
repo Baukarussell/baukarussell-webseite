@@ -159,6 +159,19 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 .gallery-order-controls button:hover:not(:disabled){background:#fff}
 .gallery-order-controls button:disabled{opacity:.38;cursor:not-allowed}
 @media(max-width:620px){.tile-head{gap:8px;flex-wrap:wrap}}
+/* Safe full-size photo inspection in test editor only. */
+#gallery-editor .media-tile>img{cursor:zoom-in}
+#gallery-editor .gallery-open{position:absolute;bottom:42px;right:7px;z-index:2;min-width:30px;min-height:30px;border:0;border-radius:5px;background:#fffdf8ee;color:#303530;font-size:18px;line-height:1;cursor:zoom-in}
+#gallery-editor .gallery-open:hover{background:white}
+.gallery-lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;gap:14px;padding:58px 20px 40px;background:rgba(12,13,12,.96);color:#fff}
+.gallery-lightbox-main{display:flex;flex:1;min-width:0;min-height:0;max-width:1200px;max-height:100%;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.gallery-lightbox-image{display:block;max-width:100%;max-height:calc(100vh - 160px);width:auto;height:auto;object-fit:contain}
+.gallery-lightbox-counter{margin:0;color:#e9e9e9;font-size:12px;letter-spacing:.06em}
+.gallery-lightbox-close{position:absolute;top:15px;right:20px;background:#272b27;border:1px solid #707470;border-radius:7px;color:#fff;min-height:40px;padding:8px 14px;font-size:12px;cursor:pointer}
+.gallery-lightbox-arrow{background:#282b28;border:1px solid #707470;border-radius:7px;color:#fff;min-width:43px;height:55px;font-size:30px;cursor:pointer}
+.gallery-lightbox-arrow:hover,.gallery-lightbox-close:hover{background:#424842}
+body.gallery-zoom-active{overflow:hidden}
+@media(max-width:620px){.gallery-lightbox{gap:7px;padding:58px 7px 32px}.gallery-lightbox-arrow{min-width:32px;height:46px;font-size:24px}.gallery-lightbox-image{max-height:calc(100vh - 140px)}}
 </style>
 </head>
 <body>
@@ -427,6 +440,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 <div class="panel-body hidden" id="tab-gallery">
 <div class="field"><label>Titelbild</label><div class="cover-control"><img id="cover-small" src="/logos/baukarussellxmontblanc-00148.jpg" alt="Aktuelles Titelbild"><div><strong>Aktuelles Titelbild</strong><p class="help">Du kannst ein anderes Bild auswählen oder eines aus deiner Galerie als Titelbild festlegen.</p><button type="button" class="btn small" id="change-cover">Bild ändern</button><input id="cover-upload" type="file" accept="image/*" class="hidden"></div></div></div>
 <div class="tile-head"><strong>Fotogalerie <span class="gallery-photo-count" id="gallery-photo-count" aria-live="polite">0 Fotos</span></strong><small>Ziehen oder mit den Pfeilen sortieren</small></div>
+<p class="help">Foto anklicken, um es gross anzusehen. Mit den Pfeilen durch die Fotos blättern.</p>
 <div id="github-gallery-import" class="github-gallery-import hidden"><button type="button" class="btn small" id="github-gallery-sync">Fotos aus GitHub übernehmen</button><p class="help">Aktuelle Fotos aus GitHub laden. Texte bleiben unverändert. Danach «Entwurf speichern» klicken.</p><p id="github-gallery-status" class="github-gallery-status hidden" role="status" aria-live="polite"></p></div>
 <div class="media-grid" id="gallery-editor"></div>
 <label class="upload-box" for="upload-input"><span style="font-size:23px">＋</span><strong>Mehrere Fotos gleichzeitig auswählen</strong><small>JPG, PNG oder WebP · Designvorschau</small></label>
@@ -450,6 +464,12 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 </main>
 </div>
 </div>
+<div id="gallery-lightbox" class="gallery-lightbox hidden" role="dialog" aria-modal="true" aria-label="Galeriefoto vergrössert ansehen" tabindex="-1">
+<button type="button" id="gallery-lightbox-close" class="gallery-lightbox-close" aria-label="Fotoansicht schliessen">× Schliessen</button>
+<button type="button" id="gallery-lightbox-prev" class="gallery-lightbox-arrow" aria-label="Vorheriges Foto">‹</button>
+<div class="gallery-lightbox-main"><img id="gallery-lightbox-image" class="gallery-lightbox-image" alt="Galeriefoto in voller Grösse"><p id="gallery-lightbox-counter" class="gallery-lightbox-counter" aria-live="polite"></p></div>
+<button type="button" id="gallery-lightbox-next" class="gallery-lightbox-arrow" aria-label="Nächstes Foto">›</button>
+</div>
 <button type="button" id="scroll-top" class="scroll-top visible" aria-label="Zurück nach oben" title="Zurück zum Seitenanfang"><span aria-hidden="true">↑</span><span>Nach oben</span></button>
 <div class="toast hidden" id="toast" role="status"></div>
 <script>
@@ -463,6 +483,29 @@ montblanc:{title:'Baukarussell x Montblanc',slogan:'Eleganz trifft auf besondere
 test:{title:'Baukarussell Test Event',slogan:'Ein besonderer Abend voller Begegnungen',date:'2026-11-20',time:'18:00',location:'Zürich',text:'Dies ist ein Testevent zur Überprüfung der neuen Baukarussell Webseite und des Redaktionssystems.',cover:photo,images:[photo],partners:[]}
 };
 let current=null,currentKey=null,align='left',dragIndex=null;
+let galleryZoomIndex=0,galleryZoomFocus=null;
+function showGalleryZoom(){
+ if(!current||!Array.isArray(current.images)||!current.images.length){closeGalleryZoom();return;}
+ galleryZoomIndex=(galleryZoomIndex+current.images.length)%current.images.length;
+ $('gallery-lightbox-image').src=current.images[galleryZoomIndex];
+ $('gallery-lightbox-counter').textContent='Foto '+(galleryZoomIndex+1)+' von '+current.images.length;
+}
+function openGalleryZoom(index){
+ if(!current||!Array.isArray(current.images)||!current.images.length)return;
+ galleryZoomFocus=document.activeElement;
+ galleryZoomIndex=index;
+ $('gallery-lightbox').classList.remove('hidden');
+ document.body.classList.add('gallery-zoom-active');
+ showGalleryZoom();
+ $('gallery-lightbox-close').focus();
+}
+function closeGalleryZoom(){
+ const box=$('gallery-lightbox');if(box.classList.contains('hidden'))return;
+ box.classList.add('hidden');document.body.classList.remove('gallery-zoom-active');
+ $('gallery-lightbox-image').removeAttribute('src');
+ if(galleryZoomFocus&&galleryZoomFocus.isConnected)galleryZoomFocus.focus();
+ galleryZoomFocus=null;
+}
 let editorScrollY=0;
 const editorStatuses=Object.create(null);
 const restoredDraftKeys=new Set();
@@ -510,6 +553,7 @@ window.addEventListener('beforeunload',function(event){if(hasTemporaryPhotoChang
 let toastTimer=null;
 function toast(message){const t=$('toast');t.textContent=message;t.classList.remove('hidden');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add('hidden'),3500);}
 function page(name){
+ if(name!=='editor')closeGalleryZoom();
  const leavingEditor=!$('editor').classList.contains('hidden') && name!=='editor';
  if(leavingEditor)editorScrollY=window.scrollY;
  const editing=name==='editor', dashboard=name==='dashboard', events=name==='events', pages=name==='pages', pageEditor=name==='page-editor';
@@ -712,7 +756,9 @@ $('gallery-preview').replaceChildren(...current.images.map(src=>{const im=docume
 $('gallery-photo-count').textContent=current.images.length+' '+(current.images.length===1?'Foto':'Fotos');
 const editor=$('gallery-editor');editor.replaceChildren();
 current.images.forEach((src,i)=>{
-const tile=document.createElement('div');tile.className='media-tile';tile.draggable=true;tile.title='Zum Sortieren ziehen';const img=document.createElement('img');img.src=src;img.alt='Galeriefoto '+(i+1);tile.append(img);const asCover=document.createElement('button');asCover.type='button';asCover.className='as-cover';asCover.textContent=src===current.cover?'✓ Titelbild':'Als Titelbild';asCover.onclick=()=>{current.cover=src;rememberChange();render();toast('Titelbild in der Designvorschau geändert.');};tile.append(asCover);const remove=document.createElement('button');remove.className='corner';remove.textContent='×';remove.title='Foto aus Entwurf entfernen';remove.onclick=()=>{current.images.splice(i,1);rememberChange();render();};tile.append(remove);
+const tile=document.createElement('div');tile.className='media-tile';tile.draggable=true;tile.title='Zum Sortieren ziehen';const img=document.createElement('img');img.src=src;img.alt='Galeriefoto '+(i+1);img.draggable=false;img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label','Foto '+(i+1)+' vergrössern');img.title='Foto vergrössern';img.onclick=()=>openGalleryZoom(i);img.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();openGalleryZoom(i);}};tile.append(img);
+const zoomButton=document.createElement('button');zoomButton.type='button';zoomButton.className='gallery-open';zoomButton.textContent='⤢';zoomButton.title='Foto vergrössern';zoomButton.setAttribute('aria-label','Foto '+(i+1)+' vergrössern');zoomButton.draggable=false;zoomButton.onclick=ev=>{ev.stopPropagation();openGalleryZoom(i);};tile.append(zoomButton);
+const asCover=document.createElement('button');asCover.type='button';asCover.className='as-cover';asCover.textContent=src===current.cover?'✓ Titelbild':'Als Titelbild';asCover.onclick=()=>{current.cover=src;rememberChange();render();toast('Titelbild in der Designvorschau geändert.');};tile.append(asCover);const remove=document.createElement('button');remove.className='corner';remove.textContent='×';remove.title='Foto aus Entwurf entfernen';remove.onclick=()=>{current.images.splice(i,1);rememberChange();render();};tile.append(remove);
 const order=document.createElement('div');order.className='gallery-order-controls';
 for(const [step,symbol,label] of [[-1,'←','Foto nach links verschieben'],[1,'→','Foto nach rechts verschieben']]){
  const move=document.createElement('button');move.type='button';move.textContent=symbol;move.title=label;move.setAttribute('aria-label',label+' ('+(i+1)+' von '+current.images.length+')');
@@ -885,6 +931,16 @@ all('[data-format]').forEach(b=>b.onclick=()=>formatSelection(b.dataset.format))
 ['title','slogan','date','time','location','text'].forEach(key=>{$('e-'+key).addEventListener('input',e=>{current[key]=e.target.value;rememberChange();render()})});
 all('[data-align]').forEach(b=>b.onclick=()=>{align=b.dataset.align;current.textAlign=align;rememberChange();all('[data-align]').forEach(x=>x.classList.toggle('active',x===b));render()});
 $('partner-add').onclick=()=>{current.partners.push({role:'partner',name:'',url:''});rememberChange();render();$('partner-list').lastElementChild.querySelector('input').focus();};
+$('gallery-lightbox-close').onclick=closeGalleryZoom;
+$('gallery-lightbox-prev').onclick=()=>{galleryZoomIndex--;showGalleryZoom();};
+$('gallery-lightbox-next').onclick=()=>{galleryZoomIndex++;showGalleryZoom();};
+$('gallery-lightbox').onclick=ev=>{if(ev.target===$('gallery-lightbox'))closeGalleryZoom();};
+document.addEventListener('keydown',ev=>{
+ if($('gallery-lightbox').classList.contains('hidden'))return;
+ if(ev.key==='Escape'){ev.preventDefault();closeGalleryZoom();}
+ else if(ev.key==='ArrowLeft'){ev.preventDefault();galleryZoomIndex--;showGalleryZoom();}
+ else if(ev.key==='ArrowRight'){ev.preventDefault();galleryZoomIndex++;showGalleryZoom();}
+});
 $('github-gallery-sync').onclick=syncGithubGallery;
 $('change-cover').onclick=()=>$('cover-upload').click();
 $('cover-upload').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f||!f.type.startsWith('image/'))return;current.cover=URL.createObjectURL(f);hasTemporaryPhotoChanges=true;rememberChange();render();e.target.value='';toast('Titelbild für diese Vorschau ausgewählt.');};
