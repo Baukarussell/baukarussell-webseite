@@ -30,7 +30,106 @@ let registrations=getSaved('bk-demo-registrations-v1',[]);
 let aboutPhotos=getSaved('bk-demo-about-photos-v1',['/mitglieder.jpg']);
 let chosenMember=null,chosenProject=null,chosenRegistration=null;
 let dragAbout=null,temporaryUploads=false;
+const cloudKinds={members:'bk-demo-members-v1',projects:'bk-demo-projects-v1'};
+const hasPreviousLocal={members:sessionStorage.getItem(cloudKinds.members)!==null,projects:sessionStorage.getItem(cloudKinds.projects)!==null};
+const cloudLoaded={members:false,projects:false},cloudLoading={members:false,projects:false},cloudDirty={members:false,projects:false};
+let restoringCloud=false;
+function cloudStatus(kind,message,status){
+ const prefix=kind==='members'?'member':'project';
+ for(const suffix of ['list','editor']){
+  const node=$(prefix+'-save-status-'+suffix);
+  if(node){node.textContent=message;node.dataset.kind=status||'info';}
+ }
+}
+function localTouched(kind){
+ if(restoringCloud||!cloudKinds[kind])return;
+ cloudDirty[kind]=true;
+ cloudStatus(kind,'Änderungen nur im Browser. Bitte «Entwurf speichern» klicken.','info');
+}
+async function getCloudSession(){
+ const response=await fetch('/admin-api/session',{credentials:'same-origin',cache:'no-store'});
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok||!data.authenticated||!data.csrf)throw Error('Bitte zuerst auf «Übersicht» mit GitHub anmelden.');
+ return data.csrf;
+}
+async function loadCloudCollection(kind){
+ if(cloudLoaded[kind]||cloudLoading[kind]||cloudDirty[kind])return;
+ if(hasPreviousLocal[kind]){
+  cloudLoaded[kind]=true;
+  cloudStatus(kind,'Vorhandenen lokalen Zwischenstand geöffnet. Bitte als privaten Entwurf speichern.','info');
+  return;
+ }
+ cloudLoading[kind]=true;
+ try{
+  const response=await fetch('/admin-api/content-draft?kind='+kind,{credentials:'same-origin',cache:'no-store'});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok)throw Error(data.error||'Gespeicherte Daten können derzeit nicht geladen werden.');
+  if(cloudDirty[kind])return;
+  if(data.found&&Array.isArray(data.items)){
+   restoringCloud=true;
+   if(kind==='members'){members=data.items;save(cloudKinds.members,members);renderMembers();}
+   else{projects=data.items;save(cloudKinds.projects,projects);renderProjects();}
+   restoringCloud=false;
+   cloudStatus(kind,'Privater Entwurf geladen ('+new Date(data.savedAt).toLocaleString('de-CH')+'). Nicht veröffentlicht.','ok');
+  }else{
+   cloudStatus(kind,'Noch kein privater Entwurf vorhanden. Änderungen bitte speichern.','info');
+  }
+  cloudLoaded[kind]=true;
+ }catch(error){
+  restoringCloud=false;
+  cloudStatus(kind,error.message||'Cloudflare Verbindung nicht erreichbar.','error');
+ }finally{cloudLoading[kind]=false;}
+}
+async function saveCloudCollection(kind){
+ const list=kind==='members'?members:projects;
+ const btns=kind==='members'?[$('member-save-cloud'),$('member-save-demo')]:[$('project-save-cloud'),$('project-save-demo')];
+ const invalid=kind==='members'&&list.some(item=>[item.logo,item.photo].some(v=>typeof v==='string'&&v.startsWith('blob:')));
+ if(invalid){cloudStatus(kind,'Fotos müssen zuerst über «Foto hochladen» oder einen gespeicherten GitHub Bildpfad hinterlegt werden.','error');return;}
+ const snapshot=JSON.parse(JSON.stringify(list));
+ const fingerprint=JSON.stringify(snapshot);
+ btns.forEach(btn=>{btn.disabled=true;});
+ cloudStatus(kind,'Privater Entwurf wird gespeichert ...','info');
+ try{
+  const csrf=await getCloudSession();
+  const response=await fetch('/admin-api/content-draft?kind='+kind,{
+   method:'PUT',credentials:'same-origin',cache:'no-store',
+   headers:{'Content-Type':'application/json','X-BK-CSRF':csrf},
+   body:JSON.stringify({items:snapshot})
+  });
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok||!result.saved)throw Error(result.error||'Speichern fehlgeschlagen.');
+  const unchanged=JSON.stringify(kind==='members'?members:projects)===fingerprint;
+  cloudDirty[kind]=!unchanged;
+  hasPreviousLocal[kind]=true;
+  cloudLoaded[kind]=true;
+  if(unchanged)cloudStatus(kind,result.count+' '+(kind==='members'?'Mitglieder':'Projekte')+' privat gespeichert ('+new Date(result.savedAt).toLocaleString('de-CH')+'). Nicht veröffentlicht.','ok');
+  else cloudStatus(kind,'Zwischenzeitlich weitere Änderungen gemacht. Bitte erneut speichern.','info');
+ }catch(error){
+  cloudStatus(kind,error.message||'Speichern nicht möglich. Browserdaten bleiben erhalten.','error');
+ }finally{btns.forEach(btn=>{btn.disabled=false;});}
+}
+async function uploadMemberImage(field,file){
+ if(!file||!file.type.startsWith('image/'))return;
+ if(file.size>4*1024*1024){cloudStatus('members','Foto ist zu gross. Bitte zuerst auf weniger als 4 MB verkleinern.','error');return;}
+ const member=memberItem();if(!member)return;
+ const targetId=member.id,btn=field==='logo'?$('member-logo-button'):$('member-photo-button');
+ btn.disabled=true;cloudStatus('members','Foto wird im GitHub Testbranch gespeichert ...','info');
+ try{
+  const csrf=await getCloudSession(),data=new FormData();
+  data.append('kind','mitglied');data.append('file',file);
+  const response=await fetch('/admin-api/member-photo',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'X-BK-CSRF':csrf},body:data});
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok||!result.saved||!result.url)throw Error(result.error||'GitHub hat das Bild nicht gespeichert.');
+  const found=members.find(x=>x.id===targetId);
+  if(found){found[field]=result.url;save(cloudKinds.members,members);}
+  if(chosenMember===targetId){$(field==='logo'?'member-logo-path':'member-photo-path').value=result.url;memberPreview();}
+  cloudStatus('members','Foto im GitHub Testbranch gespeichert. Das GitHub Repository ist öffentlich. Bitte jetzt «Entwurf speichern» klicken.','info');
+ }catch(error){cloudStatus('members',error.message||'Foto konnte nicht gespeichert werden.','error');}
+ finally{btn.disabled=false;}
+}
 function save(key,items){
+ if(key===cloudKinds.members)localTouched('members');
+ if(key===cloudKinds.projects)localTouched('projects');
  try{sessionStorage.setItem(key,JSON.stringify(items,function(prop,val){
   if((prop==='logo'||prop==='photo')&&typeof val==='string'&&val.startsWith('blob:'))return '';
   if(prop==='flyer'&&typeof val==='string'&&val.startsWith('blob:'))return '';
@@ -96,6 +195,8 @@ function editMember(memberId){
  $('member-person').value=m.person||'';$('member-role').value=m.role||'';
  $('member-phone').value=m.phone||'';$('member-email').value=m.email||'';
  if(!Array.isArray(m.socials))m.socials=[];
+ $('member-logo-path').value=m.logo||'';
+ $('member-photo-path').value=m.photo||'';
  renderMemberSocials();memberPreview();api.page('member-editor');
 }
 const socialPlatforms={
@@ -175,7 +276,8 @@ $('member-remove').onclick=()=>{const m=memberItem();if(!m)return;
  members=members.filter(x=>x.id!==m.id);chosenMember=null;save('bk-demo-members-v1',members);renderMembers();api.page('members');
  });};
 ['member-name','member-url','member-person','member-role','member-phone','member-email','member-description','member-public'].forEach(x=>$(x).addEventListener('input',changeMember));
-$('member-save-demo').onclick=()=>{changeMember();renderMembers();alertDemo()};
+$('member-save-demo').onclick=()=>{changeMember();renderMembers();saveCloudCollection('members');};
+$('member-save-cloud').onclick=()=>saveCloudCollection('members');
 $('member-social-add').onclick=()=>{
  const m=memberItem();if(!m)return;
  if(!Array.isArray(m.socials))m.socials=[];
@@ -183,19 +285,17 @@ $('member-social-add').onclick=()=>{
  const last=$('member-social-rows').lastElementChild;if(last)last.querySelector('input')?.focus();
 };
 $('member-photo-button').onclick=()=>$('member-photo-input').click();
-$('member-photo-input').onchange=e=>{
- const m=memberItem(),file=e.target.files?.[0];if(!m||!safeImage(file))return;
- m.photo=URL.createObjectURL(file);temporaryUploads=true;memberPreview();
- save('bk-demo-members-v1',members);e.target.value='';
- api.toast('Foto in der Vorschau hinzugefügt. Noch nicht dauerhaft hochgeladen.');
-};
+$('member-photo-input').onchange=e=>{const file=e.target.files?.[0];e.target.value='';if(file)uploadMemberImage('photo',file);};
 $('member-logo-button').onclick=()=>$('member-logo-input').click();
-$('member-logo-input').onchange=e=>{
- const m=memberItem(),file=e.target.files?.[0];if(!m||!safeImage(file))return;
- m.logo=URL.createObjectURL(file);temporaryUploads=true;memberPreview();
- save('bk-demo-members-v1',members);e.target.value='';
- api.toast('Neues Logo in der Vorschau angezeigt. Beim Neuladen muss es erneut hochgeladen werden.');
-};
+$('member-logo-input').onchange=e=>{const file=e.target.files?.[0];e.target.value='';if(file)uploadMemberImage('logo',file);};
+for(const [field,elem] of [['logo','member-logo-path'],['photo','member-photo-path']]){
+ $(elem).addEventListener('input',()=>{
+  const m=memberItem();if(!m)return;
+  m[field]=$(elem).value.trim();save(cloudKinds.members,members);memberPreview();
+ });
+}
+document.querySelectorAll('[data-page="members"],[data-hub-target="members"]').forEach(node=>node.addEventListener('click',()=>loadCloudCollection('members')));
+loadCloudCollection('members');
 renderMembers();
 // -- Projects (empty by default, never published) --
 function renderProjects(){
@@ -231,9 +331,12 @@ function changeProject(){
 for(const key of ['project-name','project-date','project-location','project-description'])$(key).addEventListener('input',changeProject);
 $('project-add').onclick=newProject;$('project-empty-add').onclick=newProject;
 $('project-back').onclick=()=>{renderProjects();api.page('projects')};
-$('project-save-demo').onclick=()=>{changeProject();alertDemo()};
+$('project-save-demo').onclick=()=>{changeProject();saveCloudCollection('projects');};
+$('project-save-cloud').onclick=()=>saveCloudCollection('projects');
 $('project-remove').onclick=()=>{const p=projectItem();if(!p)return;removeWithConfirm('Projekt',p.title||'Neues Projekt',()=>{projects=projects.filter(x=>x.id!==p.id);chosenProject=null;save('bk-demo-projects-v1',projects);renderProjects();api.page('projects');});};
 renderProjects();
+document.querySelectorAll('[data-page="projects"],[data-hub-target="projects"]').forEach(node=>node.addEventListener('click',()=>loadCloudCollection('projects')));
+loadCloudCollection('projects');
 // -- Registrations: distinct form and flyer per occasion --
 function registrationItem(){return registrations.find(x=>x.id===chosenRegistration)}
 function renderRegistrations(){
