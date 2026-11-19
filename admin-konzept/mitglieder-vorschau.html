@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Baukarussell | Private Mitgliedervorschau</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#faf8f5;--ink:#232520;--muted:#74766c;--gold:#af8c5e;--edge:#e9e4dd}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);font:13px/1.75 Inter,Arial,sans-serif;color:var(--ink)}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500}
+nav{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px clamp(20px,5vw,72px);background:#fff;border-bottom:1px solid var(--edge)}
+.brand{text-decoration:none;font:500 27px/1 "Cormorant Garamond",serif;letter-spacing:.13em;color:var(--ink)}
+nav a:not(.brand){text-decoration:none;color:#806342;font-size:12px}
+header{padding:64px 20px 28px;text-align:center}
+.eyebrow{color:var(--gold);font-size:11px;letter-spacing:.24em;text-transform:uppercase}
+header h1{font-size:clamp(36px,5vw,62px);margin:12px 0 4px}
+header p{color:var(--muted);margin:0}
+main{max-width:1180px;margin:0 auto;padding:18px 24px 110px}
+.notice{max-width:900px;margin:0 auto 32px;text-align:center;border:1px solid #ddcba9;border-radius:8px;background:#f6efe1;padding:12px 15px;color:#6d573b;font-size:12px}
+.members-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:23px}
+.member-card{background:white;border:1px solid #e7e3dd;min-height:235px;padding:24px 18px 17px;display:flex;align-items:center;flex-direction:column;justify-content:space-between;gap:13px;border-radius:3px}
+.member-card:hover{border-color:#bda47c;box-shadow:0 7px 24px #00000008}
+.member-card img{width:100%;height:115px;object-fit:contain}
+.member-card h2{font-size:22px;margin:0;text-align:center}
+.member-card button{border:1px solid #b79768;background:transparent;color:#7d603c;padding:9px 18px;cursor:pointer;font-size:12px}
+.member-card button:hover{background:#f5f0e7}
+.profile{background:#fff;padding:38px clamp(22px,5vw,62px) 50px;border:1px solid var(--edge)}
+.back{border:0;background:transparent;color:#8b683d;cursor:pointer;padding:0 0 22px;font-size:12px}
+.profile-grid{display:grid;grid-template-columns:minmax(260px,360px) minmax(0,1fr);gap:45px;align-items:start}
+.visual{display:grid;gap:20px;justify-items:center}
+.photo{width:100%;max-height:480px;object-fit:contain;background:#f5f2ec;border-radius:3px}
+.member-logo{width:145px;height:95px;object-fit:contain}
+.profile h2{font-size:clamp(32px,4vw,48px);margin:0}
+.profile .person{font-size:13px;color:#9a805f;margin:5px 0 19px}
+.description{font-size:13px;color:#575950}
+.description p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;min-height:1em}
+.description strong{font-weight:700}.description em{font-style:italic}
+.description a{color:#87623a}
+.contacts{padding-top:24px;display:flex;flex-wrap:wrap;gap:11px 19px}
+.contacts a{color:#806443;text-decoration:none}
+.contacts a:hover{text-decoration:underline}
+.socials{display:flex;gap:10px;flex-wrap:wrap;margin-top:23px}
+.socials a{border:1px solid #ded2c0;color:#84643c;text-decoration:none;font-size:11px;padding:7px 12px}
+.status{text-align:center;padding:50px 10px;color:#736e64}
+footer{text-align:center;border-top:1px solid #e6e2dc;padding:32px 20px;color:#898379;font-size:11px}
+.hidden{display:none!important}
+@media(max-width:900px){.members-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.profile-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.members-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.member-card{min-height:200px;padding:15px 12px}.member-card img{height:93px}.member-card h2{font-size:18px}nav{padding:18px 18px}.brand{font-size:21px}main{padding:16px 15px 60px}header{padding:40px 12px 18px}.profile{padding:22px 16px}}
+</style>
+</head>
+<body>
+<nav><a href="/admin-konzept/" class="brand">BAUKARUSSELL</a><a href="/admin-konzept/">← Zurück zum Admin</a></nav>
+<header><div class="eyebrow">Networking à la carte</div><h1>Unsere Mitglieder</h1><p>Unternehmen der Baubranche</p></header>
+<main>
+<div class="notice">Private Vorschau aus dem zuletzt gespeicherten Cloudflare Entwurf. Noch nicht veröffentlicht. Die finale Webseite wird erst nach Freigabe aktualisiert.</div>
+<p id="status" class="status" role="status">Gespeicherte Mitglieder werden geladen ...</p>
+<div id="grid" class="members-grid hidden"></div>
+<section id="profile" class="profile hidden" aria-label="Mitgliedsprofil">
+<button class="back" id="back" type="button">← Zurück zu allen Mitgliedern</button>
+<div class="profile-grid">
+<div class="visual"><img id="photo" class="photo hidden" alt=""><img id="logo" class="member-logo" alt="Firmenlogo"></div>
+<div><h2 id="name"></h2><div class="person" id="person"></div><div class="description" id="description"></div><div id="contacts" class="contacts"></div><div id="socials" class="socials"></div></div>
+</div>
+</section>
+</main>
+<footer>BAUKARUSSELL · Private Designvorschau</footer>
+<script>
+(function(){
+ 'use strict';
+ const $=id=>document.getElementById(id);
+ let members=[];
+ const lineGaps={'1.4':8,'1.6':12,'1.8':18,'2':24};
+ const make=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=String(txt);return e};
+ const safeImage=raw=>typeof raw==='string'&&/^\/(?:logos|events|mitglieder|uploads)\//.test(raw)&&!raw.includes('..')&&!raw.includes('?')&&!raw.includes('#')?raw:'';
+ const safeURL=raw=>{
+  if(typeof raw!=='string')return '';
+  if(/^mitglieder\/[a-z0-9_-]+\.html$/i.test(raw))return '/'+raw;
+  try{const u=new URL(raw);return ['https:','http:'].includes(u.protocol)?u.href:'';}catch(_){return ''}
+ };
+ function inline(parent,s){
+  const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*\*(.+?)\*\*|\*(.+?)\*/g;
+  let from=0,m;
+  while((m=re.exec(s))!==null){
+   if(m.index>from)parent.append(document.createTextNode(s.slice(from,m.index)));
+   if(m[1]!==undefined){const href=safeURL(m[2]);if(href){const a=make('a','',m[1]);a.href=href;a.rel='noopener noreferrer';a.target='_blank';parent.append(a)}else parent.append(document.createTextNode(m[0]));}
+   else if(m[3]!==undefined)parent.append(make('strong','',m[3]));
+   else parent.append(make('em','',m[4]));
+   from=re.lastIndex;
+  }
+  if(from<s.length)parent.append(document.createTextNode(s.slice(from)));
+ }
+ function displayProfile(member){
+  $('grid').classList.add('hidden');$('profile').classList.remove('hidden');
+  $('name').textContent=member.name||'Mitglied';
+  $('person').textContent=[member.person,member.role].filter(Boolean).join(' · ');
+  $('logo').src=safeImage(member.logo)||'/admin/brand.svg';
+  const photo=safeImage(member.photo);
+  $('photo').classList.toggle('hidden',!photo);
+  if(photo)$('photo').src=photo;
+  $('description').replaceChildren();
+  const styles=Array.isArray(member.descriptionParagraphStyles)?member.descriptionParagraphStyles:[];
+  String(member.description||'').replace(/\r\n?/g,'\n').split('\n').forEach((line,i,all)=>{
+   const p=make('p'),settings=styles[i]||{};
+   const spacing=settings.line||member.descriptionLineHeight||'1.6';
+   p.style.textAlign=member.descriptionAlign||'left';p.style.lineHeight=spacing;
+   p.style.marginBottom=i===all.length-1?'0':(lineGaps[spacing]??12)+'px';
+   inline(p,line||'\u00a0');$('description').append(p);
+  });
+  $('contacts').replaceChildren();
+  const contacts=[
+   [member.phone,'tel:'+String(member.phone||'').replace(/[^\d+]/g,'')],
+   [member.email,'mailto:'+member.email],
+   [member.url?'Webseite ansehen':'',safeURL(member.url)]
+  ];
+  for(const [label,link] of contacts){if(!label||!link)continue;const a=make('a','',label);a.href=link;if(link.startsWith('http')){a.target='_blank';a.rel='noopener noreferrer'}$('contacts').append(a)}
+  $('socials').replaceChildren();
+  for(const social of member.socials||[]){
+   const href=safeURL(social.url);if(!href)continue;
+   if(social.platform==='website'&&href===safeURL(member.url))continue;
+   const a=make('a','',String(social.platform||'Website'));a.href=href;a.target='_blank';a.rel='noopener noreferrer';$('socials').append(a);
+  }
+  window.scrollTo(0,0);
+ }
+ function showCards(){
+  $('profile').classList.add('hidden');$('grid').classList.remove('hidden');
+  window.scrollTo(0,0);
+ }
+ $('back').onclick=showCards;
+ async function load(){
+  try{
+   const r=await fetch('/admin-api/content-draft?kind=members',{credentials:'same-origin',cache:'no-store'});
+   const data=await r.json().catch(()=>({}));
+   if(!r.ok)throw Error(data.error||'Bitte im Admin über «Übersicht» bei GitHub anmelden.');
+   if(!data.found)throw Error('Noch kein gespeicherter Mitgliederentwurf vorhanden.');
+   members=(Array.isArray(data.items)?data.items:[]).filter(x=>x.public!==false);
+   const grid=$('grid');grid.replaceChildren();
+   for(const member of members){
+    const card=make('article','member-card');
+    const logo=make('img');logo.src=safeImage(member.logo)||'/admin/brand.svg';logo.alt='Logo '+(member.name||'');
+    const name=make('h2','',member.name||'Mitglied'),button=make('button','','Mehr erfahren');
+    button.type='button';button.onclick=()=>displayProfile(member);
+    card.append(logo,name,button);grid.append(card);
+   }
+   $('status').classList.add('hidden');grid.classList.remove('hidden');
+   if(!members.length){$('status').textContent='Es sind keine veröffentlichten Mitglieder im Entwurf.';$('status').classList.remove('hidden')}
+  }catch(e){
+   $('status').textContent=(e&&e.message)||'Vorschau nicht verfügbar.';
+  }
+ }
+ load();
+})();
+</script>
+</body>
+</html>
