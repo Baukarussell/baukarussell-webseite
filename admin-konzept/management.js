@@ -316,7 +316,7 @@ function formatMemberSelection(kind){
   const address=window.prompt('Linkadresse eingeben (https://...)','https://');
   if(!address)return;
   const href=safeHref(address);
-  if(!href||!href.startsWith('http')){memberMediaStatus('photo','Bitte eine gültige Linkadresse verwenden.','error');return;}
+  if(!href||!href.startsWith('http')){api.toast('Bitte eine gültige Linkadresse mit https:// eingeben.');return;}
   before='[';content=content||'Linktext';after=']('+href+')';
  }
  else return;
