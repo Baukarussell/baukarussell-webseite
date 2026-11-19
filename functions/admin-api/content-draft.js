@@ -1,6 +1,6 @@
 // Private Baukarussell members and projects drafts, test environment only.
 // Protected by the existing GitHub OAuth session and Cloudflare KV binding.
-// Never publishes site content or stores access tokens in KV.
+// Shared by authorized GitHub editors for handover. Never publishes site content or stores access tokens in KV.
 import {openSession,getAuthorizedIdentity,requireCsrf,json} from '../../src/admin/bk-admin-auth.js';
 
 const MAX_BYTES=160000;
@@ -66,7 +66,7 @@ async function authorize(request,env){
  if(!kv||typeof kv.get!=='function'||typeof kv.put!=='function')return {error:json({error:'Cloudflare KV Speicher ist nicht verbunden.'},503)};
  const kind=new URL(request.url).searchParams.get('kind');
  if(!kinds.has(kind))return {error:json({error:'Ungültiger Bereich.'},400)};
- return {session,kv,kind,key:'bk:test:v1:content:'+identity.user.toLowerCase()+':'+kind};
+ return {session,kv,kind,key:'bk:test:v1:content:shared:'+kind};
 }
 export async function onRequestGet({request,env}){
  try{
