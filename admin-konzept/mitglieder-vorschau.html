@@ -21,8 +21,10 @@ main{max-width:1180px;margin:0 auto;padding:18px 24px 110px}
 .notice{max-width:900px;margin:0 auto 32px;text-align:center;border:1px solid #ddcba9;border-radius:8px;background:#f6efe1;padding:12px 15px;color:#6d573b;font-size:12px}
 .members-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:23px}
 .member-card{background:white;border:1px solid #e7e3dd;min-height:235px;padding:24px 18px 17px;display:flex;align-items:center;flex-direction:column;justify-content:space-between;gap:13px;border-radius:3px}
-.member-card:hover{border-color:#bda47c;box-shadow:0 7px 24px #00000008}
-.member-card img{width:100%;height:115px;object-fit:contain}
+.member-card{transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+.member-card:hover{border-color:#bda47c;box-shadow:0 10px 28px #00000010;transform:translateY(-3px)}
+.member-card img{width:100%;height:115px;object-fit:contain;transition:transform .28s ease}
+.member-card:hover img{transform:scale(1.055)}
 .member-card h2{font-size:22px;margin:0;text-align:center}
 .member-card button{border:1px solid #b79768;background:transparent;color:#7d603c;padding:9px 18px;cursor:pointer;font-size:12px}
 .member-card button:hover{background:#f5f0e7}
@@ -31,7 +33,11 @@ main{max-width:1180px;margin:0 auto;padding:18px 24px 110px}
 .profile-grid{display:grid;grid-template-columns:minmax(260px,360px) minmax(0,1fr);gap:45px;align-items:start}
 .visual{display:grid;gap:20px;justify-items:center}
 .photo{width:100%;max-height:480px;object-fit:contain;background:#f5f2ec;border-radius:3px}
-.member-logo{width:145px;height:95px;object-fit:contain}
+.member-logo{width:145px;height:95px;object-fit:contain;transition:transform .3s ease}
+.profile .photo{transition:transform .3s ease,box-shadow .3s ease}
+.profile .photo:hover{transform:scale(1.025);box-shadow:0 12px 30px #00000010}
+.profile .member-logo:hover{transform:scale(1.06)}
+@media(prefers-reduced-motion:reduce){.member-card,.member-card img,.profile .photo,.profile .member-logo{transition:none!important}.member-card:hover,.member-card:hover img,.profile .photo:hover,.profile .member-logo:hover{transform:none}}
 .profile h2{font-size:clamp(32px,4vw,48px);margin:0}
 .profile .person{font-size:13px;color:#9a805f;margin:5px 0 19px}
 .description{font-size:13px;color:#575950}
@@ -145,6 +151,8 @@ footer{text-align:center;border-top:1px solid #e6e2dc;padding:32px 20px;color:#8
    }
    $('status').classList.add('hidden');grid.classList.remove('hidden');
    if(!members.length){$('status').textContent='Es sind keine veröffentlichten Mitglieder im Entwurf.';$('status').classList.remove('hidden')}
+   const selected=new URLSearchParams(location.search).get('member');
+   if(selected){const member=members.find(x=>x.id===selected);if(member)displayProfile(member);}
   }catch(e){
    $('status').textContent=(e&&e.message)||'Vorschau nicht verfügbar.';
   }
