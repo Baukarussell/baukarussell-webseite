@@ -373,6 +373,10 @@ function renderMemberDescription(member){
 }
 function formatMemberSelection(kind){
  const field=$('member-description');field.focus();
+ if(kind==='paragraph'){
+  field.setRangeText('\n\n',field.selectionStart,field.selectionEnd,'end');
+  changeMember();field.focus();return;
+ }
  const selected=field.value.slice(field.selectionStart,field.selectionEnd);
  let before='',after='',content=selected;
  if(kind==='bold'){before='**';after='**';if(!content)content='Text';}
