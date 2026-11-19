@@ -315,10 +315,10 @@ body.gallery-zoom-active{overflow:hidden}
 </div>
 <div class="member-text-settings">
 <label>Textausrichtung<select id="member-description-align"><option value="left">Linksbündig</option><option value="justify">Blocksatz</option><option value="center">Zentriert</option></select></label>
-<label>Zeilenabstand<select id="member-description-line"><option value="1.4">Eng</option><option value="1.6">Normal</option><option value="1.8">Grosszügig</option><option value="2">Weit</option></select></label>
+<label>Zeilenabstand<select id="member-description-line" title="Mit Cursor eine Zeile ändern, mit Ctrl + A den gesamten Text"><option value="1.4">Eng</option><option value="1.6">Normal</option><option value="1.8">Grosszügig</option><option value="2">Weit</option></select></label>
 </div>
 <textarea id="member-description" placeholder="Kurze Firmenbeschreibung"></textarea>
-<p class="help">Enter drücken: neuer Absatz mit automatisch etwas Abstand. Mit Enter nochmals mehr Platz lassen.</p>
+<p class="help">Enter fügt eine neue Zeile mit Abstand ein. Mit dem Cursor änderst du nur die aktuelle Zeile. Mit Ctrl + A markierst du alles und änderst den gesamten Text.</p>
 </div>
 <div class="fields-2"><div class="field"><label for="member-phone">Telefon <span class="optional">Optional</span></label><input id="member-phone" type="tel" placeholder="+41 ..."></div><div class="field"><label for="member-email">E-Mail <span class="optional">Optional</span></label><input id="member-email" type="email" placeholder="name@firma.ch"></div></div><div class="field"><label for="member-url">Webseite <span class="optional">Optional</span></label><input id="member-url" type="url" placeholder="https://..."></div>
 <div class="field"><label>Firmenlogo</label><div class="inline-upload"><img id="member-logo-thumb" src="/logos/onur.jpg" alt="Firmenlogo"><div><strong>Logo austauschen</strong><p>Das bestehende Logo bleibt erhalten, solange du kein neues hochlädst.</p><button class="btn small" id="member-logo-button" type="button">Logo hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-logo-input" class="hidden"></div></div><p class="member-media-status" id="member-logo-upload-status" role="status" aria-live="polite"></p><input class="member-image-path" id="member-logo-path" type="text" placeholder="/logos/firmenlogo.jpg" aria-label="Bereits gespeicherten Logopfad verwenden"><p class="help">Alternativ einen bestehenden GitHub Bildpfad eintragen.</p></div>
