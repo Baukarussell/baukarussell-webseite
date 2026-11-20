@@ -159,15 +159,43 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 .gallery-order-controls button:hover:not(:disabled){background:#fff}
 .gallery-order-controls button:disabled{opacity:.38;cursor:not-allowed}
 @media(max-width:620px){.tile-head{gap:8px;flex-wrap:wrap}}
-.member-text-tools{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:0 0 12px}
-.member-text-tools button{border:1px solid #dfded8;border-radius:6px;background:#faf9f5;min-width:32px;padding:7px 10px;font-size:12px;cursor:pointer}
-.member-text-tools button:hover{background:#f0ede5}
-.field .member-font-size-label{display:flex;align-items:center;gap:6px;margin:0 4px;color:#777568;font-size:11px;font-weight:600}
-.field .member-font-size-label select{display:inline-block;width:auto;min-height:0;padding:6px 8px;margin:0;border:1px solid rgba(177,145,101,.65);border-radius:6px;background:#fff;color:#3b3e39;font-size:12px;min-width:78px}
-.field .member-format-select{display:flex;align-items:center;gap:6px;margin:0 4px;color:#777568;font-size:11px;font-weight:600}
-.field .member-format-select select{display:inline-block;width:auto;min-height:0;padding:6px 8px;margin:0;border:1px solid rgba(177,145,101,.65);border-radius:6px;background:#fff;color:#3b3e39;font-size:12px;max-width:175px}
-.field #member-text-color{border-color:#b8945f}
-@media(max-width:670px){.field .member-format-select{width:calc(50% - 8px);justify-content:space-between}.field .member-format-select select{min-width:0;max-width:135px}}
+/* Kompakte Formatwerkzeuge, inspiriert von der Word Menüleiste. */
+.member-text-tools{display:flex;align-items:center;align-content:center;flex-wrap:wrap;gap:4px;padding:8px 9px;margin:0 0 12px;background:#fbfaf7;border:1px solid rgba(177,145,101,.42);border-radius:8px;overflow:visible}
+.member-text-tools button,.member-text-tools select{font-family:Inter,Arial,sans-serif}
+.member-text-tools button{min-width:0}
+.member-tool-select{appearance:auto;-webkit-appearance:menulist;min-height:34px;height:34px;padding:5px 3px 5px 7px;margin:0;border:1px solid #ded9cd;border-radius:5px;background:#fff;color:#30332f;font-size:12px;cursor:pointer}
+.member-tool-font{width:153px}
+.member-tool-point{width:55px;text-align:center}
+.member-tool-divider{display:block;height:25px;border-left:1px solid #dcd6ca;margin:0 4px}
+.member-text-tools .member-tool-icon,.member-text-tools .member-tool-case,.member-align-tools button,.member-symbol-picker button{display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:#30332f;border-radius:5px;cursor:pointer;height:33px;padding:0 7px;min-width:32px;font-size:15px}
+.member-text-tools .member-tool-icon:hover,.member-text-tools .member-tool-case:hover,.member-align-tools button:hover,.member-symbol-picker button:hover{background:#ede6d9;border-color:#bda784}
+.member-text-tools .member-tool-case{font-size:11px;letter-spacing:-.03em}
+.member-link-glyph{text-decoration:underline;text-underline-offset:3px}
+.member-tool-dropdown{position:relative;flex:none;line-height:1}
+.member-tool-dropdown>summary{display:flex;align-items:center;justify-content:center;gap:3px;list-style:none;cursor:pointer;border:1px solid transparent;border-radius:5px;height:33px;min-width:42px;padding:0 6px;background:transparent}
+.member-tool-dropdown>summary::-webkit-details-marker{display:none}
+.member-tool-dropdown>summary:hover,.member-tool-dropdown[open]>summary{background:#ede6d9;border-color:#bda784}
+.member-color-glyph{font-size:19px;font-weight:600;line-height:22px;border-bottom:3px solid #b8945f;min-width:14px;text-align:center}
+.member-symbol-current{font-size:18px;line-height:1}
+.member-tool-chevron{font-size:14px;color:#806f55}
+.member-tool-popover{position:absolute;right:0;top:38px;z-index:45;box-shadow:0 12px 35px #00000022;background:#fff;border:1px solid #c9b58e;border-radius:8px;padding:10px}
+.member-palette{width:186px}
+.member-palette-title{font-size:10px;font-weight:600;letter-spacing:.05em;color:#837666;margin-bottom:8px}
+.member-palette-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.member-text-tools .member-color-swatch{width:31px;height:31px;display:grid;place-items:center;padding:0;background:#fff;border:1px solid #ded8cc;border-radius:5px;cursor:pointer}
+.member-text-tools .member-color-swatch:hover{border:2px solid #7e6441;transform:translateY(-1px)}
+.member-color-swatch span{display:block;width:20px;height:20px;background:var(--swatch);border-radius:3px}
+.member-symbol-picker{width:176px;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.member-symbol-picker button{font-size:18px;border-color:#eee9df}
+.member-align-tools{display:flex;align-items:center;gap:1px}
+.member-align-tools button{padding:5px;min-width:32px}
+.member-align-tools button[aria-pressed=true]{background:#ece5d8;border:1px solid #baa17a}
+.member-align-tools svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.member-line-tool{display:flex;align-items:center;gap:2px}
+.member-line-tool>span{font-size:19px;color:#6e6659;line-height:1}
+.member-line-tool select{width:104px}
+.member-text-tools button:focus-visible,.member-text-tools summary:focus-visible,.member-text-tools select:focus-visible{outline:2px solid #b8945f;outline-offset:1px}
+@media(max-width:660px){.member-text-tools{padding:7px 5px;gap:3px}.member-tool-font{width:133px}.member-tool-divider{margin:0 1px}.member-line-tool select{width:88px}}
 .member-crop-dialog{position:fixed;inset:0;z-index:10025;background:#14130fe0;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
 .member-crop-panel{background:#faf9f5;border-radius:12px;padding:24px;max-width:900px;width:min(94vw,900px);max-height:96vh;overflow:auto;box-shadow:0 24px 90px #0008}
 .member-crop-panel h2{margin:0;font:500 31px 'Cormorant Garamond',Georgia,serif}
@@ -340,45 +368,60 @@ body.gallery-zoom-active{overflow:hidden}
 <div class="fields-2"><div class="field"><label for="member-person">Ansprechperson <span class="optional">Optional</span></label><input id="member-person" placeholder="Vorname Nachname"></div><div class="field"><label for="member-role">Funktion / Position <span class="optional">Optional</span></label><input id="member-role" placeholder="z.B. Geschäftsführung"></div></div>
 <div class="field"><label for="member-description">Beschreibung <span class="optional">Optional</span></label>
 <div class="member-text-tools" role="toolbar" aria-label="Beschreibung formatieren">
-<button type="button" data-member-format="bold" title="Markierten Text fett">B</button>
-<button type="button" data-member-format="italic" title="Markierten Text kursiv"><em>I</em></button>
-<button type="button" data-member-format="link" title="Link einfügen">Link</button>
-<label class="member-font-size-label" for="member-font-size">Punto
-<select id="member-font-size" aria-label="Schriftgrösse für markierten Text">
- <option value="">Grösse</option>
- <option value="10">10 pt</option><option value="11">11 pt</option><option value="12">12 pt</option>
- <option value="14">14 pt</option><option value="16">16 pt</option><option value="18">18 pt</option>
- <option value="20">20 pt</option><option value="24">24 pt</option>
-</select></label>
-<button type="button" data-member-format="uppercase" title="Markierten Text in Grossbuchstaben umwandeln">ABC</button>
-<button type="button" data-member-format="lowercase" title="Markierten Text in Kleinbuchstaben umwandeln">abc</button>
-<label class="member-format-select" for="member-font-family">Schriftart
-<select id="member-font-family" aria-label="Schriftart für markierten Text">
- <option value="">Wählen</option>
- <option value="inter">Inter</option>
- <option value="cormorant">Cormorant Garamond</option>
- <option value="georgia">Georgia</option>
-</select></label>
-<label class="member-format-select" for="member-text-color">Textfarbe
-<select id="member-text-color" aria-label="Textfarbe für markierten Text">
- <option value="">Wählen</option>
- <option value="gold">Gold</option>
- <option value="lightgold">Helles Gold</option>
- <option value="anthracite">Anthrazit</option>
- <option value="slate">Schiefergrau</option>
-</select></label>
-<label class="member-format-select" for="member-symbol">Symbole
-<select id="member-symbol" aria-label="Symbol an Cursorposition einfügen">
- <option value="">Wählen</option>
- <option value="check">✓ Häkchen</option>
- <option value="bullet">• Punkt</option>
- <option value="diamond">◆ Raute</option>
- <option value="arrow">→ Pfeil</option>
-</select></label>
-</div>
-<div class="member-text-settings">
-<label>Textausrichtung<select id="member-description-align"><option value="left">Linksbündig</option><option value="justify">Blocksatz</option><option value="center">Zentriert</option></select></label>
-<label>Zeilenabstand<select id="member-description-line" title="Mit Cursor eine Zeile ändern, mit Ctrl + A den gesamten Text"><option value="1.4">Eng</option><option value="1.6">Normal</option><option value="1.8">Grosszügig</option><option value="2">Weit</option></select></label>
+ <select id="member-font-family" class="member-tool-select member-tool-font" aria-label="Schriftart für markierten Text" title="Schriftart wählen">
+  <option value="">Inter</option><option value="inter">Inter</option><option value="cormorant">Cormorant Garamond</option><option value="georgia">Georgia</option>
+ </select>
+ <select id="member-font-size" class="member-tool-select member-tool-point" aria-label="Schriftgrösse für markierten Text" title="Schriftgrösse in Punkt">
+  <option value="">12</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="14">14</option>
+  <option value="16">16</option><option value="18">18</option><option value="20">20</option><option value="24">24</option>
+ </select>
+ <span class="member-tool-divider" aria-hidden="true"></span>
+ <button type="button" class="member-tool-icon" data-member-format="bold" title="Fett" aria-label="Fett"><strong>B</strong></button>
+ <button type="button" class="member-tool-icon" data-member-format="italic" title="Kursiv" aria-label="Kursiv"><em>I</em></button>
+ <button type="button" class="member-tool-icon" data-member-format="link" title="Link einfügen" aria-label="Link einfügen"><span class="member-link-glyph">↗</span></button>
+ <button type="button" class="member-tool-case" data-member-format="uppercase" title="In Grossbuchstaben umwandeln">ABC</button>
+ <button type="button" class="member-tool-case" data-member-format="lowercase" title="In Kleinbuchstaben umwandeln">abc</button>
+ <span class="member-tool-divider" aria-hidden="true"></span>
+ <details class="member-tool-dropdown" id="member-color-menu">
+  <summary title="Textfarbe wählen" aria-label="Textfarbe wählen"><span class="member-color-glyph" id="member-color-glyph">A</span><span class="member-tool-chevron" aria-hidden="true">⌄</span></summary>
+  <div class="member-tool-popover member-palette" role="group" aria-label="Textfarben">
+   <div class="member-palette-title">Textfarbe</div>
+   <div class="member-palette-grid">
+    <button type="button" class="member-color-swatch" data-member-color="gold" title="Gold" aria-label="Gold" style="--swatch:#b8945f"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="lightgold" title="Helles Gold" aria-label="Helles Gold" style="--swatch:#d4b483"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="darkgold" title="Dunkelgold" aria-label="Dunkelgold" style="--swatch:#94724b"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="bronze" title="Bronze" aria-label="Bronze" style="--swatch:#a77d57"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="anthracite" title="Anthrazit" aria-label="Anthrazit" style="--swatch:#30332f"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="slate" title="Schiefergrau" aria-label="Schiefergrau" style="--swatch:#74776f"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="sage" title="Salbeigrün" aria-label="Salbeigrün" style="--swatch:#60766b"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="wine" title="Bordeaux" aria-label="Bordeaux" style="--swatch:#875a67"><span aria-hidden="true"></span></button>
+   </div>
+  </div>
+ </details>
+ <details class="member-tool-dropdown" id="member-symbol-menu">
+  <summary title="Symbol einfügen" aria-label="Symbol einfügen"><span class="member-symbol-current" id="member-symbol-current">✓</span><span class="member-tool-chevron" aria-hidden="true">⌄</span></summary>
+  <div class="member-tool-popover member-symbol-picker" role="group" aria-label="Symbole">
+   <button type="button" data-member-symbol="check" title="Häkchen" aria-label="Häkchen">✓</button>
+   <button type="button" data-member-symbol="bullet" title="Punkt" aria-label="Punkt">•</button>
+   <button type="button" data-member-symbol="diamond" title="Raute" aria-label="Raute">◆</button>
+   <button type="button" data-member-symbol="arrow" title="Pfeil" aria-label="Pfeil">→</button>
+   <button type="button" data-member-symbol="star" title="Stern" aria-label="Stern">★</button>
+   <button type="button" data-member-symbol="circle" title="Kreis" aria-label="Kreis">○</button>
+   <button type="button" data-member-symbol="square" title="Quadrat" aria-label="Quadrat">▪</button>
+   <button type="button" data-member-symbol="up" title="Pfeil nach oben" aria-label="Pfeil nach oben">↗</button>
+  </div>
+ </details>
+ <span class="member-tool-divider" aria-hidden="true"></span>
+ <div class="member-align-tools" role="group" aria-label="Textausrichtung">
+  <button type="button" data-member-align="left" title="Linksbündig" aria-label="Linksbündig" aria-pressed="true"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M3 8h10M3 12h14M3 16h10"/></svg></button>
+  <button type="button" data-member-align="center" title="Zentriert" aria-label="Zentriert" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M5 8h10M3 12h14M5 16h10"/></svg></button>
+  <button type="button" data-member-align="justify" title="Blocksatz" aria-label="Blocksatz" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M3 8h14M3 12h14M3 16h14"/></svg></button>
+ </div>
+ <select id="member-description-align" class="hidden" aria-label="Textausrichtung"><option value="left">Linksbündig</option><option value="justify">Blocksatz</option><option value="center">Zentriert</option></select>
+ <div class="member-line-tool" title="Zeilenabstand">
+  <span aria-hidden="true">↕</span>
+  <select id="member-description-line" class="member-tool-select" aria-label="Zeilenabstand" title="Zeilenabstand: Cursor für eine Zeile, Ctrl + A für alle"><option value="1.4">Eng</option><option value="1.6">Normal</option><option value="1.8">Grosszügig</option><option value="2">Weit</option></select>
+ </div>
 </div>
 <textarea id="member-description" placeholder="Kurze Firmenbeschreibung"></textarea>
 <p class="help">Für Schriftgrösse, Schriftart, Farbe oder Gross und Klein zuerst Text markieren. Mit Ctrl + A wählst du den gesamten Text. Symbole kannst du direkt an der Cursorposition einfügen.</p>
