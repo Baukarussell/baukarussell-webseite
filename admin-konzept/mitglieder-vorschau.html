@@ -357,10 +357,19 @@
  function memberLogo(member){
   return safeImage(member.logo)||'/admin/brand.svg';
  }
+ function styleMemberText(node,member,key){
+  const style=member.fieldStyles?.[key]||{};
+  node.style.color=MEMBER_TEXT_COLORS[style.color]||'';
+  node.style.fontFamily=MEMBER_TEXT_FONTS[style.font]||'';
+  node.style.fontSize=style.size?style.size+'pt':'';
+  node.style.fontWeight=style.bold?'700':'';
+  node.style.fontStyle=style.italic?'italic':'';
+  node.style.textAlign=style.align||'';
+ }
  function makeMemberCard(member){
   const b=make('button','mini-member');b.type='button';
   const img=make('img');img.src=memberLogo(member);img.alt='Logo '+(member.name||'');
-  const title=make('span','',member.name||'Mitglied');
+  const title=make('span','',member.name||'Mitglied');styleMemberText(title,member,'name');
   b.append(img,title);b.addEventListener('click',()=>showProfile(member.id));
   return b;
  }
@@ -381,9 +390,12 @@
   $('listing').classList.add('hidden');
   $('profile-view').classList.remove('hidden');
   $('profile-name').textContent=member.name||'Mitglied';
-  const person=[member.person,member.role].filter(Boolean).join(' · ');
-  $('profile-person').textContent=person;
-  $('profile-person').classList.toggle('hidden',!person);
+  styleMemberText($('profile-name'),member,'name');
+  const personNode=$('profile-person');personNode.replaceChildren();
+  if(member.person){const part=make('span','',member.person);styleMemberText(part,member,'person');personNode.append(part);}
+  if(member.person&&member.role)personNode.append(document.createTextNode(' · '));
+  if(member.role){const part=make('span','',member.role);styleMemberText(part,member,'role');personNode.append(part);}
+  personNode.classList.toggle('hidden',!member.person&&!member.role);
   const image=safeImage(member.photo);
   $('photo-area').classList.toggle('hidden',!image);
   $('profile-hero').classList.toggle('no-photo',!image);
@@ -410,8 +422,24 @@
   }
   $('profile-contact-lines').replaceChildren();
   // The company name belongs to the contact block even when the street is not yet filled in.
-  const address=[addressCompanyName(member),member.street,[member.postalCode,member.city].filter(Boolean).join(' '),member.country].filter(Boolean);
-  if(address.length)$('profile-contact-lines').append(make('div','contact-line member-address',address.join('\n')));
+  const address=make('div','contact-line member-address');
+  function appendAddress(text,key){
+   if(!text)return;
+   const line=make('div','',text);
+   styleMemberText(line,member,key);
+   address.append(line);
+  }
+  appendAddress(addressCompanyName(member),'addressCompany');
+  appendAddress(member.street,'street');
+  if(member.postalCode||member.city){
+   const place=make('div');
+   if(member.postalCode){const code=make('span','',member.postalCode);styleMemberText(code,member,'postalCode');place.append(code);}
+   if(member.postalCode&&member.city)place.append(document.createTextNode(' '));
+   if(member.city){const city=make('span','',member.city);styleMemberText(city,member,'city');place.append(city);}
+   address.append(place);
+  }
+  appendAddress(member.country,'country');
+  if(address.childNodes.length)$('profile-contact-lines').append(address);
   if(member.phone){
    const line=make('div','contact-line');
    line.append(document.createTextNode('T '));
