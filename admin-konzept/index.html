@@ -163,9 +163,9 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 .member-text-tools{display:flex;align-items:center;align-content:center;flex-wrap:wrap;gap:4px;padding:8px 9px;margin:0 0 12px;background:#fbfaf7;border:1px solid rgba(177,145,101,.42);border-radius:8px;overflow:visible}
 .member-text-tools button,.member-text-tools select{font-family:Inter,Arial,sans-serif}
 .member-text-tools button{min-width:0}
-.member-tool-select{appearance:auto;-webkit-appearance:menulist;min-height:34px;height:34px;padding:5px 3px 5px 7px;margin:0;border:1px solid #ded9cd;border-radius:5px;background:#fff;color:#30332f;font-size:12px;cursor:pointer}
-.member-tool-font{width:153px}
-.member-tool-point{width:55px;text-align:center}
+.field .member-text-tools select.member-tool-select{display:inline-block;appearance:auto;-webkit-appearance:menulist;width:auto;min-height:34px;height:34px;padding:5px 3px 5px 7px;margin:0;border:1px solid #ded9cd;border-radius:5px;background:#fff;color:#30332f;font-size:12px;cursor:pointer}
+.field .member-text-tools select.member-tool-font{width:153px}
+.field .member-text-tools select.member-tool-point{width:55px;text-align:center}
 .member-tool-divider{display:block;height:25px;border-left:1px solid #dcd6ca;margin:0 4px}
 .member-text-tools .member-tool-icon,.member-text-tools .member-tool-case,.member-align-tools button,.member-symbol-picker button{display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:#30332f;border-radius:5px;cursor:pointer;height:33px;padding:0 7px;min-width:32px;font-size:15px}
 .member-text-tools .member-tool-icon:hover,.member-text-tools .member-tool-case:hover,.member-align-tools button:hover,.member-symbol-picker button:hover{background:#ede6d9;border-color:#bda784}
@@ -193,9 +193,9 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 .member-align-tools svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
 .member-line-tool{display:flex;align-items:center;gap:2px}
 .member-line-tool>span{font-size:19px;color:#6e6659;line-height:1}
-.member-line-tool select{width:104px}
+.field .member-text-tools .member-line-tool select{width:104px}
 .member-text-tools button:focus-visible,.member-text-tools summary:focus-visible,.member-text-tools select:focus-visible{outline:2px solid #b8945f;outline-offset:1px}
-@media(max-width:660px){.member-text-tools{padding:7px 5px;gap:3px}.member-tool-font{width:133px}.member-tool-divider{margin:0 1px}.member-line-tool select{width:88px}}
+@media(max-width:660px){.member-text-tools{padding:7px 5px;gap:3px}.field .member-text-tools select.member-tool-font{width:133px}.member-tool-divider{margin:0 1px}.field .member-text-tools .member-line-tool select{width:88px}}
 .member-crop-dialog{position:fixed;inset:0;z-index:10025;background:#14130fe0;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
 .member-crop-panel{background:#faf9f5;border-radius:12px;padding:24px;max-width:900px;width:min(94vw,900px);max-height:96vh;overflow:auto;box-shadow:0 24px 90px #0008}
 .member-crop-panel h2{margin:0;font:500 31px 'Cormorant Garamond',Georgia,serif}
