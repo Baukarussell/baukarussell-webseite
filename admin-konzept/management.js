@@ -366,6 +366,11 @@ function rebaseMemberLineStyles(before,after,original){
 }
 function applyMemberLineHeight(){
  const m=memberItem();if(!m)return;
+ if(selectedMemberTextField().id!=='member-description'){
+  api.toast('Zeilenabstand gilt für die mehrzeilige Beschreibung.');
+  $('member-description-line').value=m.descriptionLineHeight||'1.6';
+  selectedMemberTextField().focus();return;
+ }
  const field=$('member-description'),lineSelect=$('member-description-line');
  const value=lineSelect.value;
  const text=field.value.replace(/\r\n?/g,'\n'),start=field.selectionStart,end=field.selectionEnd;
