@@ -84,7 +84,7 @@ function cleanItem(item,kind){
  }
  return {id,...fields,photoZoom,photoPositionX,photoPositionY,descriptionParagraphStyles,fieldStyles,public:item.public!==false,socials};
 }
-function normalized(data,kind){
+export function normalized(data,kind){
  if(!Array.isArray(data)||data.length>(kind==='members'?90:100))return null;
  const seen=new Set(),output=[];
  for(const item of data){
