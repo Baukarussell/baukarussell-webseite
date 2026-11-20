@@ -132,12 +132,12 @@ async function optimizeProfilePhoto(file){
  }finally{source.close?.();}
 }
 async function uploadMemberImage(field,originalFile){
- if(!originalFile)return;
+ if(!originalFile)return false;
  const isPhoto=field==='photo',label=isPhoto?'Foto':'Logo';
  if(!['image/jpeg','image/png','image/webp'].includes(originalFile.type)){
-  memberMediaStatus(field,'Bitte JPG, PNG oder WebP auswählen.','error');return;
+  memberMediaStatus(field,'Bitte JPG, PNG oder WebP auswählen.','error');return false;
  }
- const member=memberItem();if(!member)return;
+ const member=memberItem();if(!member)return false;
  const targetId=member.id,btn=isPhoto?$('member-photo-button'):$('member-logo-button');
  btn.disabled=true;btn.textContent=label+' wird gespeichert ...';
  memberMediaStatus(field,'Bild wird vorbereitet und in GitHub gespeichert ...');
@@ -153,20 +153,25 @@ async function uploadMemberImage(field,originalFile){
   const result=await response.json().catch(()=>({}));
   if(!response.ok||!result.saved||!result.url)throw Error(result.error||'GitHub hat das Bild nicht gespeichert.');
   const found=members.find(x=>x.id===targetId);
+  const local=URL.createObjectURL(file);
+  if(isPhoto){
+   const previous=memberPhotoLocal.get(targetId);
+   if(previous)URL.revokeObjectURL(previous.url);
+   memberPhotoLocal.set(targetId,{path:result.url,url:local});
+  }
   if(found){found[field]=result.url;save(cloudKinds.members,members);}
   if(chosenMember===targetId){
    $(isPhoto?'member-photo-path':'member-logo-path').value=result.url;
    memberPreview();
-   // Keep the selected image visible while Cloudflare deploys the new test asset.
-   const local=URL.createObjectURL(file);
-   $(isPhoto?'member-photo-thumb':'member-logo-thumb').src=local;
-   if(isPhoto){$('member-preview-photo').src=local;$('member-photo-direct').classList.remove('hidden');}
-   else $('member-preview-logo').src=local;
-  }
+   if(isPhoto){$('member-photo-thumb').src=local;$('member-preview-photo').src=local;$('member-photo-direct').classList.remove('hidden');}
+   else $('member-logo-thumb').src=local;
+  }else if(!isPhoto)URL.revokeObjectURL(local);
   memberMediaStatus(field,label+' auf GitHub gespeichert. Bitte jetzt oben «Entwurf speichern» wählen.','success');
+  return true;
  }catch(error){
   memberMediaStatus(field,error.message||'Bild konnte nicht gespeichert werden.','error');
   cloudStatus('members','Das Bild konnte nicht hochgeladen werden. Deine bisherigen Angaben und das Logo bleiben unverändert.','error');
+  return false;
  }finally{btn.disabled=false;btn.textContent=isPhoto?'Foto hochladen':'Logo hochladen';}
 }
 
@@ -454,9 +459,12 @@ function memberPreview(){
  $('member-editor-title').textContent=m.name||'Neues Mitglied';
  renderMemberDescription(m);
  for(const elem of [$('member-preview-logo'),$('member-logo-thumb')]){elem.src=m.logo||'/admin/brand.svg';}
- $('member-photo-thumb').src=m.photo||'/admin/brand.svg';
+ const recent=memberPhotoLocal.get(m.id);
+ const photoSrc=recent?.path===m.photo?recent.url:(m.photo||'/admin/brand.svg');
+ $('member-photo-thumb').src=photoSrc;
  $('member-photo-direct').classList.toggle('hidden',!m.photo);
- if(m.photo)$('member-preview-photo').src=m.photo;
+ $('member-photo-crop').disabled=!m.photo;
+ if(m.photo)$('member-preview-photo').src=photoSrc;
  for(const el of [$('member-photo-thumb'),$('member-preview-photo')]){
   el.style.objectFit='contain';
   el.style.objectPosition='center';
@@ -525,6 +533,131 @@ $('member-social-add').onclick=()=>{
 };
 $('member-photo-button').onclick=()=>$('member-photo-input').click();
 $('member-photo-input').onchange=e=>{const file=e.target.files?.[0];e.target.value='';if(file)uploadMemberImage('photo',file);};
+
+// One-step non-destructive cropping: the original image remains in GitHub.
+// Cropping creates a separate new file only after explicit confirmation.
+const cropDialog=$('member-crop-dialog');
+const cropImage=$('member-crop-image');
+const cropStage=$('member-crop-stage');
+const cropSelection=$('member-crop-selection');
+let cropData=null,cropGesture=null;
+const clampCrop=(value,min,max)=>Math.max(min,Math.min(max,value));
+function drawMemberCrop(){
+ if(!cropData)return;
+ const r=cropData.rect;
+ cropSelection.style.left=(r.x*100)+'%';
+ cropSelection.style.top=(r.y*100)+'%';
+ cropSelection.style.width=(r.w*100)+'%';
+ cropSelection.style.height=(r.h*100)+'%';
+}
+function closeMemberCrop(){
+ if(cropDialog.classList.contains('hidden'))return;
+ if($('member-crop-apply').disabled)return;
+ cropDialog.classList.add('hidden');
+ cropImage.removeAttribute('src');
+ cropImage.onload=null;cropImage.onerror=null;
+ cropData=null;cropGesture=null;
+ $('member-crop-status').textContent='';
+}
+$('member-photo-crop').onclick=()=>{
+ const member=memberItem();if(!member?.photo)return;
+ const recent=memberPhotoLocal.get(member.id);
+ const src=recent?.path===member.photo?recent.url:member.photo;
+ cropData={memberId:member.id,rect:{x:.08,y:.08,w:.84,h:.84}};
+ cropGesture=null;
+ $('member-crop-status').textContent='Foto wird geladen ...';
+ cropSelection.style.visibility='hidden';
+ cropDialog.classList.remove('hidden');
+ cropImage.onload=()=>{
+  if(!cropData)return;
+  $('member-crop-status').textContent='Wähle den Ausschnitt direkt auf dem Foto.';
+  drawMemberCrop();cropSelection.style.visibility='visible';
+ };
+ cropImage.onerror=()=>{$('member-crop-status').textContent='Foto ist noch nicht verfügbar. Bitte nach dem Hochladen und Speichern erneut versuchen.';cropSelection.style.visibility='hidden';};
+ cropImage.src=src;
+};
+$('member-crop-cancel').onclick=closeMemberCrop;
+cropDialog.addEventListener('pointerdown',e=>{if(e.target===cropDialog)closeMemberCrop();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!cropDialog.classList.contains('hidden'))closeMemberCrop();});
+cropStage.addEventListener('pointerdown',ev=>{
+ if(!cropData||!cropImage.naturalWidth||ev.button!==0)return;
+ ev.preventDefault();
+ const bounds=cropStage.getBoundingClientRect();
+ const px=clampCrop((ev.clientX-bounds.left)/bounds.width,0,1);
+ const py=clampCrop((ev.clientY-bounds.top)/bounds.height,0,1);
+ const handle=ev.target?.dataset?.cropHandle||'';
+ const inside=cropSelection.contains(ev.target);
+ cropGesture={pointerId:ev.pointerId,mode:handle||(inside?'move':'new'),
+  x:px,y:py,rect:{...cropData.rect}};
+ if(!inside){
+  cropData.rect={x:Math.min(px,.95),y:Math.min(py,.95),w:.05,h:.05};
+  cropGesture.rect={...cropData.rect};
+  cropGesture.x=px;cropGesture.y=py;
+ }
+ cropStage.setPointerCapture(ev.pointerId);
+ drawMemberCrop();
+});
+cropStage.addEventListener('pointermove',ev=>{
+ const g=cropGesture;if(!cropData||!g||g.pointerId!==ev.pointerId)return;
+ ev.preventDefault();
+ const bounds=cropStage.getBoundingClientRect();
+ const px=clampCrop((ev.clientX-bounds.left)/bounds.width,0,1);
+ const py=clampCrop((ev.clientY-bounds.top)/bounds.height,0,1);
+ const dx=px-g.x,dy=py-g.y,r=g.rect,min=.05;
+ let result;
+ if(g.mode==='move'){
+  result={...r,x:clampCrop(r.x+dx,0,1-r.w),y:clampCrop(r.y+dy,0,1-r.h)};
+ }else if(g.mode==='new'){
+  const x=clampCrop(Math.min(g.x,px),0,1-min),y=clampCrop(Math.min(g.y,py),0,1-min);
+  result={x,y,w:clampCrop(Math.abs(px-g.x),min,1-x),h:clampCrop(Math.abs(py-g.y),min,1-y)};
+ }else{
+  const left=r.x,top=r.y,right=r.x+r.w,bottom=r.y+r.h;
+  const l=g.mode.includes('w')?clampCrop(left+dx,0,right-min):left;
+  const t=g.mode.includes('n')?clampCrop(top+dy,0,bottom-min):top;
+  const rr=g.mode.includes('e')?clampCrop(right+dx,l+min,1):right;
+  const bb=g.mode.includes('s')?clampCrop(bottom+dy,t+min,1):bottom;
+  result={x:l,y:t,w:rr-l,h:bb-t};
+ }
+ cropData.rect=result;drawMemberCrop();
+});
+function endMemberCropDrag(ev){
+ if(cropGesture&&ev.pointerId===cropGesture.pointerId){
+  cropGesture=null;
+  if(cropStage.hasPointerCapture(ev.pointerId))cropStage.releasePointerCapture(ev.pointerId);
+ }
+}
+cropStage.addEventListener('pointerup',endMemberCropDrag);
+cropStage.addEventListener('pointercancel',endMemberCropDrag);
+$('member-crop-apply').onclick=async()=>{
+ if(!cropData||!cropImage.naturalWidth)return;
+ const memberId=cropData.memberId;
+ if(chosenMember!==memberId){$('member-crop-status').textContent='Bitte das Mitglied erneut öffnen.';return;}
+ const button=$('member-crop-apply');button.disabled=true;
+ $('member-crop-status').textContent='Foto wird zugeschnitten und gespeichert ...';
+ try{
+  const {x,y,w,h}=cropData.rect;
+  const sourceWidth=cropImage.naturalWidth,sourceHeight=cropImage.naturalHeight;
+  const sx=Math.round(x*sourceWidth),sy=Math.round(y*sourceHeight);
+  const sw=Math.max(1,Math.min(sourceWidth-sx,Math.round(w*sourceWidth)));
+  const sh=Math.max(1,Math.min(sourceHeight-sy,Math.round(h*sourceHeight)));
+  const scale=Math.min(1,1800/Math.max(sw,sh));
+  const canvas=document.createElement('canvas');
+  canvas.width=Math.max(1,Math.round(sw*scale));canvas.height=Math.max(1,Math.round(sh*scale));
+  const ctx=canvas.getContext('2d');
+  if(!ctx)throw Error('Bildbearbeitung wird in diesem Browser nicht unterstützt.');
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(cropImage,sx,sy,sw,sh,0,0,canvas.width,canvas.height);
+  const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('Foto konnte nicht zugeschnitten werden.')),'image/jpeg',.88));
+  const file=new File([blob],'mitglied-zuschnitt-'+Date.now()+'.jpg',{type:'image/jpeg'});
+  const success=await uploadMemberImage('photo',file);
+  if(!success)throw Error('Zuschneiden konnte nicht gespeichert werden. Das bestehende Foto bleibt erhalten.');
+  button.disabled=false;
+  closeMemberCrop();
+ }catch(error){
+  $('member-crop-status').textContent=error.message||'Foto konnte nicht gespeichert werden.';
+ }finally{button.disabled=false;}
+};
+
 $('member-logo-button').onclick=()=>$('member-logo-input').click();
 $('member-logo-input').onchange=e=>{const file=e.target.files?.[0];e.target.value='';if(file)uploadMemberImage('logo',file);};
 for(const [field,elem] of [['logo','member-logo-path'],['photo','member-photo-path']]){
