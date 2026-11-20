@@ -160,10 +160,6 @@
 .detail-hero.no-photo{grid-template-columns:1fr;max-width:960px}
 .contact-line.member-address{white-space:pre-line}
 .contact-info .contact-line.member-address{font-size:15px;line-height:1.8;margin-bottom:10px}
-.contact-copy{display:inline-block;margin:2px 0 8px;padding:8px 14px;background:transparent;border:1px solid var(--gold);color:#8b6840;border-radius:3px;font:500 12px Inter,Arial,sans-serif;cursor:pointer;transition:border-color .2s,background .2s}
-.contact-copy:hover{background:#f9f3e8;border-color:#947140}
-.copy-feedback{font-size:11px;margin-left:10px;color:#6d7a63}
-
 .contact-section-detail{margin-top:28px}
 .contact-info .contact-line a{text-decoration:none}
 .contact-info .contact-line a:hover{text-decoration:underline}
@@ -335,6 +331,12 @@
    firstNonblank=false;
   }
  }
+ function addressCompanyName(member){
+ // Preserve the visible member/person name, use the verified business name only in the address.
+ if(member.id==='member-8'||/\/logos\/onur\./i.test(member.logo||''))return 'ONUR Projects GmbH';
+ if(member.id==='member-1'||/\/logos\/akkaya\./i.test(member.logo||''))return 'C. Akkaya Lösungen aus Edelstahl';
+ return String(member.name||'').trim();
+}
  function memberLogo(member){
   return safeImage(member.logo)||'/admin/brand.svg';
  }
@@ -390,17 +392,9 @@
    const a=make('a','btn btn-secondary','E-Mail senden');a.href='mailto:'+member.email;$('profile-actions').append(a);
   }
   $('profile-contact-lines').replaceChildren();
-  const address=[member.name,member.street,[member.postalCode,member.city].filter(Boolean).join(' '),member.country].filter(Boolean);
+  const address=[addressCompanyName(member),member.street,[member.postalCode,member.city].filter(Boolean).join(' '),member.country].filter(Boolean);
   if([member.street,member.postalCode,member.city,member.country].some(Boolean)){
-   const fullAddress=address.join('\n');
-   $('profile-contact-lines').append(make('div','contact-line member-address',fullAddress));
-   const copy=make('button','contact-copy','Adresse kopieren');copy.type='button';
-   const feedback=make('span','copy-feedback','');
-   copy.onclick=async()=>{
-    try{await navigator.clipboard.writeText(fullAddress);feedback.textContent='Kopiert';}
-    catch(_){feedback.textContent='Bitte Adresse markieren und kopieren.';}
-   };
-   $('profile-contact-lines').append(copy,feedback);
+   $('profile-contact-lines').append(make('div','contact-line member-address',address.join('\n')));
   }
   if(member.phone){
    const line=make('div','contact-line');
