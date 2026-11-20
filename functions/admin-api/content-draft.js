@@ -57,6 +57,22 @@ function cleanItem(item,kind){
     ||(value.heading!==undefined&&typeof value.heading!=='boolean'))return null;
   descriptionParagraphStyles.push({align,line,gap,heading:value.heading===true});
  }
+ // Optional, per-field presentation styles; original address, names and contact data remain plain text.
+ const allowedStyleFields=new Set(['name','person','role','addressCompany','street','postalCode','city','country']);
+ const sourceStyles=item.fieldStyles??{};
+ if(!sourceStyles||typeof sourceStyles!=='object'||Array.isArray(sourceStyles))return null;
+ const fieldStyles={};
+ for(const [key,value] of Object.entries(sourceStyles)){
+  if(!allowedStyleFields.has(key)||!value||typeof value!=='object'||Array.isArray(value))return null;
+  const font=str(value.font||'',32),color=str(value.color||'',32),size=str(value.size||'',4),align=str(value.align||'',12);
+  if(!['','inter','cormorant','georgia'].includes(font)
+   ||!['','gold','lightgold','darkgold','bronze','anthracite','slate','sage','wine'].includes(color)
+   ||!['','10','11','12','14','16','18','20','24'].includes(size)
+   ||!['','left','center','justify'].includes(align)
+   ||(value.bold!==undefined&&typeof value.bold!=='boolean')
+   ||(value.italic!==undefined&&typeof value.italic!=='boolean'))return null;
+  fieldStyles[key]={font,color,size,align,bold:value.bold===true,italic:value.italic===true};
+ }
  const social=Array.isArray(item.socials)?item.socials:[];
  if(social.length>24)return null;
  const socials=[];
@@ -66,7 +82,7 @@ function cleanItem(item,kind){
   if(platform===null||url===null||!validLink(url)||!/^[a-z0-9_-]+$/.test(platform))return null;
   socials.push({platform,url});
  }
- return {id,...fields,photoZoom,photoPositionX,photoPositionY,descriptionParagraphStyles,public:item.public!==false,socials};
+ return {id,...fields,photoZoom,photoPositionX,photoPositionY,descriptionParagraphStyles,fieldStyles,public:item.public!==false,socials};
 }
 function normalized(data,kind){
  if(!Array.isArray(data)||data.length>(kind==='members'?90:100))return null;
