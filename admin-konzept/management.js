@@ -291,9 +291,20 @@ function renderMemberSocials(){
   row.append(dropdown,url,up,down,del);root.append(row);
  });
 }
+const MEMBER_TEXT_FONTS={
+ inter:"'Inter', Arial, sans-serif",
+ cormorant:"'Cormorant Garamond', Georgia, serif",
+ georgia:"Georgia, serif"
+};
+const MEMBER_TEXT_COLORS={
+ gold:'#b8945f',
+ lightgold:'#d4b483',
+ anthracite:'#30332f',
+ slate:'#74776f'
+};
 function renderMemberInline(parent,plain){
- // Secure inline renderer: links, font sizes, bold and italic can be nested.
- const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\[pt=(10|11|12|14|16|18|20|24)\]([\s\S]*?)\[\/pt\]|\*\*\*([\s\S]+?)\*\*\*|\*\*([\s\S]+?)\*\*|\*([\s\S]+?)\*/g;
+ // Render only approved styles as DOM nodes. Never interpret arbitrary HTML.
+ const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\[pt=(10|11|12|14|16|18|20|24)\]([\s\S]*?)\[\/pt\]|\[font=(inter|cormorant|georgia)\]([\s\S]*?)\[\/font\]|\[color=(gold|lightgold|anthracite|slate)\]([\s\S]*?)\[\/color\]|\*\*\*([\s\S]+?)\*\*\*|\*\*([\s\S]+?)\*\*|\*([\s\S]+?)\*/g;
  let from=0,match;
  while((match=re.exec(plain))!==null){
   if(match.index>from)parent.append(document.createTextNode(plain.slice(from,match.index)));
@@ -304,11 +315,15 @@ function renderMemberInline(parent,plain){
   }else if(match[3]!==undefined){
    const span=make('span');span.style.fontSize=match[3]+'pt';renderMemberInline(span,match[4]);parent.append(span);
   }else if(match[5]!==undefined){
-   const strong=make('strong'),em=make('em');renderMemberInline(em,match[5]);strong.append(em);parent.append(strong);
-  }else if(match[6]!==undefined){
-   const strong=make('strong');renderMemberInline(strong,match[6]);parent.append(strong);
+   const span=make('span');span.style.fontFamily=MEMBER_TEXT_FONTS[match[5]];renderMemberInline(span,match[6]);parent.append(span);
+  }else if(match[7]!==undefined){
+   const span=make('span');span.style.color=MEMBER_TEXT_COLORS[match[7]];renderMemberInline(span,match[8]);parent.append(span);
+  }else if(match[9]!==undefined){
+   const strong=make('strong'),em=make('em');renderMemberInline(em,match[9]);strong.append(em);parent.append(strong);
+  }else if(match[10]!==undefined){
+   const strong=make('strong');renderMemberInline(strong,match[10]);parent.append(strong);
   }else{
-   const em=make('em');renderMemberInline(em,match[7]);parent.append(em);
+   const em=make('em');renderMemberInline(em,match[11]);parent.append(em);
   }
   from=re.lastIndex;
  }
@@ -397,8 +412,8 @@ function changeMemberTextSelection(replacement){
  changeMember();field.focus();
 }
 function transformMemberCase(text,toUpper){
- // Do not destroy link URLs or point size markers when changing text casing.
- const untouched=/https?:\/\/[^\s)]+|\[\/?pt(?:=(?:10|11|12|14|16|18|20|24))?\]/gi;
+ // Preserve formatting markers and links when converting selected text.
+ const untouched=/https?:\/\/[^\s)]+|\[\/?(?:pt(?:=(?:10|11|12|14|16|18|20|24))?|font(?:=(?:inter|cormorant|georgia))?|color(?:=(?:gold|lightgold|anthracite|slate))?)\]/gi;
  let out='',last=0,m;
  while((m=untouched.exec(text))!==null){
   const segment=text.slice(last,m.index);
@@ -445,6 +460,43 @@ function applyMemberFontSize(){
  changeMemberTextSelection(changed);
 }
 $('member-font-size').addEventListener('change',applyMemberFontSize);
+function applyMemberStyle(kind,value){
+ const options={
+  font:{inter:true,cormorant:true,georgia:true},
+  color:{gold:true,lightgold:true,anthracite:true,slate:true}
+ };
+ if(!options[kind]?.[value])return;
+ const field=$('member-description'),start=field.selectionStart,end=field.selectionEnd;
+ if(start===end){api.toast('Bitte zuerst den Text markieren.');field.focus();return;}
+ const selection=field.value.slice(start,end);
+ // One formatted wrapper per line preserves existing paragraph and line spacing.
+ const changed=selection.split('\n').map(line=>{
+  if(!line.trim())return line;
+  const re=kind==='font'
+   ?/^\[font=(?:inter|cormorant|georgia)\]([\s\S]*)\[\/font\]$/
+   :/^\[color=(?:gold|lightgold|anthracite|slate)\]([\s\S]*)\[\/color\]$/;
+  const previous=line.match(re);
+  return '['+kind+'='+value+']'+(previous?previous[1]:line)+'[/'+kind+']';
+ }).join('\n');
+ changeMemberTextSelection(changed);
+}
+$('member-font-family').addEventListener('change',()=>{
+ const el=$('member-font-family'),value=el.value;el.value='';
+ if(value)applyMemberStyle('font',value);
+});
+$('member-text-color').addEventListener('change',()=>{
+ const el=$('member-text-color'),value=el.value;el.value='';
+ if(value)applyMemberStyle('color',value);
+});
+const MEMBER_SYMBOLS={check:'✓',bullet:'•',diamond:'◆',arrow:'→'};
+$('member-symbol').addEventListener('change',()=>{
+ const el=$('member-symbol'),symbol=MEMBER_SYMBOLS[el.value];el.value='';
+ if(!symbol)return;
+ const field=$('member-description'),start=field.selectionStart;
+ field.setRangeText(symbol+' ',start,start,'end');
+ changeMember();field.focus();
+});
+
 function addressCompanyName(member){
  // The postal address uses its own editable company name, independent from the member heading.
  if(typeof member.addressCompany==='string'&&member.addressCompany.trim())return member.addressCompany.trim();
