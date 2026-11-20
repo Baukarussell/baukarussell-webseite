@@ -149,6 +149,8 @@
 .detail-description-wrap{max-width:680px;font-size:15px;line-height:1.78;color:#555;hyphens:auto;overflow-wrap:anywhere}
 .detail-description-wrap p{font-size:15px;line-height:1.78;margin:0 0 15px;white-space:normal;min-height:0}
 .detail-description-wrap .description-line{display:block;white-space:pre-wrap;overflow-wrap:anywhere}
+.detail-description-wrap .description-line:empty{min-height:1.5em}
+.detail-description-wrap .description-lead{color:#8d744d;letter-spacing:.1em;font-size:12px;font-weight:500;text-transform:uppercase;text-align:left!important}
 .detail-description-wrap p:last-child{margin-bottom:0}
 .detail-description-wrap p.description-lead{color:#8d744d;letter-spacing:.1em;font-size:12px;font-weight:500;line-height:1.7;text-transform:uppercase;margin-bottom:22px;text-align:left!important}
 .detail-description-wrap strong{font-weight:600}
@@ -324,36 +326,25 @@
   if(from<value.length)parent.append(document.createTextNode(value.slice(from)));
  }
  function showDescription(member){
-  const description=$('profile-description');
-  description.replaceChildren();
+  const root=$('profile-description');root.replaceChildren();
   const raw=String(member.description||'').replace(/\r\n?/g,'\n');
-  const rows=raw.split('\n');
-  const rules=Array.isArray(member.descriptionParagraphStyles)?member.descriptionParagraphStyles:[];
-  let para=null,linesInPara=0;
-  const freshParagraph=()=>{
-   para=make('p');
-   description.append(para);
-   linesInPara=0;
-  };
-  let firstNonblank=true;
-  for(let i=0;i<rows.length;i++){
-   const line=rows[i];
-   if(!line.trim()){para=null;continue;} // Blank lines separate paragraphs, never stack empty paragraphs.
-   if(!para)freshParagraph();
-   if(firstNonblank && /^[A-ZÄÖÜ0-9&\s,.–-]{10,100}$/.test(line.trim())){
-    para.classList.add('description-lead');
-   }
-   const span=make('span','description-line');
-   const config=rules[i]||{};
-   const spacing=config.line||member.descriptionLineHeight||'1.6';
-   span.style.lineHeight=spacing;
-   span.style.textAlign=member.descriptionAlign||'left';
-   if(linesInPara>0)span.style.marginTop='0';
-   inline(span,line);
-   para.append(span);
-   linesInPara++;
-   firstNonblank=false;
-  }
+  if(!raw)return;
+  const lines=raw.split('\n');
+  const styles=Array.isArray(member.descriptionParagraphStyles)?member.descriptionParagraphStyles:[];
+  let firstText=true;
+  lines.forEach((line,index)=>{
+   const row=make('div','description-line');
+   row.style.display='block';
+   row.style.whiteSpace='pre-wrap';
+   row.style.minHeight='1.5em';
+   row.style.textAlign=member.descriptionAlign||'left';
+   row.style.lineHeight=styles[index]?.line||member.descriptionLineHeight||'1.6';
+   if(line){
+    if(firstText&&/^[A-ZÄÖÜ0-9&\s,.–-]{10,100}$/.test(line.trim()))row.classList.add('description-lead');
+    inline(row,line);firstText=false;
+   }else row.append(document.createTextNode('\u00a0'));
+   root.append(row);
+  });
  }
  function addressCompanyName(member){
  // Postal address company name is editable independently from the profile title.
