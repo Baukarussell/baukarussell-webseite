@@ -706,7 +706,7 @@ async function publishMembersOnTest(){
   if(!response.ok||!data.success)throw Error(data.error||'Testveröffentlichung fehlgeschlagen.');
   if(JSON.stringify(members)!==fingerprint)throw Error('Testversion bereitgestellt, aber es gab neue Bearbeitungen. Bitte erneut speichern und übertragen.');
   cloudStatus('members',data.count+' Mitglieder für Website Test vorbereitet. GitHub Revision: '+data.commit.slice(0,8)+'. Danach Testseite prüfen. Noch nicht live.','ok');
-  window.open('/index.html#members','_blank','noopener,noreferrer');
+  $('member-test-link').classList.remove('hidden');
  }catch(error){cloudStatus('members',error.message||'Website Test konnte nicht aktualisiert werden.','error');}
  finally{button.disabled=false;button.textContent='Mitglieder auf Testwebsite übernehmen';}
 }
