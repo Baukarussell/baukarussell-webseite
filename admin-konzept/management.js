@@ -573,6 +573,17 @@ function addressCompanyName(member){
 function memberPreview(){
  const m=memberItem();if(!m)return;
  $('member-preview-name').textContent=m.name||'Firmenname';
+ applyMemberInputAppearance(m,$('member-preview-name'),'name');
+ for(const id of MEMBER_STYLED_FIELDS){
+  const control=$(id),key=MEMBER_FIELD_KEYS[id];
+  // Text inputs remain plain strings; typography is applied only for display.
+  const spec=m.fieldStyles?.[key]||{};
+  control.style.color=MEMBER_TEXT_COLORS[spec.color]||'';
+  control.style.fontFamily=MEMBER_TEXT_FONTS[spec.font]||'';
+  control.style.fontWeight=spec.bold?'700':'';
+  control.style.fontStyle=spec.italic?'italic':'';
+  control.style.textAlign=spec.align||'';
+ }
  reflectMemberAlignment();
  $('member-editor-title').textContent=m.name||'Neues Mitglied';
  renderMemberDescription(m);
@@ -589,7 +600,14 @@ function memberPreview(){
   el.style.transform='none';
   el.style.transformOrigin='center';
  }
- $('member-preview-person').textContent=[m.person,m.role].filter(Boolean).join(' · ');
+ const personPreview=$('member-preview-person');personPreview.replaceChildren();
+ if(m.person){
+  const part=make('span','',m.person);applyMemberInputAppearance(m,part,'person');personPreview.append(part);
+ }
+ if(m.person&&m.role)personPreview.append(document.createTextNode(' · '));
+ if(m.role){
+  const part=make('span','',m.role);applyMemberInputAppearance(m,part,'role');personPreview.append(part);
+ }
  const contact=$('member-preview-contacts');contact.replaceChildren();
  function contactLink(text,href){
   if(!text)return;
@@ -597,8 +615,25 @@ function memberPreview(){
   else contact.append(make('span','',text));
  }
  // Always display the company name, even if the other address fields are empty.
- const addressLines=[addressCompanyName(m),m.street,[m.postalCode,m.city].filter(Boolean).join(' '),m.country].filter(Boolean);
- if(addressLines.length)contact.append(make('span','member-address',addressLines.join('\n')));
+ const address=make('div','member-address');
+ function appendAddress(text,key,sameLine=false){
+  if(!text)return;
+  const line=make('span','',text);
+  if(key)applyMemberInputAppearance(m,line,key);
+  if(!sameLine)line.style.display='block';
+  address.append(line);
+ }
+ appendAddress(addressCompanyName(m),'addressCompany');
+ appendAddress(m.street,'street');
+ if(m.postalCode||m.city){
+  const place=make('div');
+  if(m.postalCode){const postal=make('span','',m.postalCode);applyMemberInputAppearance(m,postal,'postalCode');place.append(postal);}
+  if(m.postalCode&&m.city)place.append(document.createTextNode(' '));
+  if(m.city){const city=make('span','',m.city);applyMemberInputAppearance(m,city,'city');place.append(city);}
+  address.append(place);
+ }
+ appendAddress(m.country,'country');
+ if(address.childNodes.length)contact.append(address);
  if(m.phone)contactLink('☎ '+m.phone,'tel:'+String(m.phone).replace(/[^+\d]/g,''));
  if(m.email)contactLink('✉ '+m.email,'mailto:'+String(m.email).trim());
  if(m.url)contactLink('↗ Webseite ansehen',safeHref(m.url));
