@@ -845,7 +845,9 @@ function projectPreview(){
  const p=projectItem();if(!p)return;
  $('project-preview-title').textContent=p.title||'Projekttitel';
  $('project-preview-date').textContent=[p.date,p.location].filter(Boolean).join(' · ');
- $('project-preview-description').textContent=p.description||'Hier könnte eine Projektbeschreibung erscheinen.';
+ const projectBody=$('project-preview-description');
+ if(window.BKSharedText)window.BKSharedText.renderLines(projectBody,p.description||'Hier könnte eine Projektbeschreibung erscheinen.');
+ else projectBody.textContent=p.description||'Hier könnte eine Projektbeschreibung erscheinen.';
 }
 function changeProject(){
  const p=projectItem();if(!p)return;
@@ -893,7 +895,9 @@ function renderRegistrationPreview(){
  $('reg-preview-title').textContent=reg.title||'Name der Veranstaltung';
  $('reg-preview-date').textContent=[reg.date,reg.time].filter(Boolean).join(' · ');
  $('reg-preview-location').textContent=reg.location;
- $('reg-preview-description').textContent=reg.description||'Hier erscheint der Einladungstext.';
+ const registrationBody=$('reg-preview-description');
+ if(window.BKSharedText)window.BKSharedText.renderLines(registrationBody,reg.description||'Hier erscheint der Einladungstext.');
+ else registrationBody.textContent=reg.description||'Hier erscheint der Einladungstext.';
  $('reg-flyer-name').textContent=reg.flyerName||'Noch kein Flyer ausgewählt';
  const flyer=$('reg-flyer-preview');flyer.replaceChildren();
  if(reg.flyer&&reg.flyerType==='image'){appendImage(flyer,reg.flyer,'Flyer Vorschau');}
