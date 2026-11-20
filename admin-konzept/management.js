@@ -478,10 +478,9 @@ function memberPreview(){
   if(href){const a=make('a','',text);a.href=href;a.target=href.startsWith('http')?'_blank':'_self';if(a.target==='_blank')a.rel='noopener noreferrer';contact.append(a);}
   else contact.append(make('span','',text));
  }
+ // Always display the company name, even if the other address fields are empty.
  const addressLines=[addressCompanyName(m),m.street,[m.postalCode,m.city].filter(Boolean).join(' '),m.country].filter(Boolean);
- if([m.street,m.postalCode,m.city,m.country].some(Boolean)){
-  contact.append(make('span','member-address',addressLines.join('\n')));
- }
+ if(addressLines.length)contact.append(make('span','member-address',addressLines.join('\n')));
  if(m.phone)contactLink('☎ '+m.phone,'tel:'+String(m.phone).replace(/[^+\d]/g,''));
  if(m.email)contactLink('✉ '+m.email,'mailto:'+String(m.email).trim());
  if(m.url)contactLink('↗ Webseite ansehen',safeHref(m.url));
