@@ -159,9 +159,23 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 .gallery-order-controls button:hover:not(:disabled){background:#fff}
 .gallery-order-controls button:disabled{opacity:.38;cursor:not-allowed}
 @media(max-width:620px){.tile-head{gap:8px;flex-wrap:wrap}}
-.member-text-tools{display:flex;gap:7px;margin:0 0 12px}
+.member-text-tools{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:0 0 12px}
 .member-text-tools button{border:1px solid #dfded8;border-radius:6px;background:#faf9f5;min-width:32px;padding:7px 10px;font-size:12px;cursor:pointer}
 .member-text-tools button:hover{background:#f0ede5}
+.member-font-size-label{display:flex;align-items:center;gap:6px;margin:0 4px;color:#777568;font-size:11px;font-weight:600}
+.member-font-size-label select{padding:6px 8px;border:1px solid rgba(177,145,101,.65);border-radius:6px;background:#fff;color:#3b3e39;font-size:12px;min-width:78px}
+.member-crop-dialog{position:fixed;inset:0;z-index:10025;background:#14130fe0;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+.member-crop-panel{background:#faf9f5;border-radius:12px;padding:24px;max-width:900px;width:min(94vw,900px);max-height:96vh;overflow:auto;box-shadow:0 24px 90px #0008}
+.member-crop-panel h2{margin:0;font:500 31px 'Cormorant Garamond',Georgia,serif}
+.member-crop-image-container{margin:16px 0;background:#282824;min-height:90px;display:flex;align-items:center;justify-content:center;padding:10px;overflow:hidden;border-radius:4px}
+.member-crop-stage{position:relative;display:inline-block;line-height:0;max-width:100%;touch-action:none;user-select:none}
+.member-crop-stage img{display:block;max-width:100%;max-height:55vh;width:auto;height:auto;object-fit:contain;user-select:none;pointer-events:none}
+.member-crop-selection{position:absolute;box-sizing:border-box;border:2px solid #d5ad6b;background:#d3b07724;box-shadow:0 0 0 1px #1118;cursor:move;touch-action:none}
+.crop-handle{position:absolute;display:block;width:16px;height:16px;border:2px solid #8a6637;border-radius:50%;background:#fff3db;box-shadow:0 1px 4px #0003}
+.crop-handle.nw{top:-9px;left:-9px;cursor:nwse-resize}.crop-handle.ne{top:-9px;right:-9px;cursor:nesw-resize}
+.crop-handle.sw{bottom:-9px;left:-9px;cursor:nesw-resize}.crop-handle.se{bottom:-9px;right:-9px;cursor:nwse-resize}
+.member-crop-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:18px}
+.member-crop-dialog .help{font-size:11px}
 .member-text-settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:11px}
 .member-text-settings label{font-size:10px;color:#7a7f77;font-weight:500}
 .member-text-settings select{width:100%;margin-top:5px;padding:9px 6px;border:1px solid #e4e5df;border-radius:6px;background:#fff;color:#373b35;font-size:11px}
@@ -325,15 +339,25 @@ body.gallery-zoom-active{overflow:hidden}
 <button type="button" data-member-format="bold" title="Markierten Text fett">B</button>
 <button type="button" data-member-format="italic" title="Markierten Text kursiv"><em>I</em></button>
 <button type="button" data-member-format="link" title="Link einfügen">Link</button>
+<label class="member-font-size-label" for="member-font-size">Punto
+<select id="member-font-size" aria-label="Schriftgrösse für markierten Text">
+ <option value="">Grösse</option>
+ <option value="10">10 pt</option><option value="11">11 pt</option><option value="12">12 pt</option>
+ <option value="14">14 pt</option><option value="16">16 pt</option><option value="18">18 pt</option>
+ <option value="20">20 pt</option><option value="24">24 pt</option>
+</select></label>
+<button type="button" data-member-format="uppercase" title="Markierten Text in Grossbuchstaben umwandeln">ABC</button>
+<button type="button" data-member-format="lowercase" title="Markierten Text in Kleinbuchstaben umwandeln">abc</button>
 </div>
 <div class="member-text-settings">
 <label>Textausrichtung<select id="member-description-align"><option value="left">Linksbündig</option><option value="justify">Blocksatz</option><option value="center">Zentriert</option></select></label>
 <label>Zeilenabstand<select id="member-description-line" title="Mit Cursor eine Zeile ändern, mit Ctrl + A den gesamten Text"><option value="1.4">Eng</option><option value="1.6">Normal</option><option value="1.8">Grosszügig</option><option value="2">Weit</option></select></label>
 </div>
 <textarea id="member-description" placeholder="Kurze Firmenbeschreibung"></textarea>
-<p class="help">Enter fügt eine neue Zeile mit Abstand ein. Mit dem Cursor änderst du nur die aktuelle Zeile. Mit Ctrl + A markierst du alles und änderst den gesamten Text.</p>
+<p class="help">Für Schriftgrösse oder Gross und Klein bitte zuerst Text markieren. Mit Ctrl + A wählst du den gesamten Text. Enter fügt eine neue Zeile ein.</p>
 </div>
 <div class="member-address-fields">
+<div class="field"><label for="member-address-company">Firmenname für Adresse <span class="optional">Optional</span></label><input id="member-address-company" type="text" placeholder="Firmenname inkl. GmbH oder AG"><p class="help">Unabhängig vom Profilnamen. Du kannst den Firmennamen jederzeit selbst ändern.</p></div>
 <div class="field"><label for="member-street">Strasse und Hausnummer <span class="optional">Optional</span></label><input id="member-street" type="text" placeholder="Musterstrasse 12" autocomplete="street-address"></div>
 <div class="fields-2"><div class="field"><label for="member-postal">Postleitzahl <span class="optional">Optional</span></label><input id="member-postal" type="text" placeholder="8000" autocomplete="postal-code"></div>
 <div class="field"><label for="member-city">Ort <span class="optional">Optional</span></label><input id="member-city" type="text" placeholder="Zürich" autocomplete="address-level2"></div></div>
@@ -341,7 +365,7 @@ body.gallery-zoom-active{overflow:hidden}
 </div>
 <div class="fields-2"><div class="field"><label for="member-phone">Telefon <span class="optional">Optional</span></label><input id="member-phone" type="tel" placeholder="+41 ..."></div><div class="field"><label for="member-email">E-Mail <span class="optional">Optional</span></label><input id="member-email" type="email" placeholder="name@firma.ch"></div></div><div class="field"><label for="member-url">Webseite <span class="optional">Optional</span></label><input id="member-url" type="url" placeholder="https://..."></div>
 <div class="field"><label>Firmenlogo</label><div class="inline-upload"><img id="member-logo-thumb" src="/logos/onur.jpg" alt="Firmenlogo"><div><strong>Logo austauschen</strong><p>Das bestehende Logo bleibt erhalten, solange du kein neues hochlädst.</p><button class="btn small" id="member-logo-button" type="button">Logo hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-logo-input" class="hidden"></div></div><p class="member-media-status" id="member-logo-upload-status" role="status" aria-live="polite"></p><input class="member-image-path" id="member-logo-path" type="text" placeholder="/logos/firmenlogo.jpg" aria-label="Bereits gespeicherten Logopfad verwenden"><p class="help">Alternativ einen bestehenden GitHub Bildpfad eintragen.</p></div>
-<div class="field"><label>Profilfoto oder Firmenfoto <span class="optional">Optional</span></label><div class="inline-upload"><img id="member-photo-thumb" src="/admin/brand.svg" alt="Profilfoto"><div><strong>Personenfoto / Firmenbild</strong><p>Ein Foto zur Vorstellung der Person oder Firma. Das Logo bleibt separat.</p><button class="btn small" id="member-photo-button" type="button">Foto hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-photo-input" class="hidden"></div></div><p class="member-media-status" id="member-photo-upload-status" role="status" aria-live="polite">Noch kein Foto hochgeladen.</p><input class="member-image-path" id="member-photo-path" type="text" placeholder="/mitglieder/foto.jpg" aria-label="Bereits gespeicherten Profilbildpfad verwenden"><p class="help">JPG, PNG oder WebP, maximal 4 MB. Originale bleiben auf deinem Computer unverändert.</p>
+<div class="field"><label>Profilfoto oder Firmenfoto <span class="optional">Optional</span></label><div class="inline-upload"><img id="member-photo-thumb" src="/admin/brand.svg" alt="Profilfoto"><div><strong>Personenfoto / Firmenbild</strong><p>Ein Foto zur Vorstellung der Person oder Firma. Das Logo bleibt separat.</p><button class="btn small" id="member-photo-button" type="button">Foto hochladen</button><button class="btn small" id="member-photo-crop" type="button">Foto zuschneiden</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-photo-input" class="hidden"></div></div><p class="member-media-status" id="member-photo-upload-status" role="status" aria-live="polite">Noch kein Foto hochgeladen.</p><input class="member-image-path" id="member-photo-path" type="text" placeholder="/mitglieder/foto.jpg" aria-label="Bereits gespeicherten Profilbildpfad verwenden"><p class="help">JPG, PNG oder WebP, maximal 4 MB. Originale bleiben auf deinem Computer unverändert.</p>
 </div>
 <div class="member-social-editor">
 <div class="tile-head"><strong>Social Media & weitere Links</strong><small>Reihenfolge frei wählen</small></div>
@@ -362,6 +386,28 @@ body.gallery-zoom-active{overflow:hidden}
 <div id="member-preview-contacts" class="member-preview-contacts"></div>
 <div id="member-preview-social" class="member-preview-social"></div></div></div>
 </div></section>
+<div id="member-crop-dialog" class="member-crop-dialog hidden" role="dialog" aria-modal="true" aria-labelledby="member-crop-title">
+ <div class="member-crop-panel">
+  <h2 id="member-crop-title">Foto zuschneiden</h2>
+  <p class="help">Ziehe die goldene Fläche, um den Ausschnitt zu verschieben. Ziehe an den Ecken, um ihn anzupassen.</p>
+  <div class="member-crop-image-container">
+   <div class="member-crop-stage" id="member-crop-stage">
+    <img id="member-crop-image" alt="Foto zum Zuschneiden" draggable="false">
+    <div id="member-crop-selection" class="member-crop-selection">
+     <span data-crop-handle="nw" class="crop-handle nw"></span>
+     <span data-crop-handle="ne" class="crop-handle ne"></span>
+     <span data-crop-handle="sw" class="crop-handle sw"></span>
+     <span data-crop-handle="se" class="crop-handle se"></span>
+    </div>
+   </div>
+  </div>
+  <p id="member-crop-status" class="help" role="status" aria-live="polite"></p>
+  <div class="member-crop-actions">
+   <button type="button" class="btn" id="member-crop-cancel">Abbrechen</button>
+   <button type="button" class="btn dark" id="member-crop-apply">Zuschneiden und speichern</button>
+  </div>
+ </div>
+</div>
 
 <section id="projects-list" class="hidden">
 <div class="eyebrow">INHALTE / PROJEKTE</div>
