@@ -281,8 +281,19 @@
    return ['https:','http:'].includes(parsed.protocol)?parsed.href:'';
   }catch(_){return ''}
  }
+ const MEMBER_TEXT_FONTS={
+  inter:"'Inter', Arial, sans-serif",
+  cormorant:"'Cormorant Garamond', Georgia, serif",
+  georgia:"Georgia, serif"
+ };
+ const MEMBER_TEXT_COLORS={
+  gold:'#b8945f',
+  lightgold:'#d4b483',
+  anthracite:'#30332f',
+  slate:'#74776f'
+ };
  function inline(parent,value){
-  const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\[pt=(10|11|12|14|16|18|20|24)\]([\s\S]*?)\[\/pt\]|\*\*\*([\s\S]+?)\*\*\*|\*\*([\s\S]+?)\*\*|\*([\s\S]+?)\*/g;
+  const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\[pt=(10|11|12|14|16|18|20|24)\]([\s\S]*?)\[\/pt\]|\[font=(inter|cormorant|georgia)\]([\s\S]*?)\[\/font\]|\[color=(gold|lightgold|anthracite|slate)\]([\s\S]*?)\[\/color\]|\*\*\*([\s\S]+?)\*\*\*|\*\*([\s\S]+?)\*\*|\*([\s\S]+?)\*/g;
   let from=0,match;
   while((match=re.exec(value))!==null){
    if(match.index>from)parent.append(document.createTextNode(value.slice(from,match.index)));
@@ -294,11 +305,15 @@
    }else if(match[3]!==undefined){
     const span=make('span');span.style.fontSize=match[3]+'pt';inline(span,match[4]);parent.append(span);
    }else if(match[5]!==undefined){
-    const strong=make('strong'),em=make('em');inline(em,match[5]);strong.append(em);parent.append(strong);
-   }else if(match[6]!==undefined){
-    const strong=make('strong');inline(strong,match[6]);parent.append(strong);
+    const span=make('span');span.style.fontFamily=MEMBER_TEXT_FONTS[match[5]];inline(span,match[6]);parent.append(span);
+   }else if(match[7]!==undefined){
+    const span=make('span');span.style.color=MEMBER_TEXT_COLORS[match[7]];inline(span,match[8]);parent.append(span);
+   }else if(match[9]!==undefined){
+    const bold=make('strong'),em=make('em');inline(em,match[9]);bold.append(em);parent.append(bold);
+   }else if(match[10]!==undefined){
+    const bold=make('strong');inline(bold,match[10]);parent.append(bold);
    }else{
-    const em=make('em');inline(em,match[7]);parent.append(em);
+    const em=make('em');inline(em,match[11]);parent.append(em);
    }
    from=re.lastIndex;
   }
