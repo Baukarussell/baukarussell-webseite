@@ -289,11 +289,15 @@
  const MEMBER_TEXT_COLORS={
   gold:'#b8945f',
   lightgold:'#d4b483',
+  darkgold:'#94724b',
+  bronze:'#a77d57',
   anthracite:'#30332f',
-  slate:'#74776f'
+  slate:'#74776f',
+  sage:'#60766b',
+  wine:'#875a67'
  };
  function inline(parent,value){
-  const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\[pt=(10|11|12|14|16|18|20|24)\]([\s\S]*?)\[\/pt\]|\[font=(inter|cormorant|georgia)\]([\s\S]*?)\[\/font\]|\[color=(gold|lightgold|anthracite|slate)\]([\s\S]*?)\[\/color\]|\*\*\*([\s\S]+?)\*\*\*|\*\*([\s\S]+?)\*\*|\*([\s\S]+?)\*/g;
+  const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\[pt=(10|11|12|14|16|18|20|24)\]([\s\S]*?)\[\/pt\]|\[font=(inter|cormorant|georgia)\]([\s\S]*?)\[\/font\]|\[color=(gold|lightgold|darkgold|bronze|anthracite|slate|sage|wine)\]([\s\S]*?)\[\/color\]|\*\*\*([\s\S]+?)\*\*\*|\*\*([\s\S]+?)\*\*|\*([\s\S]+?)\*/g;
   let from=0,match;
   while((match=re.exec(value))!==null){
    if(match.index>from)parent.append(document.createTextNode(value.slice(from,match.index)));
