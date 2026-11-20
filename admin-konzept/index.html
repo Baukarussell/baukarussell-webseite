@@ -987,21 +987,17 @@ function inlineText(target,value){
 }
 function renderTextPreview(){
  const parent=$('p-text');parent.replaceChildren();
- const text=String(current.text||'').replace(/\r\n/g,'\n').trim();
+ if(window.BKSharedText){
+  window.BKSharedText.renderLines(parent,current.text||'');
+  return;
+ }
+ const text=String(current.text||'').replace(/\r\n/g,'\n');
  if(!text)return;
- text.split(/\n\s*\n/).forEach(block=>{
-  const lines=block.split('\n');
-  if(lines.every(line=>line.startsWith('- '))){
-   const list=document.createElement('ul');
-   lines.forEach(line=>{const li=document.createElement('li');inlineText(li,line.slice(2));list.append(li);});
-   parent.append(list);
-  }else if(block.startsWith('## ')){
-   const head=document.createElement('h4');inlineText(head,block.slice(3));parent.append(head);
-  }else{
-   const p=document.createElement('p');
-   lines.forEach((line,i)=>{if(i)p.append(document.createElement('br'));inlineText(p,line);});
-   parent.append(p);
-  }
+ text.split('\n').forEach(line=>{
+  const row=document.createElement('div');
+  row.style.minHeight='1.5em';row.style.whiteSpace='pre-wrap';
+  if(line)inlineText(row,line);else row.append(document.createTextNode('\u00a0'));
+  parent.append(row);
  });
 }
 function renderPartnerPreview(){
@@ -1074,7 +1070,9 @@ function previewSiteInfo(){
 function previewPage(){
  if(!currentPageKey)return;const item=pageContent[currentPageKey];
  item.title=$('page-title-field').value;item.text=$('page-text-field').value;
- $('page-preview-title').textContent=item.title;$('page-preview-text').textContent=item.text;
+ $('page-preview-title').textContent=item.title;
+ if(window.BKSharedText)window.BKSharedText.renderLines($('page-preview-text'),item.text);
+ else $('page-preview-text').textContent=item.text;
  previewSiteInfo();try{sessionStorage.setItem('bk-admin-pages-demo-v1',JSON.stringify(pageContent))}catch(_){/* unavailable */}
 }
 function updateSharedSiteFields(){
@@ -1129,4 +1127,5 @@ window.BKAdmin={page,toast,rememberChange,openSourceEvent};
 <script src="/admin-konzept/auth.js?v=1"></script>
 <script src="/admin-konzept/real-events.js?v=3"></script>
 <script src="/admin-konzept/undo.js?v=1"></script>
+<script src="/admin-konzept/shared-text-tools.js?v=1"></script>
 </body></html>
