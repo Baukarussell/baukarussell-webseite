@@ -51,3 +51,24 @@ Das Admin Konzept bietet für **Events, Mitglieder, Projekte, Startseite und Unt
 - Bestehende und öffentlich erreichbare Bildpfade können in privaten Evententwürfen gespeichert werden. Neue, über die Upload Felder ausgewählte Fotodateien bleiben **nur in der Browser Vorschau** und sind nicht dauerhaft gespeichert.
 - Das Test Admin zeigt nun die Anzahl Galeriefotos und bietet zusätzlich zu Drag & Drop kleine Pfeile zum Ändern der Reihenfolge.
 - Diese Änderungen erfolgen nur auf dem Testbranch `presentation-recovery-2026-11-10`. Eine Veröffentlichung auf `main` und die Einrichtung einer R2 Anbindung stehen noch aus.
+
+
+## Mitgliederdaten an die Website anbinden (Stand 20.11.2026)
+
+- Im Test Admin werden die fertig eingegebenen Mitgliederdaten zuerst mit **Alle Mitglieder als Entwurf speichern** privat gesichert. Das verändert die öffentliche Webseite nicht.
+- Neu gibt es ausschliesslich in der Mitgliederliste die Aktion **Mitglieder auf Testwebsite übernehmen**. Nach deutlicher Bestätigung sichert sie den aktuellen Stand in Cloudflare KV und schreibt ausschliesslich die zur Veröffentlichung markierten Mitglieder in die Datei `members-data.json` auf dem **Testbranch**.
+- Diese ausdrücklich freigegebene Datei enthält die öffentlichen Mitgliederprofile mit den gewünschten Kontaktinformationen. Es werden keine Login Informationen, Session Tokens, Gästelisten, Projekte oder andere Admin Daten publiziert.
+- Die Startseite nutzt `/js/public-members.js`, um die Mitgliedslogos und Links aus dem genehmigten Snapshot auf `/mitglieder/profil.html?member=...` zu erzeugen. Ohne Snapshot bleiben die alten Logo Karten als Rückfalllösung erhalten.
+- Die öffentliche Profilvorlage `/mitglieder/profil.html` liest **nur** `/members-data.json` und greift **niemals** auf die private Cloudflare KV API zu.
+- Das Ganze wird bewusst erst auf dem Testbranch geprüft. Eine spätere Livefreigabe erfordert die Übernahme des getesteten Branches bzw. der geprüften öffentlichen Inhalte nach `main` und einen erfolgreichen Cloudflare Produktionsdeploy.
+- Nach jeder Aktualisierung der Mitglieder erfolgt der gleiche explizite Testübernahme Schritt; `Entwurf speichern` allein veröffentlicht weiterhin nichts.
+- **Launch Sperre:** Solange `members-data.json` nicht erstellt und die Mitgliederdetailseiten nicht visuell geprüft wurden, `main` NICHT aktualisieren. Test und Produktion verwenden unterschiedliche Cloudflare KV Konfigurationen.
+
+## Vor Livefreigabe überprüfen
+
+1. Alle Mitglieder korrekt und als öffentliche Profile markiert; Anzahl der sichtbaren Karten stimmt.
+2. Foto, Logo, Firmenname, Beschreibung inklusive Formatierungen, Adresse, E-Mail, Telefon, externe Webseite und Social Links pro Profil im Test kontrolliert.
+3. Navigation zur Startseite und zu den Mitgliedern; Smartphone und Desktop.
+4. Events, bestehende Bildgalerien, Impressum, Datenschutz und Kontaktlinks unabhängig von der Mitgliederumstellung testen.
+5. GitHub Branch und Cloudflare Produktionsbereitstellung verifizieren; nach Veröffentlichung erneut kontrollieren.
+6. Bei Problemen den vorherigen `main` Commit als Rollback Referenz sichern und den erfolgreichen Zustand wiederherstellen.
