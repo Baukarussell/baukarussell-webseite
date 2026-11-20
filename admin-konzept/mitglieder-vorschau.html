@@ -399,10 +399,9 @@
    const a=make('a','btn btn-secondary','E-Mail senden');a.href='mailto:'+member.email;$('profile-actions').append(a);
   }
   $('profile-contact-lines').replaceChildren();
+  // The company name belongs to the contact block even when the street is not yet filled in.
   const address=[addressCompanyName(member),member.street,[member.postalCode,member.city].filter(Boolean).join(' '),member.country].filter(Boolean);
-  if([member.street,member.postalCode,member.city,member.country].some(Boolean)){
-   $('profile-contact-lines').append(make('div','contact-line member-address',address.join('\n')));
-  }
+  if(address.length)$('profile-contact-lines').append(make('div','contact-line member-address',address.join('\n')));
   if(member.phone){
    const line=make('div','contact-line');
    line.append(document.createTextNode('T '));
