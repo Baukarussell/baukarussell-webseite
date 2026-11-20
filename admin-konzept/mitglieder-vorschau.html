@@ -282,7 +282,7 @@
   }catch(_){return ''}
  }
  function inline(parent,value){
-  const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*\*\*(.+?)\*\*\*|\*\*(.+?)\*\*|\*(.+?)\*/g;
+  const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\[pt=(10|11|12|14|16|18|20|24)\]([\s\S]*?)\[\/pt\]|\*\*\*([\s\S]+?)\*\*\*|\*\*([\s\S]+?)\*\*|\*([\s\S]+?)\*/g;
   let from=0,match;
   while((match=re.exec(value))!==null){
    if(match.index>from)parent.append(document.createTextNode(value.slice(from,match.index)));
@@ -292,9 +292,14 @@
      const a=make('a','',match[1]);a.href=href;a.target='_blank';a.rel='noopener noreferrer';parent.append(a);
     }else parent.append(document.createTextNode(match[0]));
    }else if(match[3]!==undefined){
-    const bold=make('strong');bold.append(make('em','',match[3]));parent.append(bold);
-   }else if(match[4]!==undefined)parent.append(make('strong','',match[4]));
-   else parent.append(make('em','',match[5]));
+    const span=make('span');span.style.fontSize=match[3]+'pt';inline(span,match[4]);parent.append(span);
+   }else if(match[5]!==undefined){
+    const strong=make('strong'),em=make('em');inline(em,match[5]);strong.append(em);parent.append(strong);
+   }else if(match[6]!==undefined){
+    const strong=make('strong');inline(strong,match[6]);parent.append(strong);
+   }else{
+    const em=make('em');inline(em,match[7]);parent.append(em);
+   }
    from=re.lastIndex;
   }
   if(from<value.length)parent.append(document.createTextNode(value.slice(from)));
@@ -332,7 +337,9 @@
   }
  }
  function addressCompanyName(member){
- // Preserve the visible member/person name, use the verified business name only in the address.
+ // Postal address company name is editable independently from the profile title.
+ if(typeof member.addressCompany==='string'&&member.addressCompany.trim())return member.addressCompany.trim();
+ // Keep old names for members whose original drafts do not yet have the new field.
  if(member.id==='member-8'||/\/logos\/onur\./i.test(member.logo||''))return 'ONUR Projects GmbH';
  if(member.id==='member-1'||/\/logos\/akkaya\./i.test(member.logo||''))return 'C. Akkaya Lösungen aus Edelstahl';
  return String(member.name||'').trim();
