@@ -58,6 +58,16 @@
   const toolbar=template.cloneNode(true);toolbar.classList.add('shared-text-toolbar');toolbar.setAttribute('aria-label','Text formatieren');
   for(const node of toolbar.querySelectorAll('[id]'))node.removeAttribute('id');
   area.parentNode.insertBefore(toolbar,area);
+  if(areaId==='e-text'){
+   const group=document.createElement('span');group.className='member-shared-extra';
+   for(const [kind,label,title] of [['heading','H2','Zwischenüberschrift'],['list','☷','Aufzählung']]){
+    const button=document.createElement('button');button.type='button';button.className='member-tool-case';
+    button.textContent=label;button.title=title;button.setAttribute('aria-label',title);
+    button.dataset.sharedExtra=kind;group.append(button);
+   }
+   const align=toolbar.querySelector('.member-align-tools');
+   if(align)toolbar.insertBefore(group,align);
+  }
   const edits=toolbar.querySelectorAll('button,select,summary');
   const font=toolbar.querySelector('.member-tool-font'),size=toolbar.querySelector('.member-tool-point');
   const colorMenu=toolbar.querySelector('.member-palette')?.closest('details');
@@ -103,6 +113,13 @@
    if(replacement)set(a,b,replacement);
   };
   toolbar.querySelectorAll('[data-member-format]').forEach(btn=>btn.addEventListener('click',()=>mark(btn.dataset.memberFormat)));
+  toolbar.querySelectorAll('[data-shared-extra]').forEach(button=>button.addEventListener('click',()=>{
+   const start=area.selectionStart,end=area.selectionEnd,selected=area.value.slice(start,end);
+   const value=button.dataset.sharedExtra==='heading'
+    ?'## '+(selected||'Zwischenüberschrift')
+    :selected?selected.split('\n').map(line=>'- '+line).join('\n'):'- Erster Punkt';
+   set(start,end,value);
+  }));
   font.addEventListener('change',()=>{const v=font.value;font.value='';if(wrap('font',v))font.options[0].textContent={inter:'Inter',cormorant:'Cormorant Garamond',georgia:'Georgia'}[v]||'Inter'});
   size.addEventListener('change',()=>{const v=size.value;size.value='';if(v)wrap('pt',v)});
   toolbar.querySelectorAll('[data-member-color]').forEach(btn=>btn.addEventListener('click',()=>{
