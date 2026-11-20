@@ -393,24 +393,20 @@ function showMemberCurrentLineHeight(){
 function renderMemberDescription(member){
  const root=$('member-preview-description');
  root.replaceChildren();
- // Match the visitor preview: a single Enter breaks a line, while an empty
- // line separates paragraphs. Empty lines do not create stacked blank blocks.
- const rows=String(member.description||'Firmenbeschreibung').replace(/\r\n?/g,'\n').split('\n');
+ // Every Enter is visible, including leading and consecutive empty lines.
+ const text=String(member.description||'');
+ const lines=(text||'Firmenbeschreibung').replace(/\r\n?/g,'\n').split('\n');
  const overrides=Array.isArray(member.descriptionParagraphStyles)?member.descriptionParagraphStyles:[];
- let para=null;
- rows.forEach((line,index)=>{
-  if(!line.trim()){para=null;return;}
-  if(!para){para=make('p');para.style.marginBottom='12px';root.append(para);}
-  const span=make('span');
-  span.style.display='block';
-  span.style.whiteSpace='pre-wrap';
-  span.style.textAlign=member.descriptionAlign||'left';
-  span.style.lineHeight=overrides[index]?.line||member.descriptionLineHeight||'1.6';
-  renderMemberInline(span,line);
-  para.append(span);
+ lines.forEach((line,index)=>{
+  const row=make('div','member-description-line');
+  row.style.whiteSpace='pre-wrap';
+  row.style.minHeight='1.5em';
+  row.style.textAlign=member.descriptionAlign||'left';
+  row.style.lineHeight=overrides[index]?.line||member.descriptionLineHeight||'1.6';
+  if(line)renderMemberInline(row,line);
+  else row.append(document.createTextNode('\u00a0'));
+  root.append(row);
  });
- const last=root.lastElementChild;
- if(last)last.style.marginBottom='0';
 }
 function changeMemberTextSelection(replacement){
  const field=$('member-description'),start=field.selectionStart,end=field.selectionEnd;
