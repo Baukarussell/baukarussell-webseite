@@ -22,10 +22,7 @@
   nav.scrolled { padding: 16px 80px; box-shadow: 0 2px 20px rgba(0,0,0,0.05); }
   .logo-text { font-family: 'Cormorant Garamond', serif; display: inline-block; text-decoration: none; line-height: 1; }
   .logo-main { display: block; font-size: 56px; font-weight: 500; letter-spacing: 0.08em; color: var(--dark); text-transform: uppercase; line-height: 1; margin-bottom: 5px; }
-  .logo-sub { display: block; font-size: 13px; font-weight: 400; letter-spacing: 0.35em; color: var(--dark); text-transform: uppercase; padding-left: 6px; }
-  .logo-sub::before { content: '─── '; font-size: 11px; }
-  .logo-sub::after { content: ' ───'; font-size: 11px; }
-  nav.scrolled .logo-main { font-size: 44px; }
+  .logo-sub { display: block; font-size: 13px; font-weight: 400; letter-spacing: 0.35em; color: var(--dark); text-transform: uppercase; padding-left: 6px; }  nav.scrolled .logo-main { font-size: 44px; }
   nav.scrolled .logo-sub { font-size: 11px; }
   .nav-links { display: flex; gap: 40px; list-style: none; }
   .nav-links a { color: var(--dark); text-decoration: none; font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; transition: all 0.3s; font-weight: 500; position: relative; }
@@ -33,7 +30,7 @@
   .nav-links a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 1px; background: var(--gold); transition: width 0.3s; }
   .nav-links a:hover::after { width: 100%; }
   
-  .hero-photo { margin-top: 145px; width: 100%; height: 85vh; position: relative; overflow: hidden; }
+  .hero-photo { margin-top: 145px; width: 100%; height: 70vh; position: relative; overflow: hidden; }
   .hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center center; display: block; }
   
   section { padding: 120px 60px; max-width: 1400px; margin: 0 auto; }
@@ -50,16 +47,15 @@
   .about-text p:last-child { margin-bottom: 0; }
   
   .members-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; max-width: 1200px; margin: 0 auto; }
-  .member-card { display: flex; flex-direction: column; align-items: center; background: white; border: 1px solid #eee; padding: 30px 20px 20px; transition: all 0.4s ease; }
+  .member-card { display: flex; flex-direction: column; align-items: center; background: white; border: 1px solid rgba(184,148,95,.5); padding: 30px 20px 20px; transition: all 0.4s ease; }
   .member-card:hover { border-color: var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.08); transform: translateY(-4px); }
-  .member-card.featured { border-color: var(--gold); border-width: 2px; }
-  .member-img { max-width: 100%; height: 90px; object-fit: contain; filter: grayscale(100%); opacity: 0.75; transition: all 0.4s ease; margin-bottom: 20px; }
-  .member-card:hover .member-img { filter: grayscale(0%); opacity: 1; }
-  .member-btn { display: inline-block; padding: 10px 20px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; color: var(--dark); border: 1px solid var(--dark); transition: all 0.3s; font-weight: 500; margin-top: auto; }
+    .member-img { max-width: 100%; height: 90px; object-fit: contain; filter: grayscale(100%); opacity: 0.75; transition: all 0.4s ease; margin-bottom: 20px; }
+  .member-card:hover .member-img { filter: grayscale(0%); opacity: 1; transform: scale(1.055); }
+  @media (prefers-reduced-motion: reduce) { .member-img { transition: none; } .member-card:hover .member-img { transform: none; } }
+  .member-list-name { color: #555; font-size: 12px; line-height: 1.4; text-align: center; margin: 0 0 15px; overflow-wrap: anywhere; }
+  .member-btn { display: inline-block; padding: 10px 20px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; color: var(--dark); border: 1px solid var(--gold); transition: all 0.3s; font-weight: 500; margin-top: auto; }
   .member-btn:hover { background: var(--gold); border-color: var(--gold); color: white; }
-  .member-card.featured .member-btn { background: var(--gold); border-color: var(--gold); color: white; }
-  .member-card.featured .member-btn:hover { background: var(--dark); border-color: var(--dark); }
-  
+      
   .projects-section { background: #f5f2ed; max-width: 100%; padding: 120px 60px; }
   .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 1400px; margin: 0 auto; }
   .project-card { background: white; overflow: hidden; transition: all 0.4s ease; text-decoration: none; display: block; }
@@ -234,7 +230,7 @@
       <img src="logos/konstantin.jpg" alt="Konstantin Architektur" class="member-img">
       <a href="https://www.konstantin-architektur.com/" target="_blank" class="member-btn">Website →</a>
     </div>
-    <div class="member-card reveal featured">
+    <div class="member-card reveal">
       <img src="logos/onur.jpg" alt="Onur Projects" class="member-img">
       <a href="mitglieder/onur.html" class="member-btn">Mehr erfahren →</a>
     </div>
@@ -253,66 +249,21 @@
   </div>
 </section>
 
-<section class="projects-section">
-  <div class="reveal">
-    <h2 class="section-title">Unsere Projekte</h2>
-    <p class="section-sub">Aus dem Netzwerk</p>
-  </div>
-  
-  <div class="projects-grid">
-    <a href="projekte/meyerhof.html" class="project-card reveal">
-      <div class="project-image">
-        <img src="projekte/meyerhof.jpg" alt="Neubau MFH im Meyerhof">
-      </div>
-      <div class="project-info">
-        <div class="project-meta">11. Sept. 2026 <span>•</span> Neubau</div>
-        <h3 class="project-title">Neubau MFH im Meyerhof, Fällanden ZH</h3>
-        <p class="project-description">In der Kernzone entsteht ein moderner Neubau mit zehn bewilligten Wohneinheiten in Massivbauweise. ONUR Projects übernimmt die gesamte Elektroplanung sowie das Photovoltaik Engineering.</p>
-        <div class="project-member">Von <strong>ONUR Projects</strong></div>
-      </div>
-    </a>
-    
-    <a href="projekte.html" class="project-card reveal">
-      <div class="project-image" style="background: #eee;"></div>
-      <div class="project-info">
-        <div class="project-meta">Bald verfügbar <span>•</span> Projekt</div>
-        <h3 class="project-title">Weitere Projekte folgen</h3>
-        <p class="project-description">Hier erscheinen bald weitere spannende Projekte unserer Mitglieder.</p>
-        <div class="project-member">Von <strong>Baukarussell Netzwerk</strong></div>
-      </div>
-    </a>
-    
-    <a href="projekte.html" class="project-card reveal">
-      <div class="project-image" style="background: #eee;"></div>
-      <div class="project-info">
-        <div class="project-meta">Bald verfügbar <span>•</span> Projekt</div>
-        <h3 class="project-title">Weitere Projekte folgen</h3>
-        <p class="project-description">Hier erscheinen bald weitere spannende Projekte unserer Mitglieder.</p>
-        <div class="project-member">Von <strong>Baukarussell Netzwerk</strong></div>
-      </div>
-    </a>
-  </div>
-  
-  <div class="section-cta">
-    <a href="projekte.html" class="btn-more">Alle Projekte ansehen →</a>
-  </div>
-</section>
-
 <section id="events" class="events-section">
   <div class="reveal">
     <h2 class="section-title">Unser letztes Event</h2>
     <p class="section-sub">Begegnung. Atmosphäre. Austausch.</p>
   </div>
   
-  <a href="events/sablier.html" class="featured-event reveal">
+  <a href="events/montblanc.html" class="featured-event reveal">
     <div class="featured-event-image">
-      <img src="events/sablier/titel.jpg" alt="Baukarussell meets Sablier">
+      <img src="logos/baukarussellxmontblanc-00148.jpg" alt="Baukarussell meets Montblanc">
     </div>
     <div class="featured-event-info">
-      <div class="featured-event-meta">03. September 2026 <span>•</span> Networking Event</div>
-      <h3 class="featured-event-title">Baukarussell meets Sablier</h3>
-      <p class="featured-event-description">Ein Abend voller Begegnungen, Austausch und Inspiration. Gemeinsam mit unseren Partnern, Kunden und Gästen durften wir einen besonderen Abend im Sablier erleben.</p>
-      <div class="featured-event-location">Location <strong>Sablier Rooftop Restaurant & Bar</strong></div>
+      <div class="featured-event-meta">22. Oktober 2026 <span>•</span> Networking Event</div>
+      <h3 class="featured-event-title">Baukarussell meets Montblanc</h3>
+      <p class="featured-event-description">Ein besonderer Abend voller inspirierender Begegnungen und Einblicke in die kunstvolle Welt von Montblanc.</p>
+      <div class="featured-event-location">Location <strong>Montblanc Boutique Zürich</strong></div>
       <span class="btn-event">Alle Fotos ansehen →</span>
     </div>
   </a>
@@ -386,5 +337,26 @@
   reveals.forEach(el => observer.observe(el));
 </script>
 
+<script>
+/* Keep the homepage featured event in sync with published CMS content. */
+(async()=>{
+  const response=await fetch('/events-data.json',{cache:'no-store'});
+  if(!response.ok)return;
+  const data=await response.json();
+  if(!Array.isArray(data)||!data.length)return;
+  const e=data[0],card=document.querySelector('#events .featured-event');
+  if(!card)return;
+  card.href='/events/detail.html?event='+encodeURIComponent(e.slug);
+  const image=card.querySelector('.featured-event-image img');
+  if(image&&e.image){image.src=e.image;image.alt=e.title;}
+  const date=new Date(e.date),dateText=Number.isNaN(date.getTime())?e.date:new Intl.DateTimeFormat('de-CH',{day:'2-digit',month:'long',year:'numeric',timeZone:'Europe/Zurich'}).format(date);
+  const meta=card.querySelector('.featured-event-meta');
+  if(meta)meta.textContent=dateText+' · Networking Event';
+  const title=card.querySelector('.featured-event-title');if(title)title.textContent=e.title;
+  const desc=card.querySelector('.featured-event-description');if(desc)desc.textContent=e.subtitle||(e.body||'').split(/\n/)[0].slice(0,220);
+  const loc=card.querySelector('.featured-event-location strong');if(loc)loc.textContent=e.location||'';
+})().catch(error=>console.warn('CMS homepage feature unavailable',error));
+</script>
+<script defer src="/js/public-members.js"></script>
 </body>
 </html>

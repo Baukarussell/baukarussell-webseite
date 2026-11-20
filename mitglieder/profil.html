@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="index,follow">
+<title>Unsere Mitglieder | Baukarussell</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --gold: #b8945f; --gold-light: #d4b483; --dark: #1a1a1a; --cream: #faf8f5; --text: #333; }
+  body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--cream); line-height: 1.6; }
+  h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; font-weight: 400; }
+  
+  nav {
+    position: fixed; top: 0; width: 100%; padding: 20px 80px;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 1000; background: rgba(250, 248, 245, 0.98);
+    backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .logo-text { font-family: 'Cormorant Garamond', serif; text-decoration: none; line-height: 1; }
+  .logo-main { display: block; font-size: 32px; font-weight: 500; letter-spacing: 0.1em; color: var(--dark); text-transform: uppercase; line-height: 1; margin-bottom: 3px; }
+  .logo-sub { display: block; font-size: 9px; letter-spacing: 0.3em; color: var(--dark); text-transform: uppercase; padding-left: 8px; }
+  .logo-sub::before { content: '─── '; font-size: 8px; }
+  .logo-sub::after { content: ' ───'; font-size: 8px; }
+  .back-link { color: var(--dark); text-decoration: none; font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 500; display: flex; align-items: center; gap: 10px; transition: all 0.3s; }
+  .back-link:hover { color: var(--gold); }
+  .back-link::before { content: '←'; font-size: 18px; }
+  
+  .detail-hero {
+    margin-top: 120px;
+    padding: 40px 80px 60px;
+    max-width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 60px;
+    align-items: center;
+  }
+  
+  .detail-photo { position: relative; overflow: hidden; aspect-ratio: 4/5; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+  .detail-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
+  .detail-photo:hover img { transform: scale(1.035); }
+  @media (prefers-reduced-motion: reduce) { .detail-photo img { transition: none; } .detail-photo:hover img { transform: none; } }
+  .detail-content { padding: 20px 0; }
+  .detail-name { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 3.5vw, 46px); color: var(--dark); letter-spacing: 0.03em; margin-bottom: 15px; line-height: 1.1; }
+  .detail-tagline { font-family: 'Cormorant Garamond', serif; font-size: clamp(17px, 1.6vw, 22px); color: var(--gold); font-style: italic; letter-spacing: 0.02em; margin-bottom: 30px; line-height: 1.4; text-align: justify; }
+  .detail-description { font-size: 15px; line-height: 1.9; color: #555; margin-bottom: 25px; text-align: justify; hyphens: auto; }
+  .detail-services { margin: 25px 0; padding: 20px 0; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; }
+  .detail-services-label { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .detail-services-list { font-family: 'Cormorant Garamond', serif; font-size: 17px; color: var(--dark); letter-spacing: 0.02em; }
+  
+  .cta-buttons { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
+  .btn { display: inline-block; padding: 14px 28px; font-size: 12px; letter-spacing: 0.25em; text-transform: uppercase; text-decoration: none; transition: all 0.4s; font-weight: 500; border: 1px solid var(--dark); }
+  .btn-primary { background: var(--dark); color: white; }
+  .btn-primary:hover { background: var(--gold); border-color: var(--gold); }
+  .btn-secondary { background: transparent; color: var(--dark); }
+  .btn-secondary:hover { background: var(--dark); color: white; }
+  
+  .social-section { margin-top: 35px; padding-top: 25px; border-top: 1px solid #e5e5e5; }
+  .social-label { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 15px; }
+  .social-icons { display: flex; gap: 12px; }
+  .social-icon { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border: 1px solid #ddd; color: var(--dark); text-decoration: none; transition: all 0.3s ease; background: white; }
+  .social-icon:hover { border-color: var(--gold); background: var(--gold); color: white; transform: translateY(-3px); }
+  .social-icon svg { width: 20px; height: 20px; fill: currentColor; }
+  
+  .contact-section-detail { background: white; padding: 60px 80px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+  .contact-grid { max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .contact-info h3 { font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; font-family: 'Inter', sans-serif; }
+  .contact-line { font-size: 15px; color: #444; margin-bottom: 10px; line-height: 1.7; }
+  .contact-line a { color: var(--dark); text-decoration: none; transition: color 0.3s; }
+  .contact-line a:hover { color: var(--gold); }
+  .contact-website { display: inline-block; margin-top: 20px; color: var(--gold); text-decoration: none; font-size: 14px; letter-spacing: 0.1em; font-weight: 500; border-bottom: 1px solid var(--gold); padding-bottom: 3px; transition: all 0.3s; }
+  .contact-website:hover { color: var(--dark); border-color: var(--dark); }
+  .contact-logo { display: flex; justify-content: flex-end; align-items: center; }
+  .contact-logo img { max-width: 320px; width: 100%; height: auto; filter: grayscale(100%); opacity: 0.9; }
+  
+  .quote-section { background: var(--dark); color: white; padding: 70px 60px; text-align: center; }
+  .quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(22px, 2.5vw, 36px); font-style: italic; letter-spacing: 0.02em; max-width: 900px; margin: 0 auto; line-height: 1.4; color: var(--gold-light); }
+  .quote::before, .quote::after { content: '"'; color: var(--gold); }
+  
+  .all-members { padding: 100px 60px; max-width: 1400px; margin: 0 auto; }
+  .all-members-title { text-align: center; font-size: clamp(28px, 3vw, 42px); color: var(--dark); margin-bottom: 15px; letter-spacing: 0.05em; }
+  .all-members-sub { text-align: center; color: var(--gold); font-size: 12px; letter-spacing: 0.4em; text-transform: uppercase; margin-bottom: 60px; }
+  .all-members-title::after { content: ''; display: block; width: 60px; height: 1px; background: var(--gold); margin: 25px auto 0; }
+  .all-members-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; max-width: 1200px; margin: 0 auto; }
+  .mini-member { display: flex; flex-direction: column; align-items: center; background: white; border: 1px solid #eee; padding: 25px 15px 15px; transition: all 0.4s ease; text-decoration: none; }
+  .mini-member:hover { border-color: var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.08); transform: translateY(-4px); }
+  .mini-member.current { border-color: var(--gold); border-width: 2px; background: #faf8f5; }
+  .mini-member img { max-width: 100%; height: 70px; object-fit: contain; filter: grayscale(100%); opacity: 0.7; transition: all 0.4s ease; margin-bottom: 15px; }
+  .mini-member:hover img, .mini-member.current img { filter: grayscale(0%); opacity: 1; }
+  .mini-member:hover img { transform: scale(1.055); }
+  @media (prefers-reduced-motion: reduce) { .mini-member:hover img { transform: none; } }
+  .mini-member span { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #666; font-weight: 500; text-align: center; }
+  .mini-member.current span { color: var(--gold); }
+  
+  footer { background: var(--dark); color: white; text-align: center; padding: 50px 40px 30px; }
+  .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 26px; letter-spacing: 0.2em; color: white; margin-bottom: 6px; font-weight: 500; }
+  .footer-sub { font-size: 10px; letter-spacing: 0.4em; color: var(--gold-light); text-transform: uppercase; margin-bottom: 30px; }
+  .footer-links { display: flex; justify-content: center; gap: 40px; margin-bottom: 30px; flex-wrap: wrap; }
+  .footer-links a { color: white; text-decoration: none; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.7; transition: all 0.3s; }
+  .footer-links a:hover { opacity: 1; color: var(--gold); }
+  .footer-social { display: flex; justify-content: center; gap: 15px; margin: 30px 0 35px; padding-top: 30px; border-top: 1px solid #333; }
+  .footer-social a { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border: 1px solid rgba(255,255,255,0.2); color: white; transition: all 0.3s ease; }
+  .footer-social a:hover { border-color: var(--gold); background: var(--gold); color: white; transform: translateY(-3px); }
+  .footer-social svg { width: 17px; height: 17px; fill: currentColor; }
+  .footer-copy { font-size: 10px; color: #666; letter-spacing: 0.1em; padding-top: 25px; border-top: 1px solid #333; }
+  
+  .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: var(--dark); color: white; border: 1px solid var(--dark); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 999; opacity: 0; visibility: hidden; transition: all 0.4s ease; font-size: 22px; }
+  .back-to-top.visible { opacity: 1; visibility: visible; }
+  .back-to-top:hover { background: var(--gold); border-color: var(--gold); transform: translateY(-4px); }
+  
+  @media (max-width: 1100px) {
+    .detail-hero { grid-template-columns: 1fr; gap: 40px; padding: 30px 40px 50px; }
+    .detail-photo { max-width: 500px; margin: 0 auto; }
+    .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+    .contact-logo { justify-content: center; }
+    .all-members-grid { grid-template-columns: repeat(3, 1fr); }
+    nav { padding: 15px 40px; }
+    .logo-main { font-size: 36px; }
+  }
+  
+  @media (max-width: 900px) {
+    nav { padding: 12px 25px; }
+    .logo-main { font-size: 22px; }
+    .logo-sub { font-size: 8px; }
+    .back-link { font-size: 11px; }
+    .detail-hero { padding: 20px 25px 40px; margin-top: 100px; }
+    .detail-tagline { text-align: left; }
+    .detail-description { text-align: left; }
+    .contact-section-detail { padding: 40px 25px; }
+    .quote-section { padding: 50px 25px; }
+    .all-members { padding: 60px 25px; }
+    .all-members-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+    .mini-member { padding: 18px 10px 12px; }
+    .mini-member img { height: 50px; }
+    .back-to-top { bottom: 20px; right: 20px; width: 44px; height: 44px; font-size: 18px; }
+  }
+
+
+/* Member detail layout based on the Baukarussell website. */
+.hidden{display:none!important}
+.preview-note{font:500 11px/1.5 'Inter',sans-serif;color:#896b41;letter-spacing:.06em;margin-bottom:17px}
+.detail-hero{align-items:start}
+.detail-content{min-width:0}
+.detail-person{font-size:13px;color:var(--gold);margin:0 0 23px}
+.detail-description-wrap{max-width:680px;font-size:15px;line-height:1.78;color:#555;hyphens:auto;overflow-wrap:anywhere}
+.detail-description-wrap p{font-size:15px;line-height:1.78;margin:0 0 15px;white-space:normal;min-height:0}
+.detail-description-wrap .description-line{display:block;white-space:pre-wrap;overflow-wrap:anywhere}
+.detail-description-wrap .description-line:empty{min-height:1.5em}
+.detail-description-wrap .description-lead{color:#8d744d;letter-spacing:.1em;font-size:12px;font-weight:500;text-transform:uppercase;text-align:left!important}
+.detail-description-wrap p:last-child{margin-bottom:0}
+.detail-description-wrap p.description-lead{color:#8d744d;letter-spacing:.1em;font-size:12px;font-weight:500;line-height:1.7;text-transform:uppercase;margin-bottom:22px;text-align:left!important}
+.detail-description-wrap strong{font-weight:600}
+.detail-description-wrap em{font-style:italic}
+.detail-description-wrap a{color:#94724b;text-decoration:underline;text-underline-offset:3px}
+.detail-description-wrap a:hover{color:#3c3125}
+.detail-photo{border-radius:0;background:#f5f2ed;overflow:hidden}
+.detail-photo img{object-fit:contain;object-position:center center;transition:transform .2s ease}
+.detail-hero.no-photo{grid-template-columns:1fr;max-width:960px}
+.contact-line.member-address{white-space:pre-line}
+.contact-info .contact-line.member-address{font-size:15px;line-height:1.8;margin-bottom:10px}
+.contact-section-detail{margin-top:28px}
+.contact-info .contact-line a{text-decoration:none}
+.contact-info .contact-line a:hover{text-decoration:underline}
+.contact-logo img{max-height:185px;object-fit:contain}
+.all-members.listing-view{padding-top:170px;min-height:70vh}
+.all-members-grid button.mini-member{font:inherit;cursor:pointer;color:inherit;width:100%;border:1px solid #eee}
+.mini-member img{transition:transform .3s ease,filter .3s ease,opacity .3s ease}
+.mini-member:hover img{transform:scale(1.055)}
+.member-listing-status{margin:40px auto 0;max-width:700px;text-align:center;color:#806a4b;font-size:13px}
+.contact-actions{margin:26px 0 5px;display:flex;flex-wrap:wrap;gap:15px}
+.social-section .social-icons{flex-wrap:wrap}
+.social-icon{font-family:'Inter',sans-serif;font-size:14px;font-weight:600}
+.social-icon span{line-height:1}
+.back-link{border:0;background:transparent;cursor:pointer}
+.preview-disclaimer{font-size:11px;text-align:center;color:#8f7654;padding:12px;background:#f3ebdd;border-bottom:1px solid #eadac2}
+#profile-view.hidden+section{display:none}
+/* Restrained gold accents repeated throughout the member website preview. */
+.detail-photo,.contact-logo{outline:1px solid rgba(184,148,95,.45);outline-offset:5px}
+.mini-member,.all-members-grid button.mini-member{border-color:rgba(184,148,95,.4)!important}
+.mini-member:hover,.all-members-grid button.mini-member:hover{border-color:var(--gold)!important}
+.cta-buttons .btn,.social-icons .social-icon{border:1px solid rgba(184,148,95,.7)!important}
+.contact-info .contact-website{border-color:var(--gold)}
+@media(max-width:1100px){.detail-hero{align-items:start}.detail-photo{max-width:450px;width:100%}}
+@media(max-width:900px){.detail-description-wrap p{font-size:14px}.contact-section-detail{margin-top:0}}
+@media(max-width:640px){.detail-hero{gap:27px}.detail-person{margin-bottom:14px}.detail-description-wrap p{line-height:1.7;margin-bottom:12px}.all-members.listing-view{padding-top:120px}}
+@media(prefers-reduced-motion:reduce){.mini-member,.mini-member img,.detail-photo img{transition:none!important}.mini-member:hover img,.detail-photo:hover img{transform:none!important}}
+</style>
+</head>
+<body>
+<nav>
+ <a href="/index.html" class="logo-text"><span class="logo-main">BAUKARUSSELL</span><span class="logo-sub">Networking à la carte</span></a>
+ <button id="top-back" type="button" class="back-link">Zurück</button>
+</nav>
+<section id="listing" class="all-members listing-view">
+ <h1 class="all-members-title">Unsere Mitglieder</h1>
+ <p class="all-members-sub">Unternehmen der Baubranche</p>
+ <div class="all-members-grid" id="listing-grid"></div>
+ <p id="listing-status" class="member-listing-status" role="status" aria-live="polite">Gespeicherte Mitglieder werden geladen ...</p>
+</section>
+<div id="profile-view" class="hidden">
+ <section id="profile-hero" class="detail-hero">
+  <div class="detail-photo" id="photo-area"><img id="profile-photo" alt="Profilfoto"></div>
+  <div class="detail-content">
+   
+   <h1 class="detail-name" id="profile-name"></h1>
+   <p class="detail-person" id="profile-person"></p>
+   <div class="detail-description-wrap" id="profile-description"></div>
+   <div id="profile-actions" class="cta-buttons"></div>
+   <div id="profile-social" class="social-section hidden">
+    <div class="social-label">Folgen Sie uns</div>
+    <div id="profile-social-icons" class="social-icons"></div>
+   </div>
+  </div>
+ </section>
+ <section class="contact-section-detail">
+  <div class="contact-grid">
+   <div class="contact-info">
+    <h3>Kontakt</h3>
+    <div id="profile-contact-lines"></div>
+    <a id="profile-contact-website" class="contact-website hidden"></a>
+   </div>
+   <div class="contact-logo"><img id="profile-logo" alt="Firmenlogo"></div>
+  </div>
+ </section>
+ <section class="all-members">
+  <h2 class="all-members-title">Alle Mitglieder</h2>
+  <p class="all-members-sub">Das Baukarussell Netzwerk</p>
+  <div id="other-members-grid" class="all-members-grid"></div>
+ </section>
+</div>
+
+<footer>
+  <div class="footer-logo">BAUKARUSSELL</div>
+  <div class="footer-sub">Networking à la carte</div>
+  <div class="footer-links">
+    <a href="../index.html">Startseite</a>
+    <a href="../index.html#members">Mitglieder</a>
+    <a href="../events.html">Events</a>
+    <a href="../projekte.html">Projekte</a>
+    <a href="../index.html#contact">Kontakt</a>
+    <a href="../impressum.html">Impressum</a>
+    <a href="../datenschutz.html">Datenschutz</a>
+  </div>
+  
+  <div class="footer-social">
+    <a href="https://ch.linkedin.com/company/baukarussell" target="_blank" title="LinkedIn" aria-label="LinkedIn">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+      </svg>
+    </a>
+    <a href="https://www.instagram.com/baukarussell/" target="_blank" title="Instagram" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+      </svg>
+    </a>
+  </div>
+  
+  <div class="footer-copy">© 2026 Baukarussell. Alle Rechte vorbehalten.</div>
+</footer>
+<script>
+(function(){
+ 'use strict';
+ const $=id=>document.getElementById(id);
+ let members=[];
+ const make=(tag,cls,txt)=>{
+  const e=document.createElement(tag);
+  if(cls)e.className=cls;
+  if(txt!==undefined)e.textContent=String(txt);
+  return e;
+ };
+ const safeImage=value=>typeof value==='string'
+  &&/^\/(?:logos|events|mitglieder|uploads)\//.test(value)
+  && !value.includes('..')&&!value.includes('?')&&!value.includes('#')?value:'';
+ function safeLink(value){
+  if(typeof value!=='string')return '';
+  if(/^mitglieder\/[a-z0-9_.-]+\.html$/i.test(value))return '/'+value;
+  try{
+   const parsed=new URL(value);
+   return ['https:','http:'].includes(parsed.protocol)?parsed.href:'';
+  }catch(_){return ''}
+ }
+ const MEMBER_TEXT_FONTS={
+  inter:"'Inter', Arial, sans-serif",
+  cormorant:"'Cormorant Garamond', Georgia, serif",
+  georgia:"Georgia, serif"
+ };
+ const MEMBER_TEXT_COLORS={
+  gold:'#b8945f',
+  lightgold:'#d4b483',
+  darkgold:'#94724b',
+  bronze:'#a77d57',
+  anthracite:'#30332f',
+  slate:'#74776f',
+  sage:'#60766b',
+  wine:'#875a67'
+ };
+ function inline(parent,value){
+  const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\[pt=(10|11|12|14|16|18|20|24)\]([\s\S]*?)\[\/pt\]|\[font=(inter|cormorant|georgia)\]([\s\S]*?)\[\/font\]|\[color=(gold|lightgold|darkgold|bronze|anthracite|slate|sage|wine)\]([\s\S]*?)\[\/color\]|\*\*\*([\s\S]+?)\*\*\*|\*\*([\s\S]+?)\*\*|\*([\s\S]+?)\*/g;
+  let from=0,match;
+  while((match=re.exec(value))!==null){
+   if(match.index>from)parent.append(document.createTextNode(value.slice(from,match.index)));
+   if(match[1]!==undefined){
+    const href=safeLink(match[2]);
+    if(href){
+     const a=make('a','',match[1]);a.href=href;a.target='_blank';a.rel='noopener noreferrer';parent.append(a);
+    }else parent.append(document.createTextNode(match[0]));
+   }else if(match[3]!==undefined){
+    const span=make('span');span.style.fontSize=match[3]+'pt';inline(span,match[4]);parent.append(span);
+   }else if(match[5]!==undefined){
+    const span=make('span');span.style.fontFamily=MEMBER_TEXT_FONTS[match[5]];inline(span,match[6]);parent.append(span);
+   }else if(match[7]!==undefined){
+    const span=make('span');span.style.color=MEMBER_TEXT_COLORS[match[7]];inline(span,match[8]);parent.append(span);
+   }else if(match[9]!==undefined){
+    const bold=make('strong'),em=make('em');inline(em,match[9]);bold.append(em);parent.append(bold);
+   }else if(match[10]!==undefined){
+    const bold=make('strong');inline(bold,match[10]);parent.append(bold);
+   }else{
+    const em=make('em');inline(em,match[11]);parent.append(em);
+   }
+   from=re.lastIndex;
+  }
+  if(from<value.length)parent.append(document.createTextNode(value.slice(from)));
+ }
+ function showDescription(member){
+  const root=$('profile-description');root.replaceChildren();
+  const raw=String(member.description||'').replace(/\r\n?/g,'\n');
+  if(!raw)return;
+  const lines=raw.split('\n');
+  const styles=Array.isArray(member.descriptionParagraphStyles)?member.descriptionParagraphStyles:[];
+  let firstText=true;
+  lines.forEach((line,index)=>{
+   const row=make('div','description-line');
+   row.style.display='block';
+   row.style.whiteSpace='pre-wrap';
+   row.style.minHeight='1.5em';
+   row.style.textAlign=member.descriptionAlign||'left';
+   row.style.lineHeight=styles[index]?.line||member.descriptionLineHeight||'1.6';
+   if(line){
+    if(firstText&&/^[A-ZÄÖÜ0-9&\s,.–-]{10,100}$/.test(line.trim()))row.classList.add('description-lead');
+    inline(row,line);firstText=false;
+   }else row.append(document.createTextNode('\u00a0'));
+   root.append(row);
+  });
+ }
+ function addressCompanyName(member){
+ // Postal address company name is editable independently from the profile title.
+ if(typeof member.addressCompany==='string'&&member.addressCompany.trim())return member.addressCompany.trim();
+ // Keep old names for members whose original drafts do not yet have the new field.
+ if(member.id==='member-8'||/\/logos\/onur\./i.test(member.logo||''))return 'ONUR Projects GmbH';
+ if(member.id==='member-1'||/\/logos\/akkaya\./i.test(member.logo||''))return 'C. Akkaya Lösungen aus Edelstahl';
+ return String(member.name||'').trim();
+}
+ function memberLogo(member){
+  return safeImage(member.logo)||'/admin/brand.svg';
+ }
+ function styleMemberText(node,member,key){
+  const style=member.fieldStyles?.[key]||{};
+  node.style.color=MEMBER_TEXT_COLORS[style.color]||'';
+  node.style.fontFamily=MEMBER_TEXT_FONTS[style.font]||'';
+  node.style.fontSize=style.size?style.size+'pt':'';
+  node.style.fontWeight=style.bold?'700':'';
+  node.style.fontStyle=style.italic?'italic':'';
+  node.style.textAlign=style.align||'';
+ }
+ function makeMemberCard(member){
+  const b=make('button','mini-member');b.type='button';
+  const img=make('img');img.src=memberLogo(member);img.alt='Logo '+(member.name||'');
+  const title=make('span','',member.name||'Mitglied');styleMemberText(title,member,'name');
+  b.append(img,title);b.addEventListener('click',()=>showProfile(member.id));
+  return b;
+ }
+ function renderListing(){
+  const grid=$('listing-grid');grid.replaceChildren();
+  for(const member of members)grid.append(makeMemberCard(member));
+  $('listing-status').classList.toggle('hidden',members.length>0);
+  if(!members.length)$('listing-status').textContent='Keine Mitglieder in diesem Entwurf.';
+ }
+ function showListing(){
+  $('profile-view').classList.add('hidden');$('listing').classList.remove('hidden');
+  const url=new URL(location.href);url.searchParams.delete('member');history.replaceState(null,'',url.toString());
+  window.scrollTo(0,0);
+ }
+ function showProfile(id){
+  const member=members.find(x=>x.id===id);
+  if(!member)return;
+  $('listing').classList.add('hidden');
+  $('profile-view').classList.remove('hidden');
+  $('profile-name').textContent=member.name||'Mitglied';
+  document.title=(member.name||'Mitglied')+' | Baukarussell';
+  styleMemberText($('profile-name'),member,'name');
+  const personNode=$('profile-person');personNode.replaceChildren();
+  if(member.person){const part=make('span','',member.person);styleMemberText(part,member,'person');personNode.append(part);}
+  if(member.person&&member.role)personNode.append(document.createTextNode(' · '));
+  if(member.role){const part=make('span','',member.role);styleMemberText(part,member,'role');personNode.append(part);}
+  personNode.classList.toggle('hidden',!member.person&&!member.role);
+  const image=safeImage(member.photo);
+  $('photo-area').classList.toggle('hidden',!image);
+  $('profile-hero').classList.toggle('no-photo',!image);
+  if(image){
+   const photo=$('profile-photo');
+   photo.src=image;photo.alt=(member.name||'Mitglied')+' Profilfoto';
+   // Always show the whole photo without stored cropping or scaling.
+   photo.style.objectFit='contain';
+   photo.style.objectPosition='center';
+   photo.style.transformOrigin='';
+   photo.style.transform='';
+  }
+  $('profile-logo').src=memberLogo(member);
+  $('profile-logo').alt=(member.name||'Mitglied')+' Logo';
+  showDescription(member);
+  $('profile-actions').replaceChildren();
+  const site=safeLink(member.url);
+  if(site){
+   const a=make('a','btn btn-primary','Zur Website');a.href=site;a.target='_blank';a.rel='noopener noreferrer';
+   $('profile-actions').append(a);
+  }
+  if(member.email){
+   const a=make('a','btn btn-secondary','E-Mail senden');a.href='mailto:'+member.email;$('profile-actions').append(a);
+  }
+  $('profile-contact-lines').replaceChildren();
+  // The company name belongs to the contact block even when the street is not yet filled in.
+  const address=make('div','contact-line member-address');
+  function appendAddress(text,key){
+   if(!text)return;
+   const line=make('div','',text);
+   styleMemberText(line,member,key);
+   address.append(line);
+  }
+  appendAddress(addressCompanyName(member),'addressCompany');
+  appendAddress(member.street,'street');
+  if(member.postalCode||member.city){
+   const place=make('div');
+   if(member.postalCode){const code=make('span','',member.postalCode);styleMemberText(code,member,'postalCode');place.append(code);}
+   if(member.postalCode&&member.city)place.append(document.createTextNode(' '));
+   if(member.city){const city=make('span','',member.city);styleMemberText(city,member,'city');place.append(city);}
+   address.append(place);
+  }
+  appendAddress(member.country,'country');
+  if(address.childNodes.length)$('profile-contact-lines').append(address);
+  if(member.phone){
+   const line=make('div','contact-line');
+   line.append(document.createTextNode('T '));
+   const a=make('a','',member.phone);a.href='tel:'+String(member.phone).replace(/[^\d+]/g,'');
+   line.append(a);$('profile-contact-lines').append(line);
+  }
+  if(member.email){
+   const line=make('div','contact-line');
+   const a=make('a','',member.email);a.href='mailto:'+member.email;
+   line.append(a);$('profile-contact-lines').append(line);
+  }
+  const website=$('profile-contact-website');
+  website.classList.toggle('hidden',!site);
+  if(site){website.href=site;website.textContent='→ '+(new URL(site,location.href).hostname||'Webseite');website.target='_blank';website.rel='noopener noreferrer';}
+  const socialBox=$('profile-social-icons');socialBox.replaceChildren();
+  const icons={linkedin:'in',youtube:'▶',instagram:'◎',facebook:'f',website:'↗',x:'𝕏'};
+  for(const item of member.socials||[]){
+   const href=safeLink(item.url);if(!href)continue;
+   if(item.platform==='website'&&site&&href.replace(/\/$/,'')===site.replace(/\/$/,''))continue;
+   const label=String(item.platform||'website');
+   const a=make('a','social-icon',icons[label]||'↗');a.href=href;a.target='_blank';a.rel='noopener noreferrer';
+   a.title=label.charAt(0).toUpperCase()+label.slice(1);a.setAttribute('aria-label',a.title);
+   socialBox.append(a);
+  }
+  $('profile-social').classList.toggle('hidden',!socialBox.children.length);
+  const other=$('other-members-grid');other.replaceChildren();
+  for(const m of members)other.append(makeMemberCard(m));
+  const url=new URL(location.href);url.searchParams.set('member',member.id);history.replaceState(null,'',url.toString());
+  window.scrollTo(0,0);
+ }
+ $('top-back').onclick=()=>{
+  if(!$('profile-view').classList.contains('hidden'))showListing();
+  else location.href='/index.html#members';
+ };
+ async function load(){
+  try{
+   const response=await fetch('/members-data.json',{cache:'no-store'});
+   if(!response.ok)throw Error('Die Mitglieder sind derzeit nicht verfügbar.');
+   const data=await response.json();
+   if(!Array.isArray(data))throw Error('Die Mitgliederliste konnte nicht gelesen werden.');
+   members=data.filter(x=>x&&x.public!==false);
+   renderListing();
+   const id=new URLSearchParams(location.search).get('member');
+   if(id)showProfile(id);
+  }catch(error){$('listing-status').textContent=error.message||'Vorschau derzeit nicht verfügbar.';}
+ }
+ load();
+})();
+</script>
+</body>
+</html>

@@ -40,7 +40,9 @@
   }
   
   .detail-photo { position: relative; overflow: hidden; aspect-ratio: 4/5; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
-  .detail-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .detail-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
+  .detail-photo:hover img { transform: scale(1.035); }
+  @media (prefers-reduced-motion: reduce) { .detail-photo img { transition: none; } .detail-photo:hover img { transform: none; } }
   .detail-content { padding: 20px 0; }
   .detail-name { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 3.5vw, 46px); color: var(--dark); letter-spacing: 0.03em; margin-bottom: 15px; line-height: 1.1; }
   .detail-tagline { font-family: 'Cormorant Garamond', serif; font-size: clamp(17px, 1.6vw, 22px); color: var(--gold); font-style: italic; letter-spacing: 0.02em; margin-bottom: 30px; line-height: 1.4; text-align: justify; }
@@ -88,6 +90,8 @@
   .mini-member.current { border-color: var(--gold); border-width: 2px; background: #faf8f5; }
   .mini-member img { max-width: 100%; height: 70px; object-fit: contain; filter: grayscale(100%); opacity: 0.7; transition: all 0.4s ease; margin-bottom: 15px; }
   .mini-member:hover img, .mini-member.current img { filter: grayscale(0%); opacity: 1; }
+  .mini-member:hover img { transform: scale(1.055); }
+  @media (prefers-reduced-motion: reduce) { .mini-member:hover img { transform: none; } }
   .mini-member span { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #666; font-weight: 500; text-align: center; }
   .mini-member.current span { color: var(--gold); }
   
@@ -193,6 +197,7 @@
     <div class="contact-info">
       <h3>Kontakt</h3>
       <div class="contact-line">
+        ONUR Projects GmbH<br>
         Neunbrunnenstrasse 38<br>
         CH-8050 Zürich
       </div>

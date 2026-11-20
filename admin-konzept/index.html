@@ -1,0 +1,1121 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Baukarussell | Admin Konzept</title>
+<link rel="stylesheet" href="/admin-konzept/management.css?v=2">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f6f2;--white:#fff;--ink:#232521;--muted:#898982;--gold:#b19165;--edge:#e9e6df;--soft:#f3f0eb;--dark:#242725;--green:#547361}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:13px}button,input,textarea{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:3px}button:disabled{opacity:.45;cursor:not-allowed}h1,h2,h3,p{margin-top:0}
+.layout{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
+.sidebar{background:#fff;border-right:1px solid var(--edge);padding:31px 16px 24px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{text-align:center;padding:13px 10px 45px;display:block}.brand strong{font:600 27px 'Cormorant Garamond',Georgia,serif;letter-spacing:.13em}.brand small{display:block;font-size:8px;letter-spacing:.3em;color:#a38a67;margin-top:5px}
+.menu-label{font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:#999a93;padding:0 16px;margin:8px 0 14px}
+.nav{display:flex;align-items:center;gap:12px;color:#60645e;width:100%;text-align:left;background:none;border:0;padding:13px 15px;margin-bottom:4px;border-radius:9px;font-weight:500;transition:.2s}
+.nav:hover{background:var(--soft);color:var(--ink)}.nav.active{background:#f1eee7;color:#252722;font-weight:600}.nav .ico{font-size:18px;width:22px;text-align:center;line-height:1}.nav .pill{margin-left:auto;font-size:9px;color:#988569;border:1px solid #e5dfd6;padding:3px 6px;border-radius:5px}
+.sidebar-end{margin-top:auto;border-top:1px solid var(--edge);padding:21px 12px 0}.sidebar-end small{color:#a0a098}.identity{display:flex;align-items:center;gap:10px;margin-top:12px}.avatar{width:34px;height:34px;border-radius:50%;background:#ede6db;display:grid;place-items:center;color:#98774e;font-weight:600}
+.page{min-width:0}.topbar{min-height:88px;background:#fff;border-bottom:1px solid var(--edge);display:flex;align-items:center;justify-content:space-between;padding:15px 40px;gap:15px}.crumb{color:#8b8e87;font-size:12px}.crumb strong{color:#343832}.topright{display:flex;align-items:center;gap:16px;color:#74776e;font-size:12px}.topright .circle{width:33px;height:33px;border-radius:50%;border:1px solid var(--edge);display:grid;place-items:center}
+.main{padding:42px clamp(20px,4.5vw,62px) 70px;max-width:1650px;margin:0 auto}.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.22em;font-size:10px;font-weight:700;margin-bottom:12px}
+.hero-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:29px}
+h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margin:0 0 8px}.sub{color:#868982;line-height:1.7;margin:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:41px;background:#fff;border:1px solid rgba(177,145,101,.65);color:#30332f;border-radius:8px;padding:0 16px;font-size:12px;font-weight:600;transition:.18s}.btn:hover{border-color:#baa88b;box-shadow:0 4px 15px #00000008}.btn.dark{background:var(--dark);color:white;border-color:var(--gold)}.btn.dark:hover{background:#40433d}.btn.ghost{background:transparent}.btn.gold{background:#ae8d5b;color:white;border-color:#ae8d5b}.btn.small{min-height:33px;padding:0 11px;font-size:11px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0 0 35px}
+.stat{background:white;border:1px solid var(--edge);border-radius:12px;padding:24px 25px;display:flex;gap:18px;align-items:center}.stat .si{border-radius:11px;background:#f5f1e9;width:42px;height:42px;display:grid;place-items:center;color:#9b815c;font-size:19px}.stat strong{display:block;font-size:22px;font-weight:500;margin-bottom:5px}.stat span{font-size:11px;color:#848780}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:15px}.section-head h2{font:500 29px 'Cormorant Garamond',Georgia,serif;margin:0}
+.filter{display:flex;gap:6px;border:1px solid var(--edge);padding:4px;background:white;border-radius:9px}.filter button{background:transparent;border:0;color:#8c8d86;font-size:11px;padding:8px 12px;border-radius:6px}.filter button.selected{background:#f4f0e9;color:#2c302a;font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.event{background:white;border:1px solid var(--edge);border-radius:12px;overflow:hidden;transition:.2s}.event:hover{transform:translateY(-2px);box-shadow:0 9px 30px #0000000e}.event-photo{position:relative;aspect-ratio:16/10;background:#eee9e3;overflow:hidden}.event-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}.event:hover .event-photo img{transform:scale(1.035)}.tag{position:absolute;top:14px;left:14px;border-radius:6px;background:white;color:#46614f;font-size:10px;padding:7px 10px;font-weight:600}.tag.draft{color:#8f7448;background:#faf4e9}.event-body{padding:20px 20px 22px}.event-body .date{font-size:10px;color:#b09165;letter-spacing:.14em;margin-bottom:11px}.event-body h3{font:500 25px/1.12 'Cormorant Garamond',Georgia,serif;margin:0 0 11px}.event-body p{font-size:11px;color:#888a84;line-height:1.7;margin:0 0 20px}.event-bottom{border-top:1px solid var(--edge);padding-top:15px;display:flex;justify-content:space-between;align-items:center}.event-bottom span{font-size:11px;color:#858881}.event-bottom button{border:0;background:none;color:#3e4941;font-size:12px;font-weight:600;padding:5px}
+.notice{background:#fcf7ed;border:1px solid #ebddc5;color:#8d7347;border-radius:8px;padding:10px 14px;font-size:11px;line-height:1.7;margin-bottom:21px}
+.editor-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.back{border:none;background:transparent;color:#767a72;padding:0 0 14px;font-size:12px}
+.edit-layout{display:grid;grid-template-columns:minmax(370px,1fr) minmax(330px,.93fr);gap:24px;align-items:start}
+.panel{background:#fff;border:1px solid var(--edge);border-radius:12px;overflow:hidden}.panel-head{padding:22px 26px 16px;border-bottom:1px solid var(--edge)}.panel-head h2{font:500 27px 'Cormorant Garamond',Georgia,serif;margin:0}.panel-head p{font-size:11px;color:#92958c;margin:7px 0 0}.panel-body{padding:25px 26px 30px}.field{margin:0 0 21px}.field label{display:block;margin:0 0 9px;font-size:11px;font-weight:600;color:#555b53}.field label .optional{font-size:10px;color:#aaa;font-weight:400;margin-left:6px}.field input,.field textarea{display:block;width:100%;padding:13px;border:1px solid #e4e5df;border-radius:7px;outline:none;font-size:12px;color:#30342e;background:#fff}.field input:focus,.field textarea:focus{border-color:#ae9063;box-shadow:0 0 0 3px #b49d741c}.field textarea{height:152px;resize:vertical;line-height:1.7}.fields-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.editor-tabs{display:flex;gap:2px;border-bottom:1px solid var(--edge);padding:0 25px}.editor-tabs button{padding:16px 15px;border:none;background:transparent;color:#90918c;border-bottom:2px solid transparent;font-size:12px}.editor-tabs button.active{border-color:var(--gold);color:#333931;font-weight:600}
+.toolbar{display:flex;gap:5px;border:1px solid #e4e5df;border-radius:7px 7px 0 0;padding:9px;background:#fafaf8}.toolbar button{background:none;border:none;border-radius:5px;color:#70746d;padding:7px 10px;min-width:35px}.toolbar button.active{background:#ebe7df;color:#222}.field .toolbar+textarea{border-top:0;border-radius:0 0 7px 7px}
+.tile-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.tile-head strong{font-size:12px}.tile-head small{color:#999}
+.media-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.media-tile{position:relative;aspect-ratio:1;background:#f4f0e9;border-radius:7px;overflow:hidden;cursor:grab;touch-action:auto}.media-tile img{width:100%;height:100%;object-fit:cover}.media-tile.dragging{opacity:.38}.media-tile .corner{position:absolute;top:7px;right:7px;background:#fff;border:0;border-radius:5px;width:23px;height:23px}.upload-box{width:100%;min-height:106px;border:1px dashed #d7c7af;border-radius:8px;background:#fcfaf6;display:grid;place-items:center;padding:17px;text-align:center;cursor:pointer;color:#a0875f}.upload-box strong{display:block;color:#5b5d56;margin-top:6px;font-size:11px}.upload-box small{font-size:10px}.partner{display:flex;gap:9px;align-items:center;margin-bottom:11px}.partner input{flex:1;border:1px solid #e4e5df;border-radius:7px;padding:11px;min-width:0}.partner button{border:0;background:#f8f2eb;border-radius:6px;padding:10px;color:#9a7650}.help{color:#979b92;font-size:10px;line-height:1.65;margin:10px 0 0}
+.preview{position:sticky;top:22px;background:white;border:1px solid var(--edge);border-radius:12px;overflow:hidden}.preview-top{display:flex;justify-content:space-between;align-items:center;padding:16px 21px;border-bottom:1px solid var(--edge)}.preview-top span{font-size:12px;font-weight:600}.preview-top small{color:#8c9189;font-size:10px}.preview-image{height:250px;background:#eee9e2}.preview-image img{width:100%;height:100%;object-fit:cover}.preview-copy{text-align:center;padding:30px 27px 22px}.preview-copy small{letter-spacing:.19em;font-size:9px;color:var(--gold)}.preview-copy h2{font:500 clamp(29px,3vw,44px)/1.1 'Cormorant Garamond',Georgia,serif;margin:13px 0 5px}.preview-copy h3{font:400 23px 'Cormorant Garamond',Georgia,serif;margin:0}.preview-copy p{font-size:11px;color:#8e8e88}.preview-text{max-width:430px;margin:0 auto 26px;padding:0 24px;color:#62645d;font-size:11px;line-height:1.9;white-space:pre-line}.preview-gal{padding:0 24px 36px}.preview-gal h3{text-align:center;font:400 28px 'Cormorant Garamond',Georgia,serif}.preview-gal-images{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.preview-gal-images img{width:100%;aspect-ratio:4/3;object-fit:cover}.empty{color:#a1a29d;background:#f9f8f4;border-radius:9px;padding:30px;text-align:center}
+.toast{position:fixed;right:25px;bottom:24px;background:#30362f;color:white;padding:14px 18px;border-radius:9px;box-shadow:0 12px 30px #0002;max-width:350px;font-size:12px;z-index:30}.hidden{display:none!important}
+.mobile-head{display:none}
+@media(max-width:1200px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.edit-layout{grid-template-columns:minmax(330px,1fr) minmax(310px,1fr)}.main{padding:30px}.sidebar{width:214px}.layout{grid-template-columns:214px minmax(0,1fr)}}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static;height:auto;width:100%;padding:14px;flex-direction:row;align-items:center;gap:5px;overflow:auto}.brand{padding:7px 12px;margin-right:auto}.brand strong{font-size:20px}.menu-label,.sidebar-end{display:none}.nav{width:auto;margin:0;padding:11px 12px;white-space:nowrap}.nav .ico,.nav .pill{display:none}.topbar{padding:14px 25px}.edit-layout{grid-template-columns:1fr}.preview{position:static}.main{padding:27px 20px}}
+@media(max-width:620px){.cards,.stats{grid-template-columns:1fr}.sidebar{gap:1px}.nav{padding:10px 8px;font-size:11px}.brand{min-width:130px}.hero-heading{align-items:flex-start;flex-direction:column}.fields-2{grid-template-columns:1fr}.panel-body{padding:20px}.topbar{padding:14px 20px}.topright{display:none}}
+
+/* Polished admin proportions. Prevent branding overflow and slogan wrapping. */
+@media(min-width:901px){
+  .layout{grid-template-columns:285px minmax(0,1fr)}
+  .sidebar{width:285px}
+}
+.brand{min-width:0;max-width:100%;overflow:hidden;padding:13px 8px 42px}
+.brand strong{display:block;font-size:27px;line-height:1.08;letter-spacing:.028em;white-space:nowrap}
+.brand small{font-size:8px;letter-spacing:.12em;white-space:nowrap;line-height:1.5;margin-top:7px}
+.nav{font-size:13px;min-height:47px}
+.field label{font-size:12px}
+.field input,.field textarea{font-size:13px}
+@media(min-width:901px) and (max-width:1200px){
+ .layout{grid-template-columns:250px minmax(0,1fr)}
+ .sidebar{width:250px}
+ .brand strong{font-size:23px;letter-spacing:.025em}
+ .brand small{font-size:7.5px;letter-spacing:.095em}
+}
+@media(max-width:900px){
+ .brand{min-width:147px;width:auto;margin-right:auto;padding:7px 5px}
+ .brand strong{font-size:19px;letter-spacing:.03em}
+ .brand small{font-size:6.8px;letter-spacing:.07em}
+}
+
+
+/* Clear, functional editing controls in the design concept */
+.toolbar{flex-wrap:wrap;align-items:center}
+.toolbar button:hover{background:#f0ebdf;color:#292b29}
+.toolbar-separator{width:1px;height:24px;background:#e1ddd6;margin:0 5px}
+.cover-control{display:flex;align-items:center;gap:18px;background:#fbfaf7;border:1px solid var(--edge);border-radius:9px;padding:12px}
+.cover-control img{width:115px;height:112px;object-fit:cover;border-radius:7px;flex:none}
+.cover-control strong{font-size:12px}
+.cover-control p{margin:5px 0 13px}
+.media-tile .as-cover{position:absolute;bottom:7px;left:7px;right:7px;min-height:28px;padding:5px 6px;background:#fffdf8e8;border:0;border-radius:5px;font-size:10px;font-weight:600;color:#3a3c36}
+.media-tile .as-cover:hover{background:#fff}
+.partner-entry{background:#fbfaf7;border:1px solid var(--edge);border-radius:9px;padding:13px;margin-bottom:12px}
+.partner-line{display:grid;grid-template-columns:136px minmax(0,1fr) 34px;gap:7px;align-items:center}
+.partner-line input,.partner-line select,.partner-entry input{width:100%;min-height:39px;border:1px solid #e4e5df;border-radius:6px;background:#fff;padding:10px;font-size:12px;min-width:0}
+.partner-line select{padding:8px 4px}
+.partner-line .remove-partner{height:36px;width:34px;border:0;border-radius:6px;background:#f6ebe5;color:#9f6d53}
+.partner-extra{margin-top:8px}
+.preview-text{white-space:normal}
+.preview-text p{white-space:pre-line;margin:0 0 17px}
+.preview-text ul{padding-left:23px;margin:0 0 16px}
+.preview-text h4{font:500 25px/1.2 'Cormorant Garamond',Georgia,serif;margin:18px 0 10px}
+.preview-text a{text-decoration:underline;color:#997446}
+.preview-partners{border-top:1px solid var(--edge);padding:23px 25px 42px}
+.preview-partners h3{font:400 26px 'Cormorant Garamond',Georgia,serif;text-align:center;margin:0 0 20px}
+.partner-preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.partner-preview-item{text-align:center;border:1px solid #eee8de;border-radius:7px;padding:13px;overflow-wrap:anywhere}
+.partner-preview-item small{display:block;text-transform:uppercase;letter-spacing:.13em;color:#b19165;font-size:9px;margin-bottom:5px}
+.partner-preview-item strong{font-size:12px;font-weight:600}
+.partner-preview-item a{color:#685b44;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:620px){.partner-line{grid-template-columns:115px minmax(0,1fr) 34px}.cover-control{flex-direction:column;align-items:start}.cover-control img{width:100%;height:150px}}
+
+
+/* Purpose-built overview separate from the Events collection */
+.dashboard-meta{font-size:11px;color:#90928b}
+.hub-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:34px}
+.hub-card{display:flex;align-items:center;text-align:left;gap:16px;min-height:126px;width:100%;padding:23px;border:1px solid var(--edge);border-radius:12px;background:#fff;color:var(--ink);transition:transform .2s,box-shadow .2s,border-color .2s}
+.hub-card:hover{transform:translateY(-2px);box-shadow:0 9px 28px #0000000c;border-color:#d9c7af}
+.hub-symbol{flex:0 0 auto;width:46px;height:46px;display:grid;place-items:center;border-radius:11px;font-size:23px;background:#f5f1e9;color:#9e825d}
+.hub-text{display:grid;gap:8px;flex:1;min-width:0}.hub-text strong{font:500 24px/1.05 'Cormorant Garamond',Georgia,serif}.hub-text small{font-size:11px;color:#8e9089;line-height:1.55}
+.hub-arrow{align-self:flex-start;font-size:14px;color:#afa18a}
+.hub-muted{background:#fdfbf7}
+.mini-status{font:500 9px Inter,Arial,sans-serif;color:#a1845c;border:1px solid #e8dccb;padding:3px 6px;vertical-align:middle;white-space:nowrap;border-radius:5px;margin-left:4px}
+.dashboard-lower{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.insight-panel{padding:26px 28px 23px;background:#fff;border:1px solid var(--edge);border-radius:12px}
+.insight-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:19px}
+.insight-head .eyebrow{margin-bottom:6px}
+.insight-head h2{font:500 28px 'Cormorant Garamond',Georgia,serif;margin:0}
+.demo-note{font-size:10px;color:#a08d70;white-space:nowrap}
+.insight-row{display:flex;align-items:center;gap:12px;border-top:1px solid var(--edge);padding:15px 0;color:#666b63;font-size:12px}
+.insight-row strong{font-size:15px;font-weight:600;color:#343831;margin-left:auto}
+.insight-row .metric-text{font-size:11px;color:#9e825d}
+.metric-dot{width:8px;height:8px;border-radius:50%;background:#b5b3ad}
+.published-dot{background:#6c9476}.draft-dot{background:#be995d}
+.analytics-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.analytics-stats div{background:#f9f7f3;padding:17px;border-radius:8px}
+.analytics-stats small{display:block;color:#8b8e87;font-size:11px;margin-bottom:6px}
+.analytics-stats strong{font-size:26px;font-weight:400;color:#999b95}
+.analytics-explain{color:#94968d;font-size:11px;line-height:1.7;min-height:47px;margin:16px 0}
+.quiet-link{border:0;padding:7px 0;background:transparent;color:#9b784d;font-size:11px;font-weight:600;cursor:pointer;text-align:left}
+.quiet-link:hover{text-decoration:underline}
+@media(max-width:1200px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){.hub-grid,.dashboard-lower{grid-template-columns:1fr}.hub-card{min-height:100px}}
+
+/* Unified brand/header alignment without decorative crossing lines */
+@media(min-width:901px){
+ .sidebar{padding:0 14px 24px;border-right:1px solid #f0ede8}
+ .sidebar .brand{height:88px;min-height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 -14px 0;padding:0 13px}
+ .sidebar .menu-label{margin-top:25px}
+ .sidebar .nav{max-width:100%;margin-bottom:4px}
+ .sidebar .sidebar-end{margin-left:0;margin-right:0}
+}
+.topbar{height:88px;min-height:88px;border-bottom:0!important;background:#fff;box-shadow:none}
+.sidebar .brand{border:0!important;box-shadow:none!important}
+.sidebar{box-shadow:none}
+.pages-grid .hub-card{min-height:134px}
+.pages-grid .hub-arrow{font-size:11px;font-weight:600;white-space:nowrap}
+.page-preview-content{padding:47px 42px 60px}
+.page-preview-content h2{font:500 clamp(30px,4vw,49px)/1.16 'Cormorant Garamond',Georgia,serif;text-align:center;margin:15px 0 31px}
+.page-preview-text{font-size:13px;line-height:2;color:#676b64;white-space:pre-wrap;overflow-wrap:anywhere}
+@media(max-width:900px){.topbar{height:auto;min-height:66px}.sidebar .brand{height:auto}.pages-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.pages-grid{grid-template-columns:1fr}.page-preview-content{padding:30px 21px}}
+
+/* Event gallery: GitHub photo import and accessible ordering (test only). */
+.github-gallery-import{background:#faf8f4;border:1px solid #eee6d7;border-radius:8px;padding:12px;margin-bottom:15px}
+.github-gallery-import .help{margin:7px 0 0}
+.github-gallery-status{font-size:11px;line-height:1.6;margin:10px 0 0;padding:9px 10px;border-radius:6px;background:#f4ede2;color:#795d37}
+.github-gallery-status[data-kind="success"]{background:#e8f3e9;color:#355f3e}
+.github-gallery-status[data-kind="error"]{background:#fff0e9;color:#8c432f}
+.gallery-photo-count{display:inline-block;margin-left:6px;color:#94816a;font-size:11px;font-weight:500}
+.gallery-order-controls{position:absolute;top:7px;left:7px;display:flex;gap:4px}
+.gallery-order-controls button{border:0;border-radius:5px;background:#fffdf8f0;color:#343934;min-width:28px;min-height:28px;font-size:15px;font-weight:600;cursor:pointer}
+.gallery-order-controls button:hover:not(:disabled){background:#fff}
+.gallery-order-controls button:disabled{opacity:.38;cursor:not-allowed}
+@media(max-width:620px){.tile-head{gap:8px;flex-wrap:wrap}}
+/* Kompakte Formatwerkzeuge, inspiriert von der Word Menüleiste. */
+.member-toolbar-hint{font-size:10px;color:#8a806f;margin:0 0 8px;line-height:1.6}
+.member-text-tools{display:flex;align-items:center;align-content:center;flex-wrap:wrap;gap:4px;padding:8px 9px;margin:0 0 12px;background:#fbfaf7;border:1px solid rgba(177,145,101,.42);border-radius:8px;overflow:visible}
+.member-text-tools button,.member-text-tools select{font-family:Inter,Arial,sans-serif}
+.member-text-tools button{min-width:0}
+.member-text-tools select.member-tool-select{display:inline-block;appearance:auto;-webkit-appearance:menulist;width:auto;min-height:34px;height:34px;padding:5px 3px 5px 7px;margin:0;border:1px solid #ded9cd;border-radius:5px;background:#fff;color:#30332f;font-size:12px;cursor:pointer}
+.member-text-tools select.member-tool-font{width:153px}
+.member-text-tools select.member-tool-point{width:55px;text-align:center}
+.member-tool-divider{display:block;height:25px;border-left:1px solid #dcd6ca;margin:0 4px}
+.member-text-tools .member-tool-icon,.member-text-tools .member-tool-case,.member-align-tools button,.member-symbol-picker button{display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:#30332f;border-radius:5px;cursor:pointer;height:33px;padding:0 7px;min-width:32px;font-size:15px}
+.member-text-tools .member-tool-icon:hover,.member-text-tools .member-tool-case:hover,.member-align-tools button:hover,.member-symbol-picker button:hover{background:#ede6d9;border-color:#bda784}
+.member-text-tools .member-tool-case{font-size:11px;letter-spacing:-.03em}
+.member-link-glyph{text-decoration:underline;text-underline-offset:3px}
+.member-tool-dropdown{position:relative;flex:none;line-height:1}
+.member-tool-dropdown>summary{display:flex;align-items:center;justify-content:center;gap:3px;list-style:none;cursor:pointer;border:1px solid transparent;border-radius:5px;height:33px;min-width:42px;padding:0 6px;background:transparent}
+.member-tool-dropdown>summary::-webkit-details-marker{display:none}
+.member-tool-dropdown>summary:hover,.member-tool-dropdown[open]>summary{background:#ede6d9;border-color:#bda784}
+.member-color-glyph{font-size:19px;font-weight:600;line-height:22px;border-bottom:3px solid #b8945f;min-width:14px;text-align:center}
+.member-symbol-current{font-size:18px;line-height:1}
+.member-tool-chevron{font-size:14px;color:#806f55}
+.member-tool-popover{position:absolute;right:0;top:38px;z-index:45;box-shadow:0 12px 35px #00000022;background:#fff;border:1px solid #c9b58e;border-radius:8px;padding:10px}
+.member-palette{width:186px}
+.member-palette-title{font-size:10px;font-weight:600;letter-spacing:.05em;color:#837666;margin-bottom:8px}
+.member-palette-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.member-text-tools .member-color-swatch{width:31px;height:31px;display:grid;place-items:center;padding:0;background:#fff;border:1px solid #ded8cc;border-radius:5px;cursor:pointer}
+.member-text-tools .member-color-swatch:hover{border:2px solid #7e6441;transform:translateY(-1px)}
+.member-color-swatch span{display:block;width:20px;height:20px;background:var(--swatch);border-radius:3px}
+.member-symbol-picker{width:176px;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.member-symbol-picker button{font-size:18px;border-color:#eee9df}
+.member-align-tools{display:flex;align-items:center;gap:1px}
+.member-align-tools button{padding:5px;min-width:32px}
+.member-align-tools button[aria-pressed=true]{background:#ece5d8;border:1px solid #baa17a}
+.member-align-tools svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.member-line-tool{display:flex;align-items:center;gap:2px}
+.member-line-tool>span{font-size:19px;color:#6e6659;line-height:1}
+.member-text-tools .member-line-tool select{width:104px}
+.member-text-tools button:focus-visible,.member-text-tools summary:focus-visible,.member-text-tools select:focus-visible{outline:2px solid #b8945f;outline-offset:1px}
+@media(max-width:660px){.member-text-tools{padding:7px 5px;gap:3px}.member-text-tools select.member-tool-font{width:133px}.member-tool-divider{margin:0 1px}.member-text-tools .member-line-tool select{width:88px}}
+.member-crop-dialog{position:fixed;inset:0;z-index:10025;background:#14130fe0;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+.member-crop-panel{background:#faf9f5;border-radius:12px;padding:24px;max-width:900px;width:min(94vw,900px);max-height:96vh;overflow:auto;box-shadow:0 24px 90px #0008}
+.member-crop-panel h2{margin:0;font:500 31px 'Cormorant Garamond',Georgia,serif}
+.member-crop-image-container{margin:16px 0;background:#282824;min-height:90px;display:flex;align-items:center;justify-content:center;padding:10px;overflow:hidden;border-radius:4px}
+.member-crop-stage{position:relative;display:inline-block;line-height:0;max-width:100%;touch-action:none;user-select:none}
+.member-crop-stage img{display:block;max-width:100%;max-height:55vh;width:auto;height:auto;object-fit:contain;user-select:none;pointer-events:none}
+.member-crop-selection{position:absolute;box-sizing:border-box;border:2px solid #d5ad6b;background:#d3b07724;box-shadow:0 0 0 1px #1118;cursor:move;touch-action:none}
+.crop-handle{position:absolute;display:block;width:16px;height:16px;border:2px solid #8a6637;border-radius:50%;background:#fff3db;box-shadow:0 1px 4px #0003}
+.crop-handle.nw{top:-9px;left:-9px;cursor:nwse-resize}.crop-handle.ne{top:-9px;right:-9px;cursor:nesw-resize}
+.crop-handle.sw{bottom:-9px;left:-9px;cursor:nesw-resize}.crop-handle.se{bottom:-9px;right:-9px;cursor:nwse-resize}
+.member-crop-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:18px}
+.member-crop-dialog .help{font-size:11px}
+.member-text-settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:11px}
+.member-text-settings label{font-size:10px;color:#7a7f77;font-weight:500}
+.member-text-settings select{width:100%;margin-top:5px;padding:9px 6px;border:1px solid #e4e5df;border-radius:6px;background:#fff;color:#373b35;font-size:11px}
+.member-media-status{margin:7px 0 9px!important;font-size:11px;line-height:1.6;color:#8f8065}
+.member-media-status[data-kind="success"]{color:#32673e}
+.member-media-status[data-kind="error"]{color:#973b2f}
+.member-address-fields{margin:15px 0 20px;padding:17px 15px 2px;background:#fbfaf7;border:1px solid #ece8e0;border-radius:9px}
+.member-photo-direct{margin:0 auto 18px;width:185px;max-width:100%}
+.member-photo-direct .member-preview-photo-wrap{position:relative;display:grid;place-items:center;overflow:hidden;width:185px;max-width:100%;min-height:180px;margin:0;border-radius:8px;background:#f8f6f2;border:1px solid rgba(177,145,101,.5)}
+.member-photo-direct .member-preview-photo-wrap img{display:block;width:100%;height:auto;max-height:280px;object-fit:contain;object-position:center;transform:none!important;pointer-events:auto}
+.member-description-preview{font-size:12px;color:#74776f;overflow-wrap:anywhere;hyphens:auto}
+.member-description-preview p{margin:0;white-space:pre-wrap;color:inherit;font-size:inherit;text-align:inherit;line-height:inherit;min-height:1em}
+.member-description-preview strong{font-weight:700}
+.member-description-preview em{font-style:italic}
+.member-description-preview a{display:inline;color:#94714b;text-decoration:underline;margin:0}
+@media(max-width:600px){.member-text-settings{grid-template-columns:1fr}}
+.cloud-save-status{margin:10px 0 18px;color:#6b634e;background:#f9f5ec;border:1px solid #ebdfc9;border-radius:8px;padding:10px 12px;font-size:11px;line-height:1.7}
+.cloud-save-status[data-kind="ok"]{background:#e9f4e9;color:#356345;border-color:#d1e8d0}
+.cloud-save-status[data-kind="error"]{background:#fdf0ec;color:#8a4632;border-color:#f1d7cc}
+.member-image-path{display:block;width:100%;margin-top:8px;border:1px solid #e4e5df;border-radius:7px;padding:10px 12px;font-size:11px}
+@media(max-width:740px){#members-list .manager-actions,#projects-list .manager-actions{flex-wrap:wrap}}
+/* Safe full-size photo inspection in test editor only. */
+#gallery-editor .media-tile>img{cursor:zoom-in}
+#gallery-editor .gallery-open{position:absolute;bottom:42px;right:7px;z-index:2;min-width:30px;min-height:30px;border:0;border-radius:5px;background:#fffdf8ee;color:#303530;font-size:18px;line-height:1;cursor:zoom-in}
+#gallery-editor .gallery-open:hover{background:white}
+.gallery-lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;gap:14px;padding:58px 20px 40px;background:rgba(12,13,12,.96);color:#fff}
+.gallery-lightbox-main{display:flex;flex:1;min-width:0;min-height:0;max-width:1200px;max-height:100%;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.gallery-lightbox-image{display:block;max-width:100%;max-height:calc(100vh - 160px);width:auto;height:auto;object-fit:contain}
+.gallery-lightbox-counter{margin:0;color:#e9e9e9;font-size:12px;letter-spacing:.06em}
+.gallery-lightbox-close{position:absolute;top:15px;right:20px;background:#272b27;border:1px solid #707470;border-radius:7px;color:#fff;min-height:40px;padding:8px 14px;font-size:12px;cursor:pointer}
+.gallery-lightbox-arrow{background:#282b28;border:1px solid #707470;border-radius:7px;color:#fff;min-width:43px;height:55px;font-size:30px;cursor:pointer}
+.gallery-lightbox-arrow:hover,.gallery-lightbox-close:hover{background:#424842}
+body.gallery-zoom-active{overflow:hidden}
+@media(max-width:620px){.gallery-lightbox{gap:7px;padding:58px 7px 32px}.gallery-lightbox-arrow{min-width:32px;height:46px;font-size:24px}.gallery-lightbox-image{max-height:calc(100vh - 140px)}}
+/* Consistent restrained gold outlines for actions, logos and member images. */
+#members-list .entity-card,#members-list .entity-icon,#member-editor .member-preview-logo,
+#member-editor .inline-upload,#member-editor .inline-upload img,#member-editor .member-photo-direct .member-preview-photo-wrap{
+ border-color:rgba(177,145,101,.48)!important
+}
+#member-editor .btn,#members-list .btn,#member-editor .member-preview-social a,
+#members-list .entity-controls .btn{border:1px solid rgba(177,145,101,.75)}
+#member-editor .btn:hover,#members-list .btn:hover{border-color:#9e7a47}
+#member-editor .member-preview-contacts .member-address{white-space:pre-line}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+<a class="brand" href="#" id="brand"><strong>BAUKARUSSELL</strong><small>NETWORKING À LA CARTE</small></a>
+<div class="menu-label">VERWALTUNG</div>
+<button class="nav active" data-page="dashboard"><span class="ico"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.3"/><rect x="14" y="3" width="7" height="5" rx="1.3"/><rect x="14" y="12" width="7" height="9" rx="1.3"/><rect x="3" y="16" width="7" height="5" rx="1.3"/></svg></span>Übersicht</button>
+<button class="nav" data-page="events"><span class="ico"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/><path d="M8 14h2M14 14h2M8 18h2"/></svg></span>Events</button>
+<button class="nav" data-page="members"><span class="ico"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 21v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M21 21v-2a6 6 0 0 0-4-5.66"/></svg></span>Mitglieder</button>
+<button class="nav" data-page="projects"><span class="ico"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V6a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 10h18"/></svg></span>Projekte</button>
+<button class="nav" data-page="media"><span class="ico"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="13" height="13" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v11"/><circle cx="8.5" cy="12.5" r="1.3"/><path d="m4 19 4-4 3 3 2-2 3 3"/></svg></span>Medien</button>
+<button class="nav" data-page="pages"><span class="ico"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-8h6v8"/></svg></span>Startseite</button>
+<button class="nav" data-page="about"><span class="ico"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="8" r=".9" fill="currentColor" stroke="none"/></svg></span>Über uns</button>
+<button class="nav" data-page="registrations"><span class="ico"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M9 13l2.5 2.5L16 11M9 8h6"/></svg></span>Anmeldungen</button>
+<div class="sidebar-end"><small>DESIGNKONZEPT · TEST</small><div class="identity"><span class="avatar">BK</span><span><strong>Redaktion</strong><br><small>Baukarussell Verein</small></span></div></div>
+</aside>
+<div class="page">
+<header class="topbar"><span class="crumb">Baukarussell / <strong id="crumb">Übersicht</strong></span><span class="topright"><button type="button" class="overview-link hidden" id="global-overview">← Zurück zur Übersicht</button><span class="design-label">Nur Designvorschau</span><span class="circle">BK</span></span></header>
+<main class="main">
+<section id="dashboard">
+<div class="eyebrow">WILLKOMMEN IM REDAKTIONSBEREICH</div>
+<div class="hero-heading"><div><h1>Guten Morgen. Willkommen zurück.</h1><p class="sub">Dein zentraler Überblick über die Baukarussell Webseite.</p></div></div>
+<div class="notice"><strong>Interaktiver Designentwurf:</strong> Alle Bereiche und Kennzahlen dieser Seite sind Vorschauen. Noch keine Verbindung zu Live Statistiken oder echten Veröffentlichungen.</div>
+<section class="connection-panel" id="github-connection" aria-label="GitHub Verbindung">
+<div class="connection-icon" aria-hidden="true">◎</div>
+<div class="connection-copy"><strong id="connection-title">GitHub Verbindung wird geprüft</strong><p id="connection-detail">Die neue Anmeldung ist vom bisherigen CMS getrennt.</p><small id="connection-extra">Alle Änderungen bleiben weiterhin in der Designvorschau.</small></div>
+<div class="connection-actions">
+<a class="btn dark hidden" id="connection-login" href="/admin-api/login">Mit GitHub anmelden</a>
+<button class="btn hidden" type="button" id="connection-test">Verbindung prüfen</button>
+<button class="btn hidden" type="button" id="connection-logout">Abmelden</button>
+</div>
+</section>
+<div class="section-head"><h2>Deine Verwaltung auf einen Blick</h2><span class="dashboard-meta">Alle Bereiche direkt öffnen</span></div>
+<div class="hub-grid">
+<button type="button" class="hub-card" data-hub-target="events"><span class="hub-symbol"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/><path d="M8 14h2M14 14h2M8 18h2"/></svg></span><span class="hub-text"><strong>Events</strong><small>Veranstaltungen, Entwürfe und Galerien</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card" data-hub-target="members"><span class="hub-symbol"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 21v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M21 21v-2a6 6 0 0 0-4-5.66"/></svg></span><span class="hub-text"><strong>Mitglieder</strong><small>Firmenprofile und Logos verwalten</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card" data-hub-target="projects"><span class="hub-symbol"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V6a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 10h18"/></svg></span><span class="hub-text"><strong>Projekte</strong><small>Intern verwalten, noch nicht auf der Webseite</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card" data-hub-target="media"><span class="hub-symbol"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="13" height="13" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v11"/><circle cx="8.5" cy="12.5" r="1.3"/><path d="m4 19 4-4 3 3 2-2 3 3"/></svg></span><span class="hub-text"><strong>Medien</strong><small>Fotos und Dateien organisieren</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card" data-hub-target="pages"><span class="hub-symbol"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-8h6v8"/></svg></span><span class="hub-text"><strong>Startseite</strong><small>Hauptseite, Kontakt und Rechtliches</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card" data-hub-target="about"><span class="hub-symbol"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="8" r=".9" fill="currentColor" stroke="none"/></svg></span><span class="hub-text"><strong>Über uns</strong><small>Verein, Gruppenbilder und Mitgliederfotos</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card hub-muted" data-hub-target="registrations"><span class="hub-symbol"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M9 13l2.5 2.5L16 11M9 8h6"/></svg></span><span class="hub-text"><strong>Anmeldungen</strong><small>Einladungen, Flyer und Gästelisten</small></span><span class="hub-arrow">↗</span></button>
+<button type="button" class="hub-card hub-muted" data-hub-target="statistics"><span class="hub-symbol"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4M4 20h17"/><rect x="8" y="11" width="3" height="6" rx=".5"/><rect x="13" y="8" width="3" height="9" rx=".5"/><rect x="18" y="5" width="3" height="12" rx=".5"/></svg></span><span class="hub-text"><strong>Statistik <span class="mini-status">Geplant</span></strong><small>Besuche und Seitenaufrufe im Blick</small></span><span class="hub-arrow">↗</span></button>
+</div>
+<div class="dashboard-lower">
+<section class="insight-panel">
+<div class="insight-head"><div><div class="eyebrow">INHALTE</div><h2>Redaktionsübersicht</h2></div><span class="demo-note">Beispieldaten</span></div>
+<div class="insight-row"><span class="metric-dot published-dot"></span><span>Veröffentlichte Events</span><strong>1</strong></div>
+<div class="insight-row"><span class="metric-dot draft-dot"></span><span>Events als Entwurf</span><strong>1</strong></div>
+<div class="insight-row"><span class="metric-dot inactive-dot"></span><span>Projekte auf der Webseite</span><strong class="metric-text">Noch nicht veröffentlicht</strong></div>
+<button type="button" class="quiet-link" data-hub-target="events">Alle Events ansehen ↗</button>
+</section>
+<section class="insight-panel analytics-panel">
+<div class="insight-head"><div><div class="eyebrow">WEBSITE</div><h2>Besucherstatistik</h2></div><span class="demo-note">Noch nicht verbunden</span></div>
+<div class="analytics-stats">
+<div><small>Besucher</small><strong>—</strong></div>
+<div><small>Seitenaufrufe</small><strong>—</strong></div>
+</div>
+<p class="analytics-explain">Später können hier echte Daten aus Cloudflare Web Analytics angezeigt werden. Derzeit werden keine Besucherzahlen erfasst oder angezeigt.</p>
+<button type="button" class="quiet-link" data-hub-target="statistics">Statistik planen ↗</button>
+</section>
+</div>
+</section>
+<section id="events" class="hidden">
+<div class="eyebrow">INHALTE / EVENTS</div>
+<div class="hero-heading"><div><h1>Events verwalten.</h1><p class="sub">Veranstaltungen erstellen, bearbeiten und im Blick behalten.</p></div><button type="button" class="btn dark" id="events-add">＋ Neues Event</button></div>
+<section id="real-events-panel" class="real-events-panel" aria-label="Echte GitHub Eventdateien">
+<div class="real-events-header">
+<div><div class="eyebrow">GITHUB / TESTBRANCH</div><h2>Eventdateien aus GitHub</h2><p>Die Originaldateien bleiben unverändert. Im Editor können private Textentwürfe gespeichert werden. Nichts wird veröffentlicht.</p></div>
+<button type="button" class="btn small" id="real-events-refresh">↻ Erneut prüfen</button>
+</div>
+<div class="real-events-state" id="real-events-state" role="status">Verbindungsprüfung noch ausstehend.</div>
+<div id="real-events-list" class="real-events-grid"></div>
+<section id="real-event-detail" class="real-event-detail hidden" aria-label="Details zur GitHub Eventdatei">
+<div class="real-event-detail-head">
+<div><div class="eyebrow">EVENTDATEI / ORIGINALANSICHT</div><h3 id="real-detail-title">Event</h3><p id="real-detail-subtitle"></p></div>
+<button type="button" class="btn small" id="real-detail-close">✕ Schliessen</button>
+</div>
+<div class="notice"><strong>Nur Leseansicht.</strong> Du siehst die Originaldaten aus dem GitHub Testbranch. Es werden keine Änderungen gespeichert oder veröffentlicht.</div>
+<div class="real-event-detail-layout">
+<div class="real-event-detail-photo"><img id="real-detail-cover" alt="Titelbild des Events"></div>
+<div class="real-event-detail-data">
+<div class="real-detail-line"><strong>Datum und Uhrzeit</strong><span id="real-detail-date">–</span></div>
+<div class="real-detail-line"><strong>Location</strong><span id="real-detail-location">–</span></div>
+<div class="real-detail-line"><strong>GitHub Datei</strong><a id="real-detail-source" target="_blank" rel="noopener noreferrer">Quelldatei ansehen ↗</a></div>
+</div>
+</div>
+<div class="real-event-detail-text"><h4>Eventbeschreibung</h4><div id="real-detail-description"></div></div>
+<div class="real-event-gallery"><h4>Eventgalerie <span id="real-detail-gallery-count"></span></h4><div id="real-detail-gallery" class="real-event-gallery-grid"></div></div>
+</section>
+</section>
+<div class="section-head"><div><h2>Designentwürfe</h2><p class="help">Die folgenden Beispielkarten gehören zur interaktiven Vorschau und sind nicht mit den GitHub Dateien verbunden.</p></div><div class="filter"><button class="selected" data-filter="all">Alle</button><button data-filter="published">Veröffentlicht</button><button data-filter="draft">Entwürfe</button></div></div>
+<div class="cards" id="cards">
+<article class="event" data-status="published"><div class="event-photo"><img src="/logos/baukarussellxmontblanc-00148.jpg" alt="Montblanc Event"><span class="tag">Veröffentlicht</span></div><div class="event-body"><div class="date">22. OKTOBER 2026</div><h3>Baukarussell x Montblanc</h3><p>Eleganz trifft auf besondere Begegnungen</p><div class="event-bottom"><span>Montblanc Boutique Zürich</span><button data-open="montblanc">Bearbeiten ↗</button></div></div></article>
+<article class="event" data-status="draft"><div class="event-photo"><img src="/logos/baukarussellxmontblanc-00148.jpg" alt="Test Event"><span class="tag draft">Entwurf</span></div><div class="event-body"><div class="date">20. NOVEMBER 2026</div><h3>Baukarussell Test Event</h3><p>Ein besonderer Abend voller Begegnungen</p><div class="event-bottom"><span>Zürich</span><button data-open="test">Bearbeiten ↗</button></div></div></article>
+</div>
+
+</section>
+
+<section id="members-list" class="hidden">
+<div class="eyebrow">INHALTE / MITGLIEDER</div>
+<div class="hero-heading"><div><h1>Mitglieder verwalten.</h1><p class="sub">Jedes Mitglied mit eigenem Logo, Firmenprofil und Webseite.</p></div><div class="manager-actions"><a class="btn" href="/admin-konzept/mitglieder-vorschau.html" target="_blank" rel="noopener noreferrer">Website Vorschau ansehen</a><button type="button" class="btn" id="member-save-cloud">Alle Mitglieder als Entwurf speichern</button><button type="button" class="btn" id="member-test-publish">Mitglieder auf Testwebsite übernehmen</button><a id="member-test-link" class="btn hidden" href="/index.html#members" target="_blank" rel="noopener noreferrer">Testwebsite prüfen</a><button type="button" class="btn dark" id="member-add">＋ Neues Mitglied</button></div></div>
+<div class="notice">Die elf bisherigen Mitgliedsfirmen sind als Ausgangspunkt vorhanden. <strong>Deine Angaben lassen sich als privater Entwurf in Cloudflare speichern.</strong> Auf der Webseite wird dadurch nichts veröffentlicht.</div><p class="cloud-save-status" id="member-save-status-list" role="status" aria-live="polite">Noch nicht als privater Entwurf gespeichert.</p>
+<div class="manager-info"><strong id="member-count">11</strong> Mitglieder im Entwurf · Firmen hinzufügen, bearbeiten oder entfernen</div>
+<div class="entity-grid" id="member-cards"></div>
+</section>
+<section id="member-editor" class="hidden">
+<button type="button" class="back" id="member-back">← Zurück zu Mitglieder</button>
+<div class="hero-heading"><div><div class="eyebrow">MITGLIEDER / BEARBEITEN</div><h1 id="member-editor-title">Mitglied bearbeiten.</h1><p class="sub">Alle Angaben und das Firmenlogo an einem Ort.</p></div><div class="manager-actions"><a class="btn" href="/admin-konzept/mitglieder-vorschau.html" target="_blank" rel="noopener noreferrer">Website Vorschau</a><button type="button" class="btn" id="member-save-demo">Entwurf speichern</button></div></div>
+<div class="notice">Änderungen hier bleiben privat, bis wir sie ausdrücklich veröffentlichen. Fotos werden bereits beim Hochladen im öffentlichen GitHub Testbranch gespeichert. Bitte nur freigegebene Bilder verwenden.</div><p class="cloud-save-status" id="member-save-status-editor" role="status" aria-live="polite">Noch nicht als privater Entwurf gespeichert.</p>
+<div class="edit-layout">
+<div class="panel"><div class="panel-head"><h2>Firmenprofil</h2><p>Basisinformationen für die Mitgliederübersicht.</p></div><div class="panel-body">
+<p class="member-toolbar-hint">Schrift, Farbe und Symbole für Firmenname, Ansprechperson, Funktion, Adresse und Beschreibung. Zuerst das Feld auswählen.</p>
+<div class="member-text-tools" role="toolbar" aria-label="Beschreibung formatieren">
+ <select id="member-font-family" class="member-tool-select member-tool-font" aria-label="Schriftart für markierten Text" title="Schriftart wählen">
+  <option value="">Inter</option><option value="inter">Inter</option><option value="cormorant">Cormorant Garamond</option><option value="georgia">Georgia</option>
+ </select>
+ <select id="member-font-size" class="member-tool-select member-tool-point" aria-label="Schriftgrösse für markierten Text" title="Schriftgrösse in Punkt">
+  <option value="">12</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="14">14</option>
+  <option value="16">16</option><option value="18">18</option><option value="20">20</option><option value="24">24</option>
+ </select>
+ <span class="member-tool-divider" aria-hidden="true"></span>
+ <button type="button" class="member-tool-icon" data-member-format="bold" title="Fett" aria-label="Fett"><strong>B</strong></button>
+ <button type="button" class="member-tool-icon" data-member-format="italic" title="Kursiv" aria-label="Kursiv"><em>I</em></button>
+ <button type="button" class="member-tool-icon" data-member-format="link" title="Link einfügen" aria-label="Link einfügen"><span class="member-link-glyph">↗</span></button>
+ <button type="button" class="member-tool-case" data-member-format="uppercase" title="In Grossbuchstaben umwandeln">ABC</button>
+ <button type="button" class="member-tool-case" data-member-format="lowercase" title="In Kleinbuchstaben umwandeln">abc</button>
+ <span class="member-tool-divider" aria-hidden="true"></span>
+ <details class="member-tool-dropdown" id="member-color-menu">
+  <summary title="Textfarbe wählen" aria-label="Textfarbe wählen"><span class="member-color-glyph" id="member-color-glyph">A</span><span class="member-tool-chevron" aria-hidden="true">⌄</span></summary>
+  <div class="member-tool-popover member-palette" role="group" aria-label="Textfarben">
+   <div class="member-palette-title">Textfarbe</div>
+   <div class="member-palette-grid">
+    <button type="button" class="member-color-swatch" data-member-color="gold" title="Gold" aria-label="Gold" style="--swatch:#b8945f"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="lightgold" title="Helles Gold" aria-label="Helles Gold" style="--swatch:#d4b483"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="darkgold" title="Dunkelgold" aria-label="Dunkelgold" style="--swatch:#94724b"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="bronze" title="Bronze" aria-label="Bronze" style="--swatch:#a77d57"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="anthracite" title="Anthrazit" aria-label="Anthrazit" style="--swatch:#30332f"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="slate" title="Schiefergrau" aria-label="Schiefergrau" style="--swatch:#74776f"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="sage" title="Salbeigrün" aria-label="Salbeigrün" style="--swatch:#60766b"><span aria-hidden="true"></span></button>
+    <button type="button" class="member-color-swatch" data-member-color="wine" title="Bordeaux" aria-label="Bordeaux" style="--swatch:#875a67"><span aria-hidden="true"></span></button>
+   </div>
+  </div>
+ </details>
+ <details class="member-tool-dropdown" id="member-symbol-menu">
+  <summary title="Symbol einfügen" aria-label="Symbol einfügen"><span class="member-symbol-current" id="member-symbol-current">✓</span><span class="member-tool-chevron" aria-hidden="true">⌄</span></summary>
+  <div class="member-tool-popover member-symbol-picker" role="group" aria-label="Symbole">
+   <button type="button" data-member-symbol="check" title="Häkchen" aria-label="Häkchen">✓</button>
+   <button type="button" data-member-symbol="bullet" title="Punkt" aria-label="Punkt">•</button>
+   <button type="button" data-member-symbol="diamond" title="Raute" aria-label="Raute">◆</button>
+   <button type="button" data-member-symbol="arrow" title="Pfeil" aria-label="Pfeil">→</button>
+   <button type="button" data-member-symbol="star" title="Stern" aria-label="Stern">★</button>
+   <button type="button" data-member-symbol="circle" title="Kreis" aria-label="Kreis">○</button>
+   <button type="button" data-member-symbol="square" title="Quadrat" aria-label="Quadrat">▪</button>
+   <button type="button" data-member-symbol="up" title="Pfeil nach oben" aria-label="Pfeil nach oben">↗</button>
+  </div>
+ </details>
+ <span class="member-tool-divider" aria-hidden="true"></span>
+ <div class="member-align-tools" role="group" aria-label="Textausrichtung">
+  <button type="button" data-member-align="left" title="Linksbündig" aria-label="Linksbündig" aria-pressed="true"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M3 8h10M3 12h14M3 16h10"/></svg></button>
+  <button type="button" data-member-align="center" title="Zentriert" aria-label="Zentriert" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M5 8h10M3 12h14M5 16h10"/></svg></button>
+  <button type="button" data-member-align="justify" title="Blocksatz" aria-label="Blocksatz" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14M3 8h14M3 12h14M3 16h14"/></svg></button>
+ </div>
+ <select id="member-description-align" class="hidden" aria-label="Textausrichtung"><option value="left">Linksbündig</option><option value="justify">Blocksatz</option><option value="center">Zentriert</option></select>
+ <div class="member-line-tool" title="Zeilenabstand">
+  <span aria-hidden="true">↕</span>
+  <select id="member-description-line" class="member-tool-select" aria-label="Zeilenabstand" title="Zeilenabstand: Cursor für eine Zeile, Ctrl + A für alle"><option value="1.4">Eng</option><option value="1.6">Normal</option><option value="1.8">Grosszügig</option><option value="2">Weit</option></select>
+ </div>
+</div>
+<div class="field"><label for="member-name">Firmenname</label><input id="member-name" type="text" placeholder="Firmenname"></div>
+
+<div class="fields-2"><div class="field"><label for="member-person">Ansprechperson <span class="optional">Optional</span></label><input id="member-person" placeholder="Vorname Nachname"></div><div class="field"><label for="member-role">Funktion / Position <span class="optional">Optional</span></label><input id="member-role" placeholder="z.B. Geschäftsführung"></div></div>
+<div class="field"><label for="member-description">Beschreibung <span class="optional">Optional</span></label>
+
+<textarea id="member-description" placeholder="Kurze Firmenbeschreibung"></textarea>
+<p class="help">Auch Leerzeilen am Anfang und mehrere Leerzeilen zwischen den Absätzen bleiben sichtbar.</p>
+</div>
+<div class="member-address-fields">
+<div class="field"><label for="member-address-company">Firmenname für Adresse <span class="optional">Optional</span></label><input id="member-address-company" type="text" placeholder="Firmenname inkl. GmbH oder AG"><p class="help">Unabhängig vom Profilnamen. Du kannst den Firmennamen jederzeit selbst ändern.</p></div>
+<div class="field"><label for="member-street">Strasse und Hausnummer <span class="optional">Optional</span></label><input id="member-street" type="text" placeholder="Musterstrasse 12" autocomplete="street-address"></div>
+<div class="fields-2"><div class="field"><label for="member-postal">Postleitzahl <span class="optional">Optional</span></label><input id="member-postal" type="text" placeholder="8000" autocomplete="postal-code"></div>
+<div class="field"><label for="member-city">Ort <span class="optional">Optional</span></label><input id="member-city" type="text" placeholder="Zürich" autocomplete="address-level2"></div></div>
+<div class="field"><label for="member-country">Land <span class="optional">Optional</span></label><input id="member-country" type="text" placeholder="Schweiz" autocomplete="country-name"></div>
+</div>
+<div class="fields-2"><div class="field"><label for="member-phone">Telefon <span class="optional">Optional</span></label><input id="member-phone" type="tel" placeholder="+41 ..."></div><div class="field"><label for="member-email">E-Mail <span class="optional">Optional</span></label><input id="member-email" type="email" placeholder="name@firma.ch"></div></div><div class="field"><label for="member-url">Webseite <span class="optional">Optional</span></label><input id="member-url" type="url" placeholder="https://..."></div>
+<div class="field"><label>Firmenlogo</label><div class="inline-upload"><img id="member-logo-thumb" src="/logos/onur.jpg" alt="Firmenlogo"><div><strong>Logo austauschen</strong><p>Das bestehende Logo bleibt erhalten, solange du kein neues hochlädst.</p><button class="btn small" id="member-logo-button" type="button">Logo hochladen</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-logo-input" class="hidden"></div></div><p class="member-media-status" id="member-logo-upload-status" role="status" aria-live="polite"></p><input class="member-image-path" id="member-logo-path" type="text" placeholder="/logos/firmenlogo.jpg" aria-label="Bereits gespeicherten Logopfad verwenden"><p class="help">Alternativ einen bestehenden GitHub Bildpfad eintragen.</p></div>
+<div class="field"><label>Profilfoto oder Firmenfoto <span class="optional">Optional</span></label><div class="inline-upload"><img id="member-photo-thumb" src="/admin/brand.svg" alt="Profilfoto"><div><strong>Personenfoto / Firmenbild</strong><p>Ein Foto zur Vorstellung der Person oder Firma. Das Logo bleibt separat.</p><button class="btn small" id="member-photo-button" type="button">Foto hochladen</button><button class="btn small" id="member-photo-crop" type="button">Foto zuschneiden</button><input type="file" accept="image/jpeg,image/png,image/webp" id="member-photo-input" class="hidden"></div></div><p class="member-media-status" id="member-photo-upload-status" role="status" aria-live="polite">Noch kein Foto hochgeladen.</p><input class="member-image-path" id="member-photo-path" type="text" placeholder="/mitglieder/foto.jpg" aria-label="Bereits gespeicherten Profilbildpfad verwenden"><p class="help">JPG, PNG oder WebP, maximal 4 MB. Originale bleiben auf deinem Computer unverändert.</p>
+</div>
+<div class="member-social-editor">
+<div class="tile-head"><strong>Social Media & weitere Links</strong><small>Reihenfolge frei wählen</small></div>
+<p class="help">Die Hauptwebseite wird oben eingetragen und in der Vorschau nur einmal angezeigt. Hier kannst du LinkedIn, YouTube oder weitere Profile hinzufügen.</p>
+<div id="member-social-rows"></div>
+<button type="button" class="btn small" id="member-social-add">＋ Link hinzufügen</button>
+</div>
+<div class="field"><label class="check-row"><input id="member-public" type="checkbox" checked> Mitglied auf der Webseite anzeigen</label><p class="help">Der Entwurf wird nicht automatisch veröffentlicht. Die spätere Sichtbarkeit wird beim Veröffentlichen berücksichtigt.</p></div>
+</div></div>
+<div class="panel"><div class="panel-head"><h2>Profilvorschau</h2><p>Firmenkarte, wie sie später erscheinen könnte.</p></div><div class="manager-preview"><div class="member-preview-logo"><img id="member-preview-logo" src="/logos/onur.jpg" alt="Logo Vorschau"></div><div class="member-photo-direct hidden" id="member-photo-direct">
+ <div id="member-preview-photo-wrap" class="member-preview-photo-wrap">
+  <img id="member-preview-photo" src="" alt="Profilfoto">
+ </div>
+</div>
+<h2 id="member-preview-name"></h2>
+<div id="member-preview-person" class="member-preview-person"></div>
+<div id="member-preview-description" class="member-description-preview"></div>
+<div id="member-preview-contacts" class="member-preview-contacts"></div>
+<div id="member-preview-social" class="member-preview-social"></div></div></div>
+</div></section>
+<div id="member-crop-dialog" class="member-crop-dialog hidden" role="dialog" aria-modal="true" aria-labelledby="member-crop-title">
+ <div class="member-crop-panel">
+  <h2 id="member-crop-title">Foto zuschneiden</h2>
+  <p class="help">Ziehe die goldene Fläche, um den Ausschnitt zu verschieben. Ziehe an den Ecken, um ihn anzupassen.</p>
+  <div class="member-crop-image-container">
+   <div class="member-crop-stage" id="member-crop-stage">
+    <img id="member-crop-image" alt="Foto zum Zuschneiden" draggable="false">
+    <div id="member-crop-selection" class="member-crop-selection">
+     <span data-crop-handle="nw" class="crop-handle nw"></span>
+     <span data-crop-handle="ne" class="crop-handle ne"></span>
+     <span data-crop-handle="sw" class="crop-handle sw"></span>
+     <span data-crop-handle="se" class="crop-handle se"></span>
+    </div>
+   </div>
+  </div>
+  <p id="member-crop-status" class="help" role="status" aria-live="polite"></p>
+  <div class="member-crop-actions">
+   <button type="button" class="btn" id="member-crop-cancel">Abbrechen</button>
+   <button type="button" class="btn dark" id="member-crop-apply">Zuschneiden und speichern</button>
+  </div>
+ </div>
+</div>
+
+<section id="projects-list" class="hidden">
+<div class="eyebrow">INHALTE / PROJEKTE</div>
+<div class="hero-heading"><div><h1>Projekte verwalten.</h1><p class="sub">Projekte intern vorbereiten. Die öffentliche Webseite zeigt derzeit keine Projekte.</p></div><div class="manager-actions"><button type="button" class="btn" id="project-save-cloud">Projekte als Entwurf speichern</button><button type="button" class="btn dark" id="project-add">＋ Neues Projekt</button></div></div>
+<div class="notice">Der Projektbereich bleibt im Admin verfügbar. Die Inhalte können privat in Cloudflare gespeichert werden, werden aber nicht auf der Webseite veröffentlicht.</div><p class="cloud-save-status" id="project-save-status-list" role="status" aria-live="polite">Noch nicht als privater Entwurf gespeichert.</p>
+<div class="entity-grid" id="project-cards"></div>
+<div class="entity-empty" id="project-empty"><div class="empty-icon">▤</div><h3>Noch keine Projekte vorhanden.</h3><p>Der Bereich darf vorerst leer bleiben. Wenn ihr später Projekte zeigen möchtet, kannst du sie hier vorbereiten.</p><button class="btn" type="button" id="project-empty-add">＋ Neues Projekt</button></div>
+</section>
+<section id="project-editor" class="hidden">
+<button class="back" type="button" id="project-back">← Zurück zu Projekte</button>
+<div class="hero-heading"><div><div class="eyebrow">PROJEKTE / INTERNER ENTWURF</div><h1>Projekt bearbeiten.</h1><p class="sub">Projektinformationen vorbereiten, ohne sie öffentlich anzuzeigen.</p></div><button type="button" class="btn" id="project-save-demo">Entwurf speichern</button></div>
+<div class="notice">Auch bei ausgefüllten Projektinformationen wird nichts veröffentlicht.</div><p class="cloud-save-status" id="project-save-status-editor" role="status" aria-live="polite">Noch nicht als privater Entwurf gespeichert.</p>
+<div class="edit-layout"><div class="panel"><div class="panel-head"><h2>Projektdaten</h2><p>Für eine spätere Nutzung vorbereitet.</p></div><div class="panel-body">
+<div class="field"><label for="project-name">Projekttitel</label><input id="project-name" type="text"></div>
+<div class="field"><label for="project-date">Datum <span class="optional">Optional</span></label><input id="project-date" type="date"></div>
+<div class="field"><label for="project-location">Ort <span class="optional">Optional</span></label><input id="project-location" type="text"></div>
+<div class="field"><label for="project-description">Beschreibung</label><textarea id="project-description"></textarea></div>
+<button class="btn" type="button" id="project-remove">Projekt aus Entwurf entfernen</button>
+</div></div><div class="panel"><div class="panel-head"><h2>Vorschau</h2><p>Nur innerhalb der Verwaltung sichtbar.</p></div><div class="manager-preview"><div class="eyebrow">INTERNER ENTWURF</div><h2 id="project-preview-title"></h2><p id="project-preview-date"></p><p id="project-preview-description"></p></div></div></div>
+</section>
+
+<section id="registrations-list" class="hidden">
+<div class="eyebrow">EVENTS / ANMELDUNGEN</div>
+<div class="hero-heading"><div><h1>Eventanmeldungen verwalten.</h1><p class="sub">Jeder Anlass erhält eine eigene Einladung, einen Flyer und später seine eigene Gästeliste.</p></div><button type="button" class="btn dark" id="registration-add">＋ Neue Anmeldung</button></div>
+<div class="notice"><strong>Designvorschau:</strong> Hier legst du Anmeldeseiten als einzelne Entwürfe an. Es werden noch keine Formulare veröffentlicht oder echten Anmeldungen verarbeitet.</div>
+<div class="entity-grid" id="registration-cards"></div>
+<div class="entity-empty" id="registration-empty"><div class="empty-icon">▣</div><h3>Noch keine Anmeldungen erstellt.</h3><p>Du kannst für jeden künftigen Event einen eigenen Einladungsbereich erstellen, inklusive Flyer und Informationen.</p><button type="button" class="btn" id="registration-empty-add">＋ Neue Anmeldung</button></div>
+</section>
+<section id="registration-editor" class="hidden">
+<button type="button" class="back" id="registration-back">← Zurück zu Anmeldungen</button>
+<div class="hero-heading"><div><div class="eyebrow">EVENTANMELDUNGEN / BEARBEITEN</div><h1>Einladung gestalten.</h1><p class="sub">Flyer, Termin und Registrierungsinformationen für einen Anlass.</p></div><div class="manager-actions"><button type="button" class="btn hidden" id="registration-save-demo">Entwurf merken</button><button type="button" class="btn" id="registration-remove">Entwurf entfernen</button></div></div>
+<div class="no-real-data"><strong>Demo ohne echte Anmeldungen:</strong> Bitte hier noch keine persönlichen Gästedaten eingeben. Onlineformular, Versand, QR Code und Export benötigen zuerst eine sichere technische Anbindung.</div>
+<div class="edit-layout">
+<div class="panel"><div class="panel-head"><h2>Event und Anmeldung</h2><p>Jede Einladung kann unabhängig bearbeitet werden.</p></div><div class="panel-body">
+<div class="field"><label for="reg-title">Name der Veranstaltung</label><input id="reg-title" type="text" placeholder="z.B. Weihnachtsessen"></div>
+<div class="fields-2"><div class="field"><label for="reg-date">Datum</label><input type="date" id="reg-date"></div><div class="field"><label for="reg-time">Uhrzeit</label><input type="time" id="reg-time"></div></div>
+<div class="field"><label for="reg-location">Veranstaltungsort</label><input type="text" id="reg-location" placeholder="Adresse oder Location"></div>
+<div class="field"><label for="reg-description">Einladungstext</label><textarea id="reg-description" placeholder="Einladung, Programm und weitere Hinweise"></textarea></div>
+<div class="fields-2"><div class="field"><label for="reg-deadline">Anmeldefrist <span class="optional">Optional</span></label><input type="date" id="reg-deadline"></div><div class="field"><label for="reg-capacity">Maximale Gäste <span class="optional">Optional</span></label><input type="number" min="0" id="reg-capacity" placeholder="Keine Begrenzung"></div></div>
+<div class="field"><label>Flyer hochladen</label>
+<div class="inline-upload"><div class="preview-icon" id="reg-upload-symbol">▧</div><div><strong id="reg-flyer-name">Noch kein Flyer ausgewählt</strong><p>Foto, Flyerbild oder PDF als Vorschau.</p><button class="btn small" type="button" id="reg-flyer-button">Flyer auswählen</button><input type="file" accept="image/*,.pdf,application/pdf" id="reg-flyer-input" class="hidden"></div></div></div>
+<div class="demo-attendees"><h3>Gästeliste & Anmeldungen</h3><p id="reg-attendee-counter">0 Anmeldungen · noch keine echte Verbindung</p>
+<div class="entity-empty" style="padding:23px" id="reg-attendee-empty"><div class="empty-icon">♧</div><h3>Gästeliste</h3><p>Später: Zusagen, Absagen, Begleitpersonen, Bestätigungen und Excel Export.</p></div>
+<div id="reg-attendees"></div>
+<button class="btn small" type="button" id="reg-add-demo-attendee">＋ Testeintrag hinzufügen</button><p class="help">Fügt ausschliesslich «Testperson (Demo)» ohne personenbezogene Daten hinzu.</p>
+</div>
+</div></div>
+<div class="panel"><div class="panel-head"><h2>Einladungsvorschau</h2><p>So könnte die jeweilige Anmeldeseite aussehen.</p></div>
+<div class="manager-preview">
+<div class="eyebrow" style="text-align:center">BAUKARUSSELL · EINLADUNG</div>
+<div class="reg-flyer-display" id="reg-flyer-preview">Flyer noch nicht hinzugefügt</div>
+<h2 id="reg-preview-title"></h2><p id="reg-preview-date" style="text-align:center"></p><p id="reg-preview-location" style="text-align:center"></p><p id="reg-preview-description"></p>
+<div class="empty" style="margin-top:24px">Anmeldeformular<br><small>Funktion folgt nach der sicheren Anbindung</small></div>
+</div></div>
+</div>
+</section>
+
+<section id="pages-list" class="hidden">
+<div class="eyebrow">WEBSEITE / STARTSEITE</div>
+<div class="hero-heading"><div><h1>Startseite verwalten.</h1><p class="sub">Hauptseite, zentrale Kontaktdaten und die rechtlichen Texte an einem Ort.</p></div></div>
+<div class="notice"><strong>Designvorschau:</strong> Diese Bereiche lassen sich hier probeweise bearbeiten. Änderungen wirken sich noch nicht auf die öffentliche Webseite aus.</div>
+<div class="hub-grid pages-grid">
+<button class="hub-card" data-page-edit="start"><span class="hub-symbol">⌂</span><span class="hub-text"><strong>Startseite</strong><small>Einleitung, Teaser und Hauptbereiche</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
+
+<button class="hub-card" data-page-edit="contact"><span class="hub-symbol">✉</span><span class="hub-text"><strong>Kontakt</strong><small>Kontaktangaben und Anfragen</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
+<button class="hub-card" data-page-edit="imprint"><span class="hub-symbol">§</span><span class="hub-text"><strong>Impressum</strong><small>Rechtliche Angaben des Vereins</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
+<button class="hub-card" data-page-edit="privacy"><span class="hub-symbol">◇</span><span class="hub-text"><strong>Datenschutz</strong><small>Datenschutzerklärung und Hinweise</small></span><span class="hub-arrow">Bearbeiten ↗</span></button>
+</div>
+</section>
+<section id="page-editor" class="hidden">
+<button class="back" id="page-edit-back">← Zurück zur Startseite</button>
+<div class="hero-heading"><div><div class="eyebrow">SEITEN / BEARBEITEN</div><h1 id="page-edit-heading">Seite bearbeiten</h1><p class="sub">Inhalte unkompliziert ändern und rechts ansehen.</p></div><button class="btn hidden" id="page-save-demo" type="button">Entwurf merken</button></div>
+<div class="notice"><strong>Nur Konzept:</strong> Änderungen hier werden nicht auf der Webseite gespeichert. Impressum und Datenschutz sollten vor einer späteren Veröffentlichung rechtlich geprüft werden.</div>
+<div class="edit-layout">
+<div class="panel"><div class="panel-head"><h2>Seiteninhalt</h2><p>Titel und Text dieser Seite im Entwurf bearbeiten.</p></div>
+<div class="panel-body">
+<div class="field"><label for="page-title-field">Seitentitel</label><input id="page-title-field" type="text"></div>
+<div class="field"><label for="page-text-field">Inhalt</label><textarea id="page-text-field" style="min-height:330px;line-height:1.85"></textarea><p class="help">Für den endgültigen Editor planen wir dieselben Textwerkzeuge wie bei den Events.</p></div>
+<div class="site-data-section hidden" id="site-data-section">
+<div class="tile-head"><strong>Zentrale Vereinsangaben & Kontakt</strong><small>Gemeinsam verwendet</small></div>
+<p class="help">Hier bearbeitete Angaben werden in der Vorschau von Startseite, Kontakt und Impressum gemeinsam verwendet. Rechtstexte bleiben eigenständige Inhalte.</p>
+<div class="field"><label for="site-company">Vereinsname / Organisation</label><input type="text" id="site-company" placeholder="Baukarussell Verein"></div>
+<div class="field"><label for="site-contact-person">Kontaktperson / Vertretung <span class="optional">Optional</span></label><input type="text" id="site-contact-person" placeholder="Name oder Funktion"></div>
+<div class="field"><label for="site-address">Strasse und Hausnummer <span class="optional">Optional</span></label><input type="text" id="site-address" placeholder="Strasse und Nummer"></div>
+<div class="field"><label for="site-city">PLZ und Ort <span class="optional">Optional</span></label><input type="text" id="site-city" placeholder="8000 Zürich"></div>
+<div class="fields-2"><div class="field"><label for="site-phone">Telefon</label><input id="site-phone" type="tel" placeholder="+41 ..."></div><div class="field"><label for="site-email">E-Mail</label><input id="site-email" type="email" placeholder="info@..."></div></div>
+<div class="field"><label for="site-website">Webseite</label><input type="url" id="site-website" placeholder="https://..."></div>
+</div>
+<section class="gallery-workspace hidden" id="about-gallery-workspace">
+<div class="tile-head"><div><h3>Mitgliederfotos & Gruppenbilder</h3><p class="help">Aktuelle Gruppenfotos, Vorstandsfotos oder Vereinsbilder. Mehrere Fotos auswählen, sortieren und entfernen.</p></div><small>Ziehen zum Sortieren</small></div>
+<div class="media-grid" id="about-gallery-editor"></div>
+<label class="upload-box" for="about-photo-upload"><span style="font-size:23px">＋</span><strong>Mehrere Fotos hinzufügen</strong><small>JPG, PNG oder WebP · Designvorschau</small></label>
+<input id="about-photo-upload" type="file" accept="image/*" multiple class="hidden">
+<p class="help">Neu hochgeladene Fotos bleiben in diesem Prototyp nur im geöffneten Browserfenster verfügbar und können beim Neuladen verloren gehen.</p>
+</section>
+</div></div>
+<div class="panel page-preview-panel"><div class="panel-head"><h2>Vorschau</h2><p>So könnte die Textseite im Webdesign aussehen.</p></div><div class="page-preview-content"><div class="eyebrow">BAUKARUSSELL</div><h2 id="page-preview-title"></h2><div id="page-preview-text" class="page-preview-text"></div><div id="site-preview-block" class="site-preview-block hidden"></div><div class="page-picture-preview hidden" id="about-gallery-preview"><h3>Unsere Mitglieder</h3><div class="images" id="about-gallery-preview-images"></div></div></div></div>
+</div>
+</section>
+<section id="editor" class="hidden">
+<button class="back" id="edit-back">← Zurück zu Events</button>
+<div class="hero-heading"><div><div class="eyebrow">EVENTS / BEARBEITEN</div><h1 id="editor-heading">Event bearbeiten</h1><p class="sub" id="editor-subtitle">Übersichtlich bearbeiten und die Vorschau sofort sehen.</p><div class="editor-save-indicator" id="editor-save-indicator" data-state="original" role="status" aria-live="polite"><span class="editor-save-dot" aria-hidden="true"></span><span id="editor-save-label">Noch keine Änderungen</span></div></div><div class="editor-actions"><button class="btn" id="demo-save">Entwurf sichern</button><button class="btn dark" id="demo-publish">Veröffentlichen</button></div></div>
+<div class="notice" id="editor-notice">Designvorschau: Änderungen bleiben beim Wechsel zwischen den Bereichen in diesem Browserfenster erhalten. <strong>Keine echte Speicherung oder Veröffentlichung.</strong> Neue Fotodateien können beim Neuladen verloren gehen.</div>
+<div class="source-draft-banner hidden" id="source-draft-banner" role="status">
+<strong>GitHub Eventdatei · nicht veröffentlicht</strong>
+<p id="source-draft-status">Dieser Event wurde aus GitHub geladen. Änderungen bleiben bis zur Einrichtung eines privaten Entwurfsspeichers lokal.</p>
+</div>
+<div class="edit-layout">
+<section class="panel">
+<div class="panel-head"><h2>Event gestalten</h2><p>Alle Informationen an einem Ort.</p></div>
+<div class="editor-tabs"><button class="active" data-tab="info">Allgemein & Text</button><button data-tab="gallery">Galerie & Partner</button></div>
+<div class="panel-body" id="tab-info">
+<div class="field"><label for="e-title">Eventname</label><input id="e-title" placeholder="z.B. Baukarussell x Montblanc"></div>
+<div class="field"><label for="e-slogan">Leitsatz <span class="optional">Optional</span></label><input id="e-slogan" placeholder="Die besondere Überschrift des Abends"></div>
+<div class="fields-2"><div class="field"><label for="e-date">Datum</label><input id="e-date" type="date"></div><div class="field"><label for="e-time">Uhrzeit</label><input id="e-time" type="time"></div></div>
+<div class="field"><label for="e-location">Veranstaltungsort <span class="optional">Optional</span></label><input id="e-location" placeholder="z.B. Montblanc Boutique Zürich"></div>
+<div class="field"><label for="e-text">Beschreibung</label>
+
+<textarea id="e-text" placeholder="Schreibe hier deinen Eventbericht..."></textarea>
+<p class="help">Text markieren und in der kompakten Formatleiste gestalten. Zwischenüberschriften und Aufzählungen bleiben verfügbar.</p></div>
+</div>
+<div class="panel-body hidden" id="tab-gallery">
+<div class="field"><label>Titelbild</label><div class="cover-control"><img id="cover-small" src="/logos/baukarussellxmontblanc-00148.jpg" alt="Aktuelles Titelbild"><div><strong>Aktuelles Titelbild</strong><p class="help">Du kannst ein anderes Bild auswählen oder eines aus deiner Galerie als Titelbild festlegen.</p><button type="button" class="btn small" id="change-cover">Bild ändern</button><input id="cover-upload" type="file" accept="image/*" class="hidden"></div></div></div>
+<div class="tile-head"><strong>Fotogalerie <span class="gallery-photo-count" id="gallery-photo-count" aria-live="polite">0 Fotos</span></strong><small>Ziehen oder mit den Pfeilen sortieren</small></div>
+<p class="help">Foto anklicken, um es gross anzusehen. Mit den Pfeilen durch die Fotos blättern.</p>
+<div id="github-gallery-import" class="github-gallery-import hidden"><button type="button" class="btn small" id="github-gallery-sync">Fotos aus GitHub übernehmen</button><p class="help">Aktuelle Fotos aus GitHub laden. Texte bleiben unverändert. Danach «Entwurf speichern» klicken.</p><p id="github-gallery-status" class="github-gallery-status hidden" role="status" aria-live="polite"></p></div>
+<div class="media-grid" id="gallery-editor"></div>
+<label class="upload-box" for="upload-input"><span style="font-size:23px">＋</span><strong>Mehrere Fotos gleichzeitig auswählen</strong><small>JPG, PNG oder WebP · Designvorschau</small></label>
+<input id="upload-input" type="file" accept="image/*" multiple class="hidden">
+<p class="help">Neu ausgewählte Fotos bleiben beim Wechsel zwischen den Menüs erhalten, aber noch nicht dauerhaft auf dem Server. Beim Neuladen können sie verloren gehen.</p>
+<div style="border-top:1px solid var(--edge);margin:26px 0"></div>
+<div class="tile-head"><strong>Partner & Mitwirkende</strong><small>Optional</small></div>
+<p class="help">Eventpartner, Musikerinnen und Musiker, Fotografie sowie Dankesworte haben eigene Kategorien. Nur ausgefüllte Einträge erscheinen in der Vorschau.</p>
+<div id="partner-list"></div><button type="button" class="btn small" id="partner-add">＋ Person oder Partner hinzufügen</button>
+</div>
+</section>
+<section class="preview"><div class="preview-top"><span>Live Vorschau</span><small>Desktopansicht</small></div><div class="preview-image"><img id="p-image" src="/logos/baukarussellxmontblanc-00148.jpg" alt="Eventfoto"></div><div class="preview-copy"><small id="p-date"></small><h2 id="p-slogan"></h2><h3 id="p-title"></h3><p id="p-location"></p></div><div class="preview-text" id="p-text"></div><div class="preview-gal"><h3>Impressionen</h3><div class="preview-gal-images" id="gallery-preview"></div></div><div class="preview-partners hidden" id="preview-partners"><h3>Mitwirkende & Partner</h3><div id="partner-preview-grid" class="partner-preview-grid"></div></div></section>
+</div>
+</section>
+<section id="placeholder" class="hidden">
+<button class="back" id="placeholder-back">← Zurück zur Übersicht</button>
+<div class="eyebrow">GEPLANTER VERWALTUNGSBEREICH</div><h1 id="placeholder-title">Mitglieder</h1>
+<p class="sub" id="placeholder-text">Dieser Bereich wird im nächsten Schritt ausgearbeitet.</p>
+<div style="margin-top:30px;background:white;border:1px solid var(--edge);border-radius:12px;padding:35px"><div class="empty">Vorschau des Menübereichs. Hier werden später die zugehörigen Funktionen eingebaut.</div></div>
+</section>
+</main>
+</div>
+</div>
+<div id="gallery-lightbox" class="gallery-lightbox hidden" role="dialog" aria-modal="true" aria-label="Galeriefoto vergrössert ansehen" tabindex="-1">
+<button type="button" id="gallery-lightbox-close" class="gallery-lightbox-close" aria-label="Fotoansicht schliessen">× Schliessen</button>
+<button type="button" id="gallery-lightbox-prev" class="gallery-lightbox-arrow" aria-label="Vorheriges Foto">‹</button>
+<div class="gallery-lightbox-main"><img id="gallery-lightbox-image" class="gallery-lightbox-image" alt="Galeriefoto in voller Grösse"><p id="gallery-lightbox-counter" class="gallery-lightbox-counter" aria-live="polite"></p></div>
+<button type="button" id="gallery-lightbox-next" class="gallery-lightbox-arrow" aria-label="Nächstes Foto">›</button>
+</div>
+<button type="button" id="scroll-top" class="scroll-top visible" aria-label="Zurück nach oben" title="Zurück zum Seitenanfang"><span aria-hidden="true">↑</span><span>Nach oben</span></button>
+<div class="toast hidden" id="toast" role="status"></div>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id), all=(selector)=>Array.from(document.querySelectorAll(selector));
+const photo='/logos/baukarussellxmontblanc-00148.jpg';
+const photo2='/logos/baukarussellxmontblanc-00001.jpg';
+const models={
+montblanc:{title:'Baukarussell x Montblanc',slogan:'Eleganz trifft auf besondere Begegnungen',date:'2026-10-22',time:'18:00',location:'Montblanc Boutique Zürich',text:'Ein Abend, der von zeitloser Eleganz, inspirierenden Gesprächen und wertvollen Begegnungen geprägt war.\n\nIn der exklusiven Atmosphäre der Montblanc Boutique durften wir gemeinsam mit unseren Gästen besondere Momente erleben und unser Netzwerk in stilvollem Rahmen pflegen.\n\nEin herzliches Dankeschön an Montblanc für die wundervolle Gastfreundschaft und die ausgezeichnete Zusammenarbeit sowie an alle Gäste, Partner und Mitglieder, die diesen Abend mit ihrer Präsenz bereichert haben.',cover:photo,images:[photo,photo2],partners:['Montblanc Boutique Zürich']},
+test:{title:'Baukarussell Test Event',slogan:'Ein besonderer Abend voller Begegnungen',date:'2026-11-20',time:'18:00',location:'Zürich',text:'Dies ist ein Testevent zur Überprüfung der neuen Baukarussell Webseite und des Redaktionssystems.',cover:photo,images:[photo],partners:[]}
+};
+let current=null,currentKey=null,align='left',dragIndex=null;
+let galleryZoomIndex=0,galleryZoomFocus=null;
+function showGalleryZoom(){
+ if(!current||!Array.isArray(current.images)||!current.images.length){closeGalleryZoom();return;}
+ galleryZoomIndex=(galleryZoomIndex+current.images.length)%current.images.length;
+ $('gallery-lightbox-image').src=current.images[galleryZoomIndex];
+ $('gallery-lightbox-counter').textContent='Foto '+(galleryZoomIndex+1)+' von '+current.images.length;
+}
+function openGalleryZoom(index){
+ if(!current||!Array.isArray(current.images)||!current.images.length)return;
+ galleryZoomFocus=document.activeElement;
+ galleryZoomIndex=index;
+ $('gallery-lightbox').classList.remove('hidden');
+ document.body.classList.add('gallery-zoom-active');
+ showGalleryZoom();
+ $('gallery-lightbox-close').focus();
+}
+function closeGalleryZoom(){
+ const box=$('gallery-lightbox');if(box.classList.contains('hidden'))return;
+ box.classList.add('hidden');document.body.classList.remove('gallery-zoom-active');
+ $('gallery-lightbox-image').removeAttribute('src');
+ if(galleryZoomFocus&&galleryZoomFocus.isConnected)galleryZoomFocus.focus();
+ galleryZoomFocus=null;
+}
+let editorScrollY=0;
+const editorStatuses=Object.create(null);
+const restoredDraftKeys=new Set();
+let currentPageKey=null;
+const pageContent={start:{title:'Startseite',text:'Hier werden künftig die Einleitung und Haupttexte der Startseite bearbeitet.'},about:{title:'Über uns',text:'Hier wird künftig der Text über den Verein Baukarussell bearbeitet.'},contact:{title:'Kontakt',text:'Hier werden künftig Kontaktangaben und Kontakttexte bearbeitet.'},imprint:{title:'Impressum',text:'Hier wird später der bestehende Impressumstext zur Bearbeitung übernommen. Bitte keine rechtlichen Angaben ohne Prüfung veröffentlichen.'},privacy:{title:'Datenschutz',text:'Hier wird später die bestehende Datenschutzerklärung zur Bearbeitung übernommen. Vor Veröffentlichung bitte prüfen lassen.'}};
+try{const savedPages=JSON.parse(sessionStorage.getItem('bk-admin-pages-demo-v1')||'{}');for(const key of Object.keys(pageContent)){if(savedPages[key]&&typeof savedPages[key].title==='string'&&typeof savedPages[key].text==='string')pageContent[key]=savedPages[key]}}catch(_){/* ignore */}
+const siteInfo={company:'Baukarussell Verein',contactPerson:'',address:'',city:'',phone:'',email:'info@baukarussell.ch',website:'https://baukarussell.ch'};
+try{const persisted=JSON.parse(sessionStorage.getItem('bk-admin-site-info-v1')||'{}');for(const k of Object.keys(siteInfo))if(typeof persisted[k]==='string')siteInfo[k]=persisted[k]}catch(_){/* Keep default site information */}
+const siteFields={company:'site-company',contactPerson:'site-contact-person',address:'site-address',city:'site-city',phone:'site-phone',email:'site-email',website:'site-website'};
+const sessionKey='bk-admin-konzept-drafts-v2';
+let hasTemporaryPhotoChanges=false;
+try { const restored=JSON.parse(sessionStorage.getItem(sessionKey)||'{}'); for (const [key,val] of Object.entries(restored)) { if (val && typeof val==='object' && Array.isArray(val.images)) {models[key]=val;restoredDraftKeys.add(key);} } } catch (_) { /* Browser storage may be unavailable. */ }
+function setEditorStatus(key,state){
+ editorStatuses[key]=state;
+ if(key!==currentKey)return;
+ const banner=$('editor-save-indicator'),label=$('editor-save-label');
+ const source=Boolean(models[key]?.sourceSlug);
+ const descriptions={
+  original:'Noch keine Änderungen · nicht veröffentlicht',
+  local:'Nicht gespeicherte Änderungen · nur lokal vorgemerkt',
+  savedLocal:'Lokal gemerkt · nicht dauerhaft gespeichert',
+  savedRemote:'Privater Entwurf gespeichert · nicht veröffentlicht'
+ };
+ const normalized=state==='savedRemote'&&!source?'savedLocal':state;
+ banner.dataset.state=normalized;
+ label.textContent=descriptions[normalized]||descriptions.local;
+}
+function rememberChange() {
+ try {
+   const snapshot={};
+   for (const [key,val] of Object.entries(models))snapshot[key]={
+     ...val,cover:String(val.cover||'').startsWith('blob:')?photo:val.cover,
+     images:val.images.filter(src=>!String(src).startsWith('blob:'))
+   };
+   sessionStorage.setItem(sessionKey,JSON.stringify(snapshot));
+ }catch(_){/* Keep working in memory; the browser may block storage. */}
+ if(currentKey&&current){
+   setEditorStatus(currentKey,'local');
+   if(current.sourceSlug&&!$('editor').classList.contains('hidden')){
+     $('source-draft-status').textContent='Änderungen nur lokal vorgemerkt. Für dauerhafte Speicherung bitte «Entwurf speichern» verwenden. Keine Veröffentlichung.';
+   }
+ }
+}
+window.addEventListener('beforeunload',function(event){if(hasTemporaryPhotoChanges){event.preventDefault();event.returnValue='';}});
+let toastTimer=null;
+function toast(message){const t=$('toast');t.textContent=message;t.classList.remove('hidden');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add('hidden'),3500);}
+function page(name){
+ if(name!=='editor')closeGalleryZoom();
+ const leavingEditor=!$('editor').classList.contains('hidden') && name!=='editor';
+ if(leavingEditor)editorScrollY=window.scrollY;
+ const editing=name==='editor', dashboard=name==='dashboard', events=name==='events', pages=name==='pages', pageEditor=name==='page-editor';
+ const modules=['members','member-editor','projects','project-editor','registrations','registration-editor'];
+ const placeholder=!editing&&!dashboard&&!events&&!pages&&!pageEditor&&!modules.includes(name);
+ $('dashboard').classList.toggle('hidden',!dashboard);
+ $('events').classList.toggle('hidden',!events);
+ $('pages-list').classList.toggle('hidden',!pages);
+ $('page-editor').classList.toggle('hidden',!pageEditor);
+ $('members-list').classList.toggle('hidden',name!=='members');
+ $('member-editor').classList.toggle('hidden',name!=='member-editor');
+ $('projects-list').classList.toggle('hidden',name!=='projects');
+ $('project-editor').classList.toggle('hidden',name!=='project-editor');
+ $('registrations-list').classList.toggle('hidden',name!=='registrations');
+ $('registration-editor').classList.toggle('hidden',name!=='registration-editor');
+ $('editor').classList.toggle('hidden',!editing);
+ $('placeholder').classList.toggle('hidden',!placeholder);
+ const currentNav=(editing||events)?'events':pageEditor&&currentPageKey==='about'?'about':(pages||pageEditor)?'pages':name==='member-editor'?'members':name==='project-editor'?'projects':name==='registration-editor'?'registrations':name;
+ $('crumb').textContent=editing?'Event bearbeiten':pageEditor?(currentPageKey==='about'?'Über uns':'Startseite / '+(pageContent[currentPageKey]?.title||'Bearbeiten')):dashboard?'Übersicht':currentNav==='members'?'Mitglieder':currentNav==='projects'?'Projekte':currentNav==='registrations'?'Anmeldungen':currentNav==='events'?'Events':currentNav==='pages'?'Startseite':name;
+ $('global-overview').classList.toggle('hidden',dashboard);
+ all('.nav').forEach(b=>b.classList.toggle('active',b.dataset.page===currentNav));
+ if(editing){requestAnimationFrame(()=>window.scrollTo(0,editorScrollY));}
+ else window.scrollTo(0,0);
+}
+function back(){page('events');}
+function setTab(name){all('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$('tab-info').classList.toggle('hidden',name!=='info');$('tab-gallery').classList.toggle('hidden',name!=='gallery');}
+function openEditor(key){
+ currentKey=key;editorScrollY=0;
+ $('editor').dataset.historyKey='event:'+key;
+ if(!models[key])models[key]={title:'Neues Event',slogan:'',date:'',time:'18:00',location:'',text:'',cover:photo,images:[],partners:[]};
+ current=models[key];
+ current.partners=Array.isArray(current.partners)?current.partners.map(p=>typeof p==='string'?{role:'partner',name:p,url:''}:{role:p.role||'partner',name:p.name||'',url:p.url||''}):[];
+ align=current.textAlign||'left';
+ all('[data-align]').forEach(b=>b.classList.toggle('active',b.dataset.align===align));
+ $('e-title').value=current.title;$('e-slogan').value=current.slogan;$('e-date').value=current.date;$('e-time').value=current.time;
+ $('e-location').value=current.location;$('e-text').value=current.text;$('cover-small').src=current.cover;$('p-image').src=current.cover;
+ const source=Boolean(current.sourceSlug);
+ $('editor-heading').textContent=source?'GitHub Event bearbeiten':key==='new'?'Neues Event':'Event bearbeiten';
+ $('demo-save').textContent=source?'Entwurf speichern':'Lokal merken';
+ $('demo-save').classList.toggle('hidden',!source);
+ $('source-draft-banner').classList.toggle('hidden',!source);
+ $('github-gallery-import').classList.toggle('hidden',!source);
+ $('editor-notice').textContent=source
+  ?'GitHub Event als privater Entwurf. Texte und vorhandene Bildpfade lassen sich mit «Entwurf speichern» sichern. Neu ausgewählte Fotodateien bleiben vorerst nur in der Vorschau. Nichts wird veröffentlicht.'
+  :'Designvorschau: Änderungen bleiben in diesem Browserfenster erhalten. Keine echte Speicherung oder Veröffentlichung. Neue Fotodateien können beim Neuladen verloren gehen.';
+ setTab('info');render();page('editor');
+ setEditorStatus(key,editorStatuses[key]||(restoredDraftKeys.has(key)?'local':'original'));
+}
+function sourceEventTime(event){
+ if(/^\d{2}:\d{2}$/.test(String(event.time||'')))return event.time;
+ if(!event.date||!String(event.date).includes('T'))return '18:00';
+ const date=new Date(event.date);
+ if(Number.isNaN(date.getTime()))return '18:00';
+ return new Intl.DateTimeFormat('de-CH',{timeZone:'Europe/Zurich',hour:'2-digit',minute:'2-digit',hour12:false}).format(date);
+}
+async function openSourceEvent(event){
+ if(!event||typeof event.slug!=='string'||!/^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,119}$/.test(event.slug)||event.slug.includes('..'))return;
+ const key='github_'+event.slug;
+ const hadLocal=Boolean(models[key]&&models[key].sourceSlug);
+ const source={
+   title:event.title||'',slogan:event.subtitle||'',
+   date:String(event.date||'').slice(0,10),time:sourceEventTime(event),
+   location:event.location||'',text:event.body||'',cover:event.image||photo,
+   images:Array.isArray(event.gallery)?event.gallery.slice():[],partners:[],
+   sourceSlug:event.slug,sourceSha:event.sha||'',sourceType:'github',textAlign:'left'
+ };
+ if(!hadLocal)models[key]=source;
+ openEditor(key);
+ $('source-draft-status').textContent=hadLocal
+   ?(editorStatuses[key]==='savedRemote'
+      ?'Privater Entwurf in diesem Browserfenster wieder geöffnet. Nicht veröffentlicht.'
+      :'Lokaler Zwischenstand aus diesem Browserfenster geöffnet. Noch nicht dauerhaft gespeichert.')
+   :'Originaldaten aus dem GitHub Testbranch geladen. Prüfe oder bearbeite sie hier als privaten Entwurf.';
+ if(hadLocal)return;
+ // If the user begins editing while the remote draft is loading, never overwrite her changes.
+ const initialState=JSON.stringify(models[key]);
+ try{
+   const response=await fetch('/admin-api/draft?slug='+encodeURIComponent(event.slug),{credentials:'same-origin',cache:'no-store'});
+   const data=await response.json().catch(()=>({}));
+   if(currentKey!==key||$('editor').classList.contains('hidden'))return;
+   if(JSON.stringify(models[key])!==initialState)return;
+   if(response.ok&&data.found&&data.draft){
+     const d=data.draft;
+     models[key]={...source,...d,sourceSlug:event.slug,sourceSha:event.sha||'',sourceType:'github'};
+     current=models[key];
+     rememberChange();openEditor(key);
+     setEditorStatus(key,'savedRemote');
+     $('source-draft-status').textContent='Gespeicherten privaten Entwurf geladen ('+new Date(d.savedAt).toLocaleString('de-CH')+'). Noch nicht veröffentlicht.';
+   }else if(response.status===503){
+     $('source-draft-status').textContent='Privater Entwurfsspeicher noch nicht eingerichtet. Änderungen bleiben derzeit nur in diesem Browserfenster.';
+   }else if(!response.ok){
+     $('source-draft-status').textContent='Entwurfsspeicher momentan nicht erreichbar. Du kannst weiterhin im Browser arbeiten.';
+   }else{
+     $('source-draft-status').textContent='Kein privater Entwurf vorhanden. GitHub Original geöffnet, bisher unverändert.';
+   }
+ }catch(_){if(currentKey===key)$('source-draft-status').textContent='Verbindung zum Entwurfsspeicher nicht erreichbar. Änderungen bleiben nur lokal.';}
+}
+async function syncGithubGallery(){
+ if(!current||!current.sourceSlug)return;
+ const key=currentKey,slug=current.sourceSlug,button=$('github-gallery-sync'),status=$('github-gallery-status');
+ const showStatus=(message,success)=>{status.classList.remove('hidden');status.dataset.kind=success?'success':'error';status.textContent=message;};
+ if(!window.confirm('Aktuelle GitHub Fotos übernehmen? Die bisherige Fotoreihenfolge im Entwurf wird ersetzt, deine Texte bleiben erhalten.'))return;
+ button.disabled=true;button.textContent='Fotos werden geladen ...';
+ status.classList.remove('hidden');status.dataset.kind='loading';status.textContent='GitHub Fotos werden geladen ...';
+ try{
+  const response=await fetch('/admin-api/events',{credentials:'same-origin',cache:'no-store'});
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok||!Array.isArray(result.events))throw Error('GitHub Eventdaten konnten nicht geladen werden. Bitte Anmeldung prüfen.');
+  const event=result.events.find(e=>e.slug===slug);
+  if(!event)throw Error('Event in GitHub nicht gefunden.');
+  const valid=src=>typeof src==='string'&&['/logos/','/events/','/uploads/'].some(prefix=>src.startsWith(prefix))&&!src.includes('..')&&!src.includes('?')&&!src.includes('#');
+  const gallery=(Array.isArray(event.gallery)?event.gallery:[]).filter(valid);
+  const cover=valid(event.image)?event.image:'';
+  if(!gallery.length&&!cover)throw Error('In GitHub sind für diesen Event keine Fotos hinterlegt.');
+  if(currentKey!==key||!current||current.sourceSlug!==slug)return;
+  const images=[cover,...gallery].filter((src,i,array)=>src&&array.indexOf(src)===i);
+  current.images=images.filter(src=>src!==cover);
+  if(cover)current.cover=cover;
+  current.sourceSha=event.sha||current.sourceSha;
+  rememberChange();render();
+  $('source-draft-status').textContent=images.length+' Fotos aus GitHub übernommen. Texte unverändert. Jetzt «Entwurf speichern» klicken. Nichts veröffentlicht.';
+  showStatus(images.length+' Fotos übernommen, davon '+current.images.length+' in der Galerie. Bitte oben «Entwurf speichern» klicken.',true);
+  toast(images.length+' Fotos übernommen. Bitte Entwurf speichern.');
+ }catch(error){
+  const message=error.message||'GitHub Fotos konnten nicht geladen werden. Der Entwurf bleibt unverändert.';
+  $('source-draft-status').textContent=message;
+  showStatus(message,false);
+  toast('Galerie konnte nicht geladen werden.');
+ }finally{button.disabled=false;button.textContent='Fotos aus GitHub übernehmen';}
+}
+async function saveSourceDraft(){
+ if(!current||!current.sourceSlug)return false;
+ const item=current;
+ const key=currentKey;
+ rememberChange();
+ const info=$('source-draft-status');
+ const btn=$('demo-save');
+ const active=()=>currentKey===key&&!$('editor').classList.contains('hidden');
+ const notice=message=>{if(active())info.textContent=message;};
+ if(!item.title.trim()){notice('Bitte zuerst einen Eventnamen eingeben.');return true;}
+ const allImages=[item.cover,...item.images];
+ if(allImages.some(v=>typeof v==='string'&&v.startsWith('blob:'))){
+   notice('Neue Fotos sind noch nicht dauerhaft hochgeladen. Bitte verwende vorerst nur bereits im GitHub Projekt vorhandene Bilder.');
+   toast('Fotos müssen zuerst dauerhaft hochgeladen werden. Kein Cloudflare Entwurf gespeichert.');
+   return true;
+ }
+ // Capture exactly what was submitted before asynchronous network requests.
+ // Editing another event while saving must never change the target slug.
+ const body={
+   slug:item.sourceSlug,title:item.title,slogan:item.slogan||'',date:item.date||'',
+   time:item.time||'',location:item.location||'',text:item.text||'',textAlign:item.textAlign||align,
+   sourceSha:item.sourceSha||'',cover:item.cover||'',images:item.images.slice(),
+   partners:item.partners.map(x=>typeof x==='string'?{role:'partner',name:x,url:''}:{...x})
+ };
+ const fingerprint=JSON.stringify(item);
+ btn.disabled=true;btn.textContent='Speichern ...';
+ try{
+   const sessionResponse=await fetch('/admin-api/session',{credentials:'same-origin',cache:'no-store'});
+   const session=await sessionResponse.json().catch(()=>({}));
+   if(!sessionResponse.ok||!session.authenticated||!session.csrf){
+     notice('GitHub Anmeldung erforderlich. Dein Zwischenstand ist nur im Browser verfügbar.');
+     toast('Bitte auf Übersicht mit GitHub anmelden.');return true;
+   }
+   const response=await fetch('/admin-api/draft?slug='+encodeURIComponent(body.slug),{
+     method:'PUT',credentials:'same-origin',cache:'no-store',
+     headers:{'Content-Type':'application/json','X-BK-CSRF':session.csrf},body:JSON.stringify(body)
+   });
+   const data=await response.json().catch(()=>({}));
+   if(response.ok&&data.saved){
+     const unchanged=JSON.stringify(models[key])===fingerprint;
+     setEditorStatus(key,unchanged?'savedRemote':'local');
+     if(unchanged){
+       notice('Privater Entwurf gespeichert: '+new Date(data.savedAt).toLocaleString('de-CH')+'. Nicht veröffentlicht.');
+       toast('Entwurf im privaten Cloudflare Speicher gesichert. Nicht veröffentlicht.');
+     }else{
+       notice('Ein früherer Zwischenstand wurde gespeichert. Neuere Änderungen sind weiterhin ungespeichert.');
+       toast('Änderungen während des Speicherns bleiben lokal vorgemerkt.');
+     }
+   }else{
+     notice(data.error||'Der private Entwurf konnte nicht gespeichert werden. Die Änderungen bleiben vorläufig im Browser.');
+     toast('Kein permanenter Speichererfolg. Dein Zwischenstand bleibt im Browser.');
+   }
+ }catch(_){
+   notice('Entwurfsspeicher derzeit nicht erreichbar. Änderungen bleiben nur in diesem Browserfenster.');
+   toast('Speichern derzeit nicht möglich.');
+ }finally{btn.disabled=false;btn.textContent='Entwurf speichern';}
+ return true;
+}
+function render(){if(!current)return;
+$('p-title').textContent=current.title||'Eventname';
+$('p-slogan').textContent=current.slogan||current.title||'Eventtitel';
+$('p-title').style.display=current.slogan?'block':'none';
+$('p-location').textContent=current.location;
+let d=current.date?new Date(current.date+'T12:00:00'):null;
+$('p-date').textContent=d&&!isNaN(d.getTime())?new Intl.DateTimeFormat('de-CH',{day:'2-digit',month:'long',year:'numeric'}).format(d):'DATUM';
+renderTextPreview();$('p-text').style.textAlign=align;
+$('cover-small').src=current.cover||photo;$('p-image').src=current.cover||photo;
+renderPartnerPreview();
+$('gallery-preview').replaceChildren(...current.images.map(src=>{const im=document.createElement('img');im.src=src;im.alt='Event Impression';return im;}));
+$('gallery-photo-count').textContent=current.images.length+' '+(current.images.length===1?'Foto':'Fotos');
+const editor=$('gallery-editor');editor.replaceChildren();
+current.images.forEach((src,i)=>{
+const tile=document.createElement('div');tile.className='media-tile';tile.draggable=true;tile.title='Zum Sortieren ziehen';const img=document.createElement('img');img.src=src;img.alt='Galeriefoto '+(i+1);img.draggable=false;img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label','Foto '+(i+1)+' vergrössern');img.title='Foto vergrössern';img.onclick=()=>openGalleryZoom(i);img.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();openGalleryZoom(i);}};tile.append(img);
+const zoomButton=document.createElement('button');zoomButton.type='button';zoomButton.className='gallery-open';zoomButton.textContent='⤢';zoomButton.title='Foto vergrössern';zoomButton.setAttribute('aria-label','Foto '+(i+1)+' vergrössern');zoomButton.draggable=false;zoomButton.onclick=ev=>{ev.stopPropagation();openGalleryZoom(i);};tile.append(zoomButton);
+const asCover=document.createElement('button');asCover.type='button';asCover.className='as-cover';asCover.textContent=src===current.cover?'✓ Titelbild':'Als Titelbild';asCover.onclick=()=>{current.cover=src;rememberChange();render();toast('Titelbild in der Designvorschau geändert.');};tile.append(asCover);const remove=document.createElement('button');remove.className='corner';remove.textContent='×';remove.title='Foto aus Entwurf entfernen';remove.onclick=()=>{current.images.splice(i,1);rememberChange();render();};tile.append(remove);
+const order=document.createElement('div');order.className='gallery-order-controls';
+for(const [step,symbol,label] of [[-1,'←','Foto nach links verschieben'],[1,'→','Foto nach rechts verschieben']]){
+ const move=document.createElement('button');move.type='button';move.textContent=symbol;move.title=label;move.setAttribute('aria-label',label+' ('+(i+1)+' von '+current.images.length+')');
+ move.disabled=step===-1?i===0:i===current.images.length-1;
+ move.draggable=false;
+ move.onclick=ev=>{ev.stopPropagation();const j=i+step;if(j<0||j>=current.images.length)return;
+ [current.images[i],current.images[j]]=[current.images[j],current.images[i]];
+ rememberChange();render();
+ const nextTile=$('gallery-editor').children[j];nextTile?.querySelector('.gallery-order-controls button:nth-child('+(step===-1?1:2)+')')?.focus();
+ };
+ order.append(move);
+}
+tile.append(order);
+tile.addEventListener('dragstart',()=>{dragIndex=i;tile.classList.add('dragging')});tile.addEventListener('dragend',()=>tile.classList.remove('dragging'));tile.addEventListener('dragover',event=>event.preventDefault());tile.addEventListener('drop',event=>{event.preventDefault();if(dragIndex===null||dragIndex===i)return;const moved=current.images.splice(dragIndex,1)[0];current.images.splice(i,0,moved);dragIndex=null;rememberChange();render();});editor.append(tile);});
+const part=$('partner-list');part.replaceChildren();
+const roles={partner:'Eventpartner',music:'Musik',photo:'Fotografie',thanks:'Dankeschön',other:'Weitere'};
+current.partners.forEach((person,i)=>{
+ const row=document.createElement('div');row.className='partner-entry';
+ const line=document.createElement('div');line.className='partner-line';
+ const role=document.createElement('select');role.setAttribute('aria-label','Rolle wählen');
+ for(const [value,label] of Object.entries(roles)){const option=document.createElement('option');option.value=value;option.textContent=label;role.append(option);}
+ role.value=person.role||'partner';role.onchange=()=>{person.role=role.value;rememberChange();renderPartnerPreview();};
+ const name=document.createElement('input');name.value=person.name||'';name.placeholder='Name oder Unternehmen';name.setAttribute('aria-label','Name');
+ name.oninput=()=>{person.name=name.value;rememberChange();renderPartnerPreview();};
+ const remove=document.createElement('button');remove.type='button';remove.className='remove-partner';remove.textContent='×';remove.title='Eintrag entfernen';
+ remove.onclick=()=>{current.partners.splice(i,1);rememberChange();render();};
+ line.append(role,name,remove);
+ const url=document.createElement('input');url.className='partner-extra';url.value=person.url||'';url.placeholder='Webseite (optional, https://...)';url.setAttribute('aria-label','Webseite');
+ url.oninput=()=>{person.url=url.value;rememberChange();renderPartnerPreview();};
+ row.append(line,url);part.append(row);
+});
+}
+
+/* Lightweight safe preview of common Markdown style tools. */
+function inlineText(target,value){
+ const re=/(\*\*[^*\n]+\*\*|\*[^*\n]+\*|\[[^\]\n]+\]\(https?:\/\/[^\s)]+\))/g;
+ let pos=0,m;
+ while((m=re.exec(value))!==null){
+  if(m.index>pos)target.append(document.createTextNode(value.slice(pos,m.index)));
+  const raw=m[0];let node;
+  if(raw.startsWith('**')){node=document.createElement('strong');node.textContent=raw.slice(2,-2);}
+  else if(raw.startsWith('*')){node=document.createElement('em');node.textContent=raw.slice(1,-1);}
+  else {
+   const parts=/^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/.exec(raw);
+   if(parts){node=document.createElement('a');node.textContent=parts[1];node.href=parts[2];node.target='_blank';node.rel='noopener noreferrer';}
+   else node=document.createTextNode(raw);
+  }
+  target.append(node);pos=re.lastIndex;
+ }
+ if(pos<value.length)target.append(document.createTextNode(value.slice(pos)));
+}
+function renderTextPreview(){
+ const parent=$('p-text');parent.replaceChildren();
+ if(window.BKSharedText){
+  window.BKSharedText.renderLines(parent,current.text||'');
+  return;
+ }
+ const text=String(current.text||'').replace(/\r\n/g,'\n');
+ if(!text)return;
+ text.split('\n').forEach(line=>{
+  const row=document.createElement('div');
+  row.style.minHeight='1.5em';row.style.whiteSpace='pre-wrap';
+  if(line)inlineText(row,line);else row.append(document.createTextNode('\u00a0'));
+  parent.append(row);
+ });
+}
+function renderPartnerPreview(){
+ const outer=$('preview-partners');const grid=$('partner-preview-grid');grid.replaceChildren();
+ const categories={partner:'Eventpartner',music:'Musik',photo:'Fotografie',thanks:'Dankeschön',other:'Mitwirkende'};
+ for(const person of current.partners||[]){
+  if(!person||!String(person.name||'').trim())continue;
+  const item=document.createElement('div');item.className='partner-preview-item';
+  const role=document.createElement('small');role.textContent=categories[person.role]||'Mitwirkende';item.append(role);
+  const name=document.createElement('strong');name.textContent=person.name;
+  let destination=null;
+  try {const u=new URL(String(person.url||''));if(u.protocol==='https:'||u.protocol==='http:')destination=u.href;}catch(_){}
+  if(destination){const a=document.createElement('a');a.href=destination;a.target='_blank';a.rel='noopener noreferrer';a.append(name);item.append(a);}
+  else item.append(name);
+  grid.append(item);
+ }
+ outer.classList.toggle('hidden',grid.children.length===0);
+}
+function formatSelection(kind){
+ const area=$('e-text');const start=area.selectionStart,end=area.selectionEnd;
+ const selected=area.value.slice(start,end);
+ let replacement;
+ if(kind==='bold')replacement='**'+(selected||'Text')+'**';
+ else if(kind==='italic')replacement='*'+(selected||'Text')+'*';
+ else if(kind==='heading')replacement='## '+(selected||'Zwischenüberschrift');
+ else if(kind==='list')replacement=selected?selected.split('\n').map(line=>'- '+line).join('\n'):'- Erster Punkt';
+ else if(kind==='link')replacement='['+(selected||'Linktext')+'](https://example.com)';
+ else return;
+ area.setRangeText(replacement,start,end,'select');
+ // Keep the Word-style Undo history in sync with formatting changes.
+ area.dispatchEvent(new Event('input',{bubbles:true}));area.focus();
+}
+
+function placeholder(key){const labels={members:['Mitglieder','Firmenprofile, Logos und Kontaktdaten komfortabel verwalten.'],projects:['Projekte','Projekte bleiben auf der Webseite verborgen, bis ihr sie ausdrücklich aktiviert.'],media:['Medien','Fotos und Logos hochladen, organisieren und wiederverwenden.'],registrations:['Eventanmeldungen','Geplant: Einladungsseiten, Flyer, QR Code, Registrierungsformulare, automatische Bestätigungen und Gästelisten. Noch nicht verfügbar.']};const result=labels[key]||['Bereich','Dieser Verwaltungsbereich ist noch nicht verfügbar.'];$('placeholder-title').textContent=result[0];$('placeholder-text').textContent=result[1];page(key);}
+all('.nav').forEach(b=>b.onclick=()=>{
+ const p=b.dataset.page;
+ if(p==='about'){
+  editPage('about');
+ }else if(['dashboard','events','pages','members','projects','registrations'].includes(p)){
+  page(p);
+ }else placeholder(p);
+});
+all('[data-hub-target]').forEach(button=>button.onclick=()=>{
+ const dest=button.dataset.hubTarget;
+ if(dest==='statistics'){
+  $('placeholder-title').textContent='Besucherstatistik';
+  $('placeholder-text').textContent='Echte Besuchszahlen können nach einer späteren Verbindung mit Cloudflare Web Analytics angezeigt werden. Aktuell ist keine Statistik verbunden.';
+  page('statistics');
+ }else if(dest==='about')editPage('about');
+ else if(['events','pages','members','projects','registrations'].includes(dest))page(dest);
+ else placeholder(dest);
+});
+$('brand').onclick=e=>{e.preventDefault();page('dashboard')};
+$('global-overview').onclick=()=>page('dashboard');
+$('scroll-top').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+function previewSiteInfo(){
+ const panel=$('site-preview-block');const show=['start','contact','imprint'].includes(currentPageKey);
+ panel.classList.toggle('hidden',!show);panel.replaceChildren();if(!show)return;
+ const company=document.createElement('strong');company.textContent=siteInfo.company||'Organisation';panel.append(company);
+ for(const k of ['contactPerson','address','city']){
+   if(siteInfo[k]){const item=document.createElement('span');item.textContent=siteInfo[k];panel.append(item);}
+ }
+ const phone=String(siteInfo.phone||'').trim();
+ if(phone){const link=document.createElement('a');link.href='tel:'+phone.replace(/[^+\d]/g,'');link.textContent='☎ '+phone;panel.append(link);}
+ const email=String(siteInfo.email||'').trim();
+ if(email){const link=document.createElement('a');link.href='mailto:'+email;link.textContent='✉ '+email;panel.append(link);}
+ const website=String(siteInfo.website||'').trim();
+ try{const u=new URL(website);if(['http:','https:'].includes(u.protocol)){const link=document.createElement('a');link.href=u.href;link.target='_blank';link.rel='noopener noreferrer';link.textContent='↗ '+website;panel.append(link);}}catch(_){}
+}
+function previewPage(){
+ if(!currentPageKey)return;const item=pageContent[currentPageKey];
+ item.title=$('page-title-field').value;item.text=$('page-text-field').value;
+ $('page-preview-title').textContent=item.title;
+ if(window.BKSharedText)window.BKSharedText.renderLines($('page-preview-text'),item.text);
+ else $('page-preview-text').textContent=item.text;
+ previewSiteInfo();try{sessionStorage.setItem('bk-admin-pages-demo-v1',JSON.stringify(pageContent))}catch(_){/* unavailable */}
+}
+function updateSharedSiteFields(){
+ for(const [key,id] of Object.entries(siteFields))siteInfo[key]=$(id).value;
+ try{sessionStorage.setItem('bk-admin-site-info-v1',JSON.stringify(siteInfo))}catch(_){}
+ previewSiteInfo();
+}
+for(const id of Object.values(siteFields))$(id).addEventListener('input',updateSharedSiteFields);
+function editPage(key){
+ if(!pageContent[key])return;
+ currentPageKey=key;$('page-editor').dataset.key=key;
+ $('page-editor').dataset.historyKey='page:'+key;
+ $('page-edit-heading').textContent=pageContent[key].title;
+ $('page-title-field').value=pageContent[key].title;
+ $('page-text-field').value=pageContent[key].text;
+ $('site-data-section').classList.toggle('hidden',!['start','contact','imprint'].includes(key));
+ for(const [name,id] of Object.entries(siteFields))$(id).value=siteInfo[name]||'';
+ $('page-edit-back').textContent=key==='about'?'← Zurück zur Übersicht':'← Zurück zur Startseite';
+ previewPage();page('page-editor');
+ if(window.BKManagement&&window.BKManagement.renderAbout)window.BKManagement.renderAbout();
+}
+all('[data-page-edit]').forEach(b=>b.onclick=()=>editPage(b.dataset.pageEdit));
+$('page-edit-back').onclick=()=>page(currentPageKey==='about'?'dashboard':'pages');$('page-title-field').addEventListener('input',previewPage);$('page-text-field').addEventListener('input',previewPage);
+$('page-save-demo').onclick=()=>{previewPage();toast('Nur Demo: Text im Browser gemerkt. Noch nicht auf der Webseite gespeichert.');};$('events-add').onclick=()=>openEditor('new');all('[data-open]').forEach(b=>b.onclick=()=>openEditor(b.dataset.open));
+$('edit-back').onclick=back;$('placeholder-back').onclick=()=>page('dashboard');
+all('[data-filter]').forEach(b=>b.onclick=()=>{all('[data-filter]').forEach(t=>t.classList.toggle('selected',t===b));all('.event').forEach(card=>card.classList.toggle('hidden',b.dataset.filter!=='all'&&card.dataset.status!==b.dataset.filter));});
+all('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+all('[data-format]').forEach(b=>b.onclick=()=>formatSelection(b.dataset.format));
+['title','slogan','date','time','location','text'].forEach(key=>{$('e-'+key).addEventListener('input',e=>{current[key]=e.target.value;rememberChange();render()})});
+all('[data-align]').forEach(b=>b.onclick=()=>{align=b.dataset.align;current.textAlign=align;rememberChange();all('[data-align]').forEach(x=>x.classList.toggle('active',x===b));render()});
+$('partner-add').onclick=()=>{current.partners.push({role:'partner',name:'',url:''});rememberChange();render();$('partner-list').lastElementChild.querySelector('input').focus();};
+$('gallery-lightbox-close').onclick=closeGalleryZoom;
+$('gallery-lightbox-prev').onclick=()=>{galleryZoomIndex--;showGalleryZoom();};
+$('gallery-lightbox-next').onclick=()=>{galleryZoomIndex++;showGalleryZoom();};
+$('gallery-lightbox').onclick=ev=>{if(ev.target===$('gallery-lightbox'))closeGalleryZoom();};
+document.addEventListener('keydown',ev=>{
+ if($('gallery-lightbox').classList.contains('hidden'))return;
+ if(ev.key==='Escape'){ev.preventDefault();closeGalleryZoom();}
+ else if(ev.key==='ArrowLeft'){ev.preventDefault();galleryZoomIndex--;showGalleryZoom();}
+ else if(ev.key==='ArrowRight'){ev.preventDefault();galleryZoomIndex++;showGalleryZoom();}
+});
+$('github-gallery-sync').onclick=syncGithubGallery;
+$('change-cover').onclick=()=>$('cover-upload').click();
+$('cover-upload').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f||!f.type.startsWith('image/'))return;current.cover=URL.createObjectURL(f);hasTemporaryPhotoChanges=true;rememberChange();render();e.target.value='';toast('Titelbild für diese Vorschau ausgewählt.');};
+$('upload-input').onchange=e=>{const files=Array.from(e.target.files||[]).filter(f=>f.type.startsWith('image/'));if(!files.length)return;files.forEach(f=>{current.images.push(URL.createObjectURL(f))});hasTemporaryPhotoChanges=true;rememberChange();render();e.target.value='';toast(files.length+' Foto(s) in der Designvorschau hinzugefügt.');};
+$('demo-save').onclick=async()=>{if(await saveSourceDraft())return;rememberChange();setEditorStatus(currentKey,'savedLocal');toast('Zwischenstand nur in diesem Browserfenster gemerkt. Nicht dauerhaft gespeichert.');};
+$('demo-publish').onclick=()=>toast('Nur Konzept: Kein Inhalt wird veröffentlicht.');
+window.BKAdmin={page,toast,rememberChange,openSourceEvent};
+})();
+</script>
+<script src="/admin-konzept/management.js?v=1"></script>
+<script src="/admin-konzept/auth.js?v=1"></script>
+<script src="/admin-konzept/real-events.js?v=3"></script>
+<script src="/admin-konzept/undo.js?v=1"></script>
+<script src="/admin-konzept/shared-text-tools.js?v=1"></script>
+</body></html>

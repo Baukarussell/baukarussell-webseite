@@ -1,12 +1,16 @@
 backend:
   name: github
   repo: Baukarussell/baukarussell-webseite
-  branch: main
-  base_url: https://baukarussell-webseite.pages.dev
+  branch: presentation-recovery-2026-11-10
+  base_url: https://baukarussell-cms-test.pages.dev
   auth_endpoint: api/auth
 
 # Das hier ist der Schalter für "Entwurf speichern" (Preview Workflow)
 publish_mode: editorial_workflow
+
+logo:
+  src: /admin/brand.svg
+  show_in_header: true
 
 media_folder: "logos" 
 public_folder: "/logos"
@@ -18,7 +22,9 @@ collections:
     create: true
     slug: "{{slug}}"
     fields:
-      - {label: "Titel", name: "title", widget: "string"}
+      - {label: "Eventname (z.B. Baukarussell x Montblanc)", name: "title", widget: "string"}
+      - {label: "Leitsatz (grosser Titel auf der Eventseite)", name: "subtitle", widget: "string", required: false}
+      - {label: "Location", name: "location", widget: "string", required: false}
       - {label: "Datum", name: "date", widget: "datetime"}
       - {label: "Titelbild", name: "image", widget: "image"}
       - {label: "Text", name: "body", widget: "markdown"}

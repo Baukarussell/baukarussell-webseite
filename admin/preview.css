@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+html,body{margin:0;padding:0;background:#f8f6f1;color:#252525;font-family:'Inter',Arial,sans-serif;font-size:14px;line-height:1.8}
+*{box-sizing:border-box} .bk-preview{max-width:100%;overflow:hidden}
+.bk-preview-cover{height:clamp(190px,28vw,380px);background:#292824;overflow:hidden}
+.bk-preview-cover img{display:block;width:100%;height:100%;object-fit:cover}
+.bk-preview-title{padding:35px 30px 20px;text-align:center}
+.bk-preview-date{color:#a68759;text-transform:uppercase;letter-spacing:.20em;font-size:10px;margin:0 0 14px}
+.bk-preview-title h1{font:400 clamp(30px,4vw,48px)/1.15 'Cormorant Garamond',Georgia,serif;margin:0 auto 6px;max-width:700px}
+.bk-preview-eventname{font:400 clamp(20px,2.5vw,28px)/1.25 'Cormorant Garamond',Georgia,serif;margin:8px 0;color:#46413b}
+.bk-preview-location{font-size:12px;color:#a68759;margin:15px 0 0}
+.bk-preview-text{padding:24px 35px;max-width:700px;margin:0 auto;color:#393939}
+.bk-preview-text p{margin:0 0 18px}
+.bk-preview-gallery{max-width:780px;padding:10px 32px 60px;margin:auto}
+.bk-preview-gallery h2{font:400 35px 'Cormorant Garamond',Georgia,serif;text-align:center;margin:25px 0 22px}
+.bk-preview-gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.bk-preview-gallery-grid img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+@media(max-width:640px){.bk-preview-cover{height:220px}.bk-preview-title{padding:24px 17px 10px}.bk-preview-text{padding:15px 22px}.bk-preview-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}

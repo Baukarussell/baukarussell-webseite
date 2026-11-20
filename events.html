@@ -22,10 +22,7 @@
   nav.scrolled { padding: 16px 80px; box-shadow: 0 2px 20px rgba(0,0,0,0.05); }
   .logo-text { font-family: 'Cormorant Garamond', serif; display: inline-block; text-decoration: none; line-height: 1; }
   .logo-main { display: block; font-size: 56px; font-weight: 500; letter-spacing: 0.08em; color: var(--dark); text-transform: uppercase; line-height: 1; margin-bottom: 5px; }
-  .logo-sub { display: block; font-size: 13px; font-weight: 400; letter-spacing: 0.35em; color: var(--dark); text-transform: uppercase; padding-left: 6px; }
-  .logo-sub::before { content: '─── '; font-size: 11px; }
-  .logo-sub::after { content: ' ───'; font-size: 11px; }
-  nav.scrolled .logo-main { font-size: 44px; }
+  .logo-sub { display: block; font-size: 13px; font-weight: 400; letter-spacing: 0.35em; color: var(--dark); text-transform: uppercase; padding-left: 6px; }  nav.scrolled .logo-main { font-size: 44px; }
   nav.scrolled .logo-sub { font-size: 11px; }
   .nav-links { display: flex; gap: 40px; list-style: none; }
   .nav-links a { color: var(--dark); text-decoration: none; font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; transition: all 0.3s; font-weight: 500; position: relative; }
@@ -41,7 +38,9 @@
   .filter-btn { background: none; border: 1px solid transparent; font-family: 'Inter', sans-serif; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #999; cursor: pointer; padding: 10px 20px; transition: all 0.3s; }
   .filter-btn.active, .filter-btn:hover { color: var(--dark); border-color: var(--dark); }
 
-  .events-list { max-width: 1200px; margin: 0 auto; padding: 80px 40px; display: flex; flex-direction: column; gap: 60px; }
+  .events-list { max-width: 1200px; margin: 0 auto; padding: 65px 40px; display: block; }
+  .events-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; margin-top: 30px; }
+  .archive-heading { margin-top: 65px; font-size: 34px; text-align: center; }
   .event-card { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-decoration: none; color: inherit; background: white; border: 1px solid #eee; transition: all 0.4s ease; }
   .event-card:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.08); transform: translateY(-4px); border-color: var(--gold); }
   .event-image { width: 100%; aspect-ratio: 4/3; overflow: hidden; }
@@ -56,6 +55,17 @@
   .event-loc strong { color: var(--dark); }
   .btn-read { align-self: flex-start; padding: 14px 30px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; color: white; background: var(--dark); transition: all 0.3s; font-weight: 500; }
   .event-card:hover .btn-read { background: var(--gold); }
+  .featured-event { grid-template-columns: 1.15fr 1fr; }
+  .archive-event { display: flex; flex-direction: column; min-width: 0; gap: 0; }
+  .archive-event .event-image { aspect-ratio: 4/3; }
+  .archive-event .event-info { padding: 25px; flex: 1; justify-content: flex-start; }
+  .archive-event .event-meta { font-size: 9px; letter-spacing: .12em; }
+  .archive-event .event-title { font-size: 27px; margin-bottom: 12px; }
+  .archive-event .event-desc { font-size: 13px; margin-bottom: 16px; }
+  .archive-event .event-loc { font-size: 10px; padding-top: 12px; margin-bottom: 16px; }
+  .archive-event .btn-read { padding: 11px 17px; font-size: 10px; margin-top: auto; }
+  .event-card[hidden] { display: none !important; }
+  .empty-events { text-align: center; color: #777; padding: 30px; }
 
   footer { background: var(--dark); color: white; padding: 70px 40px 30px; text-align: center; margin-top: 80px; }
   .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 32px; letter-spacing: 0.2em; color: white; margin-bottom: 8px; font-weight: 500; }
@@ -76,12 +86,17 @@
     .logo-main { font-size: 30px; }
     .logo-sub { font-size: 9px; }
     nav.scrolled .logo-main { font-size: 26px; }
-    .event-card { grid-template-columns: 1fr; gap: 0; }
+    .event-card, .featured-event { grid-template-columns: 1fr; gap: 0; }
+    .events-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .archive-event { display: flex; flex-direction: column; }
+    .archive-event .event-info { padding: 25px; }
     .event-info { padding: 30px; }
     .events-list { padding: 40px 20px; }
     .filter-bar { padding: 20px; flex-wrap: wrap; }
     .page-header { padding: 150px 20px 60px; }
   }
+
+  @media (max-width: 600px) { .events-grid { grid-template-columns: 1fr; } .events-list { padding: 35px 18px; } }
 </style>
 </head>
 <body>
@@ -105,17 +120,17 @@
 </header>
 
 <div class="filter-bar">
-  <button class="filter-btn active">Alle</button>
-  <button class="filter-btn">2026</button>
-  <button class="filter-btn">2025</button>
-  <button class="filter-btn">2024</button>
+  <button class="filter-btn active" data-filter="all">Alle</button>
+  <button class="filter-btn" data-filter="2026">2026</button>
+  <button class="filter-btn" data-filter="2025">2025</button>
+  <button class="filter-btn" data-filter="2024">2024</button>
 </div>
 
 <div class="events-list">
   <!-- Event 1: Montblanc -->
-  <a href="events/baukarussell-meets-montblanc.html" class="event-card">
+  <a href="events/montblanc.html" class="event-card featured-event" data-year="2026">
     <div class="event-image">
-      <img src="events/montblanc/titel.jpg" alt="Baukarussell meets Montblanc">
+      <img src="logos/baukarussellxmontblanc-00148.jpg" alt="Baukarussell meets Montblanc">
     </div>
     <div class="event-info">
       <div class="event-meta">22. Oktober 2026 <span>•</span> Networking Event</div>
@@ -126,8 +141,10 @@
     </div>
   </a>
 
+  <h2 class="archive-heading">Vergangene Events</h2>
+  <div class="events-grid">
   <!-- Event 2: Sablier -->
-  <a href="events/sablier.html" class="event-card">
+  <a href="events/sablier.html" class="event-card archive-event" data-year="2026">
     <div class="event-image">
       <img src="events/sablier/titel.jpg" alt="Baukarussell meets Sablier">
     </div>
@@ -140,7 +157,9 @@
     </div>
   </a>
   
-  <!-- Hier kannst du später ganz einfach weitere vergangene Events nach dem gleichen Muster einfügen -->
+  </div>
+  <p class="empty-events" hidden>Für dieses Jahr sind noch keine Events veröffentlicht.</p>
+  <!-- Weitere Events als Karten mit data-year ergänzen -->
 </div>
 
 <footer>
@@ -168,6 +187,58 @@
     if (window.scrollY > 80) { nav.classList.add('scrolled'); }
     else { nav.classList.remove('scrolled'); }
   });
+</script>
+<script>
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const eventCards = document.querySelectorAll('.events-list .event-card');
+  const emptyEvents = document.querySelector('.empty-events');
+  filterButtons.forEach(button => button.addEventListener('click', () => {
+    const year = button.dataset.filter;
+    filterButtons.forEach(item => item.classList.toggle('active', item === button));
+    let visible = 0;
+    eventCards.forEach(card => {
+      const show = year === 'all' || card.dataset.year === year;
+      card.hidden = !show;
+      if (show) visible++;
+    });
+    emptyEvents.hidden = visible > 0;
+  }));
+</script>
+<script>
+/* Published CMS entries are generated from Markdown during Cloudflare build. */
+(async()=>{
+  let res=await fetch('/events-data.json',{cache:'no-store'});
+  if(!res.ok)return;
+  const entries=await res.json();
+  if(!Array.isArray(entries)||!entries.length)return;
+  const getDate=(e)=>{const d=new Date(e.date);return Number.isNaN(d.getTime())?e.date:new Intl.DateTimeFormat('de-CH',{day:'2-digit',month:'long',year:'numeric',timeZone:'Europe/Zurich'}).format(d);};
+  const make=(e,featured)=>{
+    const a=document.createElement('a');
+    a.className='event-card '+(featured?'featured-event':'archive-event');
+    a.dataset.year=e.year||'';
+    a.href='/events/detail.html?event='+encodeURIComponent(e.slug);
+    const image=document.createElement('div');image.className='event-image';
+    if(e.image){const img=document.createElement('img');img.src=e.image;img.alt=e.title;img.loading='lazy';image.append(img);}
+    const info=document.createElement('div');info.className='event-info';
+    const meta=document.createElement('div');meta.className='event-meta';meta.textContent=getDate(e)+' · Networking Event';
+    const title=document.createElement('h3');title.className='event-title';title.textContent=e.title;
+    const desc=document.createElement('p');desc.className='event-desc';desc.textContent=e.subtitle||(e.body||'').split(/\n/)[0].slice(0,190);
+    info.append(meta,title,desc);
+    if(e.location){const loc=document.createElement('div');loc.className='event-loc';loc.textContent='Location ';const strong=document.createElement('strong');strong.textContent=e.location;loc.append(strong);info.append(loc);}
+    const button=document.createElement('span');button.className='btn-read';button.textContent='Mehr erfahren →';info.append(button);
+    a.append(image,info);return a;
+  };
+  const list=document.querySelector('.events-list');
+  const archive=document.querySelector('.events-grid');
+  const existing=list.querySelector(':scope > .featured-event');
+  if(existing)existing.replaceWith(make(entries[0],true));
+  for(const e of entries.slice(1))archive.prepend(make(e,false));
+  const buttons=document.querySelectorAll('.filter-btn');
+  const empty=document.querySelector('.empty-events');
+  const cards=()=>list.querySelectorAll('.event-card');
+  const apply=()=>{const active=document.querySelector('.filter-btn.active');const year=active?.dataset.filter||'all';let visible=0;cards().forEach(card=>{card.hidden=year!=='all'&&card.dataset.year!==year;if(!card.hidden)visible++;});if(empty)empty.hidden=visible>0;};
+  buttons.forEach(b=>b.addEventListener('click',apply));apply();
+})().catch(error=>console.warn('CMS event listing unavailable',error));
 </script>
 </body>
 </html>
