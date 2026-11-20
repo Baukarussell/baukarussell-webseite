@@ -397,6 +397,12 @@ function formatMemberSelection(kind){
  field.setSelectionRange(start+before.length,start+before.length+content.length);
  changeMember();field.focus();
 }
+function addressCompanyName(member){
+ // Preserve the visible member/person name, use the verified business name only in the address.
+ if(member.id==='member-8'||/\/logos\/onur\./i.test(member.logo||''))return 'ONUR Projects GmbH';
+ if(member.id==='member-1'||/\/logos\/akkaya\./i.test(member.logo||''))return 'C. Akkaya Lösungen aus Edelstahl';
+ return String(member.name||'').trim();
+}
 function memberPreview(){
  const m=memberItem();if(!m)return;
  $('member-preview-name').textContent=m.name||'Firmenname';
@@ -419,22 +425,9 @@ function memberPreview(){
   if(href){const a=make('a','',text);a.href=href;a.target=href.startsWith('http')?'_blank':'_self';if(a.target==='_blank')a.rel='noopener noreferrer';contact.append(a);}
   else contact.append(make('span','',text));
  }
- const addressLines=[m.name,m.street,[m.postalCode,m.city].filter(Boolean).join(' '),m.country].filter(Boolean);
+ const addressLines=[addressCompanyName(m),m.street,[m.postalCode,m.city].filter(Boolean).join(' '),m.country].filter(Boolean);
  if([m.street,m.postalCode,m.city,m.country].some(Boolean)){
-  const fullAddress=addressLines.join('\n');
-  contact.append(make('span','member-address',fullAddress));
-  const controls=make('div','member-address-copier');
-  const copyButton=make('button','btn small','Adresse kopieren');
-  const response=make('small','','');
-  copyButton.type='button';
-  copyButton.onclick=async()=>{
-   try{
-    await navigator.clipboard.writeText(fullAddress);
-    response.textContent='Kopiert';
-   }catch(_){response.textContent='Bitte Adresse markieren und kopieren.';}
-  };
-  controls.append(copyButton,response);
-  contact.append(controls);
+  contact.append(make('span','member-address',addressLines.join('\n')));
  }
  if(m.phone)contactLink('☎ '+m.phone,'tel:'+String(m.phone).replace(/[^+\d]/g,''));
  if(m.email)contactLink('✉ '+m.email,'mailto:'+String(m.email).trim());
