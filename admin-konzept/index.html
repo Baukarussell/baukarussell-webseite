@@ -160,6 +160,7 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 .gallery-order-controls button:disabled{opacity:.38;cursor:not-allowed}
 @media(max-width:620px){.tile-head{gap:8px;flex-wrap:wrap}}
 /* Kompakte Formatwerkzeuge, inspiriert von der Word Menüleiste. */
+.member-toolbar-hint{font-size:10px;color:#8a806f;margin:0 0 8px;line-height:1.6}
 .member-text-tools{display:flex;align-items:center;align-content:center;flex-wrap:wrap;gap:4px;padding:8px 9px;margin:0 0 12px;background:#fbfaf7;border:1px solid rgba(177,145,101,.42);border-radius:8px;overflow:visible}
 .member-text-tools button,.member-text-tools select{font-family:Inter,Arial,sans-serif}
 .member-text-tools button{min-width:0}
@@ -363,10 +364,7 @@ body.gallery-zoom-active{overflow:hidden}
 <div class="notice">Änderungen hier bleiben privat, bis wir sie ausdrücklich veröffentlichen. Fotos werden bereits beim Hochladen im öffentlichen GitHub Testbranch gespeichert. Bitte nur freigegebene Bilder verwenden.</div><p class="cloud-save-status" id="member-save-status-editor" role="status" aria-live="polite">Noch nicht als privater Entwurf gespeichert.</p>
 <div class="edit-layout">
 <div class="panel"><div class="panel-head"><h2>Firmenprofil</h2><p>Basisinformationen für die Mitgliederübersicht.</p></div><div class="panel-body">
-<div class="field"><label for="member-name">Firmenname</label><input id="member-name" type="text" placeholder="Firmenname"></div>
-
-<div class="fields-2"><div class="field"><label for="member-person">Ansprechperson <span class="optional">Optional</span></label><input id="member-person" placeholder="Vorname Nachname"></div><div class="field"><label for="member-role">Funktion / Position <span class="optional">Optional</span></label><input id="member-role" placeholder="z.B. Geschäftsführung"></div></div>
-<div class="field"><label for="member-description">Beschreibung <span class="optional">Optional</span></label>
+<p class="member-toolbar-hint">Schrift, Farbe und Symbole für Firmenname, Ansprechperson, Funktion, Adresse und Beschreibung. Zuerst das Feld auswählen.</p>
 <div class="member-text-tools" role="toolbar" aria-label="Beschreibung formatieren">
  <select id="member-font-family" class="member-tool-select member-tool-font" aria-label="Schriftart für markierten Text" title="Schriftart wählen">
   <option value="">Inter</option><option value="inter">Inter</option><option value="cormorant">Cormorant Garamond</option><option value="georgia">Georgia</option>
@@ -423,8 +421,13 @@ body.gallery-zoom-active{overflow:hidden}
   <select id="member-description-line" class="member-tool-select" aria-label="Zeilenabstand" title="Zeilenabstand: Cursor für eine Zeile, Ctrl + A für alle"><option value="1.4">Eng</option><option value="1.6">Normal</option><option value="1.8">Grosszügig</option><option value="2">Weit</option></select>
  </div>
 </div>
+<div class="field"><label for="member-name">Firmenname</label><input id="member-name" type="text" placeholder="Firmenname"></div>
+
+<div class="fields-2"><div class="field"><label for="member-person">Ansprechperson <span class="optional">Optional</span></label><input id="member-person" placeholder="Vorname Nachname"></div><div class="field"><label for="member-role">Funktion / Position <span class="optional">Optional</span></label><input id="member-role" placeholder="z.B. Geschäftsführung"></div></div>
+<div class="field"><label for="member-description">Beschreibung <span class="optional">Optional</span></label>
+
 <textarea id="member-description" placeholder="Kurze Firmenbeschreibung"></textarea>
-<p class="help">Für Schriftgrösse, Schriftart, Farbe oder Gross und Klein zuerst Text markieren. Mit Ctrl + A wählst du den gesamten Text. Symbole kannst du direkt an der Cursorposition einfügen.</p>
+<p class="help">Auch Leerzeilen am Anfang und mehrere Leerzeilen zwischen den Absätzen bleiben sichtbar.</p>
 </div>
 <div class="member-address-fields">
 <div class="field"><label for="member-address-company">Firmenname für Adresse <span class="optional">Optional</span></label><input id="member-address-company" type="text" placeholder="Firmenname inkl. GmbH oder AG"><p class="help">Unabhängig vom Profilnamen. Du kannst den Firmennamen jederzeit selbst ändern.</p></div>
