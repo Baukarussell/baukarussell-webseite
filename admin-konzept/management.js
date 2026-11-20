@@ -29,6 +29,7 @@ let projects=getSaved('bk-demo-projects-v1',[]);
 let registrations=getSaved('bk-demo-registrations-v1',[]);
 let aboutPhotos=getSaved('bk-demo-about-photos-v1',['/mitglieder.jpg']);
 let chosenMember=null,chosenProject=null,chosenRegistration=null;
+const memberPhotoLocal=new Map();
 
 let dragAbout=null,temporaryUploads=false;
 const cloudKinds={members:'bk-demo-members-v1',projects:'bk-demo-projects-v1'};
@@ -244,6 +245,7 @@ function editMember(memberId){
  $('member-postal').value=m.postalCode||'';
  $('member-city').value=m.city||'';
  $('member-country').value=m.country||'';
+ $('member-address-company').value=addressCompanyName(m);
  $('member-phone').value=m.phone||'';$('member-email').value=m.email||'';
  if(!Array.isArray(m.socials))m.socials=[];
  $('member-logo-path').value=m.logo||'';
@@ -285,8 +287,8 @@ function renderMemberSocials(){
  });
 }
 function renderMemberInline(parent,plain){
- // Allow **bold**, *italic* and ***both*** with safe DOM nodes.
- const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*\*\*(.+?)\*\*\*|\*\*(.+?)\*\*|\*(.+?)\*/g;
+ // Secure inline renderer: links, font sizes, bold and italic can be nested.
+ const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\[pt=(10|11|12|14|16|18|20|24)\]([\s\S]*?)\[\/pt\]|\*\*\*([\s\S]+?)\*\*\*|\*\*([\s\S]+?)\*\*|\*([\s\S]+?)\*/g;
  let from=0,match;
  while((match=re.exec(plain))!==null){
   if(match.index>from)parent.append(document.createTextNode(plain.slice(from,match.index)));
@@ -295,9 +297,14 @@ function renderMemberInline(parent,plain){
    if(href){const link=make('a','',match[1]);link.href=href;link.target='_blank';link.rel='noopener noreferrer';parent.append(link);}
    else parent.append(document.createTextNode(match[0]));
   }else if(match[3]!==undefined){
-   const strong=make('strong');strong.append(make('em','',match[3]));parent.append(strong);
-  }else if(match[4]!==undefined){parent.append(make('strong','',match[4]));}
-  else {parent.append(make('em','',match[5]));}
+   const span=make('span');span.style.fontSize=match[3]+'pt';renderMemberInline(span,match[4]);parent.append(span);
+  }else if(match[5]!==undefined){
+   const strong=make('strong'),em=make('em');renderMemberInline(em,match[5]);strong.append(em);parent.append(strong);
+  }else if(match[6]!==undefined){
+   const strong=make('strong');renderMemberInline(strong,match[6]);parent.append(strong);
+  }else{
+   const em=make('em');renderMemberInline(em,match[7]);parent.append(em);
+  }
   from=re.lastIndex;
  }
  if(from<plain.length)parent.append(document.createTextNode(plain.slice(from)));
@@ -378,9 +385,32 @@ function renderMemberDescription(member){
  const last=root.lastElementChild;
  if(last)last.style.marginBottom='0';
 }
+function changeMemberTextSelection(replacement){
+ const field=$('member-description'),start=field.selectionStart,end=field.selectionEnd;
+ field.setRangeText(replacement,start,end,'select');
+ field.setSelectionRange(start,start+replacement.length);
+ changeMember();field.focus();
+}
+function transformMemberCase(text,toUpper){
+ // Do not destroy link URLs or point size markers when changing text casing.
+ const untouched=/https?:\/\/[^\s)]+|\[\/?pt(?:=(?:10|11|12|14|16|18|20|24))?\]/gi;
+ let out='',last=0,m;
+ while((m=untouched.exec(text))!==null){
+  const segment=text.slice(last,m.index);
+  out+=toUpper?segment.toLocaleUpperCase('de-CH'):segment.toLocaleLowerCase('de-CH');
+  out+=m[0];last=untouched.lastIndex;
+ }
+ const rest=text.slice(last);
+ return out+(toUpper?rest.toLocaleUpperCase('de-CH'):rest.toLocaleLowerCase('de-CH'));
+}
 function formatMemberSelection(kind){
- const field=$('member-description');field.focus();
- const selected=field.value.slice(field.selectionStart,field.selectionEnd);
+ const field=$('member-description'),start=field.selectionStart,end=field.selectionEnd;
+ const selected=field.value.slice(start,end);
+ if(kind==='uppercase'||kind==='lowercase'){
+  if(!selected){api.toast('Bitte zuerst den Text markieren.');field.focus();return;}
+  changeMemberTextSelection(transformMemberCase(selected,kind==='uppercase'));return;
+ }
+ field.focus();
  let before='',after='',content=selected;
  if(kind==='bold'){before='**';after='**';if(!content)content='Text';}
  else if(kind==='italic'){before='*';after='*';if(!content)content='Text';}
@@ -390,15 +420,30 @@ function formatMemberSelection(kind){
   const href=safeHref(address);
   if(!href||!href.startsWith('http')){api.toast('Bitte eine gültige Linkadresse mit https:// eingeben.');return;}
   before='[';content=content||'Linktext';after=']('+href+')';
- }
- else return;
- const start=field.selectionStart;
- field.setRangeText(before+content+after,field.selectionStart,field.selectionEnd,'select');
+ }else return;
+ field.setRangeText(before+content+after,start,end,'select');
  field.setSelectionRange(start+before.length,start+before.length+content.length);
  changeMember();field.focus();
 }
+function applyMemberFontSize(){
+ const selector=$('member-font-size'),size=selector.value;
+ if(!size)return;
+ selector.value='';
+ const field=$('member-description'),start=field.selectionStart,end=field.selectionEnd;
+ if(start===end){api.toast('Bitte zuerst den Text markieren.');field.focus();return;}
+ const selected=field.value.slice(start,end);
+ const changed=selected.split('\n').map(line=>{
+  if(!line.trim())return line;
+  const prior=line.match(/^\[pt=(?:10|11|12|14|16|18|20|24)\]([\s\S]*)\[\/pt\]$/);
+  return '[pt='+size+']'+(prior?prior[1]:line)+'[/pt]';
+ }).join('\n');
+ changeMemberTextSelection(changed);
+}
+$('member-font-size').addEventListener('change',applyMemberFontSize);
 function addressCompanyName(member){
- // Preserve the visible member/person name, use the verified business name only in the address.
+ // The postal address uses its own editable company name, independent from the member heading.
+ if(typeof member.addressCompany==='string'&&member.addressCompany.trim())return member.addressCompany.trim();
+ // Legacy member drafts may not have this field yet.
  if(member.id==='member-8'||/\/logos\/onur\./i.test(member.logo||''))return 'ONUR Projects GmbH';
  if(member.id==='member-1'||/\/logos\/akkaya\./i.test(member.logo||''))return 'C. Akkaya Lösungen aus Edelstahl';
  return String(member.name||'').trim();
@@ -451,6 +496,7 @@ function changeMember(){
  m.postalCode=$('member-postal').value;
  m.city=$('member-city').value;
  m.country=$('member-country').value;
+ m.addressCompany=$('member-address-company').value.trim();
  m.phone=$('member-phone').value;m.email=$('member-email').value;
  const newDescription=$('member-description').value;
  if(newDescription!==m.description){
@@ -463,7 +509,7 @@ function changeMember(){
 }
 $('member-add').onclick=newMember;
 $('member-back').onclick=()=>{renderMembers();api.page('members')};
-['member-name','member-url','member-person','member-role','member-street','member-postal','member-city','member-country','member-phone','member-email','member-description','member-public','member-description-align'].forEach(x=>$(x).addEventListener('input',changeMember));
+['member-name','member-url','member-person','member-role','member-street','member-postal','member-city','member-country','member-address-company','member-phone','member-email','member-description','member-public','member-description-align'].forEach(x=>$(x).addEventListener('input',changeMember));
 $('member-description-line').addEventListener('change',applyMemberLineHeight);
 $('member-description').addEventListener('click',showMemberCurrentLineHeight);
 $('member-description').addEventListener('keyup',showMemberCurrentLineHeight);
