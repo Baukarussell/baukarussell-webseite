@@ -164,6 +164,10 @@ h1{font:500 clamp(30px,3.4vw,45px)/1.12 'Cormorant Garamond',Georgia,serif;margi
 .member-text-tools button:hover{background:#f0ede5}
 .field .member-font-size-label{display:flex;align-items:center;gap:6px;margin:0 4px;color:#777568;font-size:11px;font-weight:600}
 .field .member-font-size-label select{display:inline-block;width:auto;min-height:0;padding:6px 8px;margin:0;border:1px solid rgba(177,145,101,.65);border-radius:6px;background:#fff;color:#3b3e39;font-size:12px;min-width:78px}
+.field .member-format-select{display:flex;align-items:center;gap:6px;margin:0 4px;color:#777568;font-size:11px;font-weight:600}
+.field .member-format-select select{display:inline-block;width:auto;min-height:0;padding:6px 8px;margin:0;border:1px solid rgba(177,145,101,.65);border-radius:6px;background:#fff;color:#3b3e39;font-size:12px;max-width:175px}
+.field #member-text-color{border-color:#b8945f}
+@media(max-width:670px){.field .member-format-select{width:calc(50% - 8px);justify-content:space-between}.field .member-format-select select{min-width:0;max-width:135px}}
 .member-crop-dialog{position:fixed;inset:0;z-index:10025;background:#14130fe0;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
 .member-crop-panel{background:#faf9f5;border-radius:12px;padding:24px;max-width:900px;width:min(94vw,900px);max-height:96vh;overflow:auto;box-shadow:0 24px 90px #0008}
 .member-crop-panel h2{margin:0;font:500 31px 'Cormorant Garamond',Georgia,serif}
@@ -348,13 +352,36 @@ body.gallery-zoom-active{overflow:hidden}
 </select></label>
 <button type="button" data-member-format="uppercase" title="Markierten Text in Grossbuchstaben umwandeln">ABC</button>
 <button type="button" data-member-format="lowercase" title="Markierten Text in Kleinbuchstaben umwandeln">abc</button>
+<label class="member-format-select" for="member-font-family">Schriftart
+<select id="member-font-family" aria-label="Schriftart für markierten Text">
+ <option value="">Wählen</option>
+ <option value="inter">Inter</option>
+ <option value="cormorant">Cormorant Garamond</option>
+ <option value="georgia">Georgia</option>
+</select></label>
+<label class="member-format-select" for="member-text-color">Textfarbe
+<select id="member-text-color" aria-label="Textfarbe für markierten Text">
+ <option value="">Wählen</option>
+ <option value="gold">Gold</option>
+ <option value="lightgold">Helles Gold</option>
+ <option value="anthracite">Anthrazit</option>
+ <option value="slate">Schiefergrau</option>
+</select></label>
+<label class="member-format-select" for="member-symbol">Symbole
+<select id="member-symbol" aria-label="Symbol an Cursorposition einfügen">
+ <option value="">Wählen</option>
+ <option value="check">✓ Häkchen</option>
+ <option value="bullet">• Punkt</option>
+ <option value="diamond">◆ Raute</option>
+ <option value="arrow">→ Pfeil</option>
+</select></label>
 </div>
 <div class="member-text-settings">
 <label>Textausrichtung<select id="member-description-align"><option value="left">Linksbündig</option><option value="justify">Blocksatz</option><option value="center">Zentriert</option></select></label>
 <label>Zeilenabstand<select id="member-description-line" title="Mit Cursor eine Zeile ändern, mit Ctrl + A den gesamten Text"><option value="1.4">Eng</option><option value="1.6">Normal</option><option value="1.8">Grosszügig</option><option value="2">Weit</option></select></label>
 </div>
 <textarea id="member-description" placeholder="Kurze Firmenbeschreibung"></textarea>
-<p class="help">Für Schriftgrösse oder Gross und Klein bitte zuerst Text markieren. Mit Ctrl + A wählst du den gesamten Text. Enter fügt eine neue Zeile ein.</p>
+<p class="help">Für Schriftgrösse, Schriftart, Farbe oder Gross und Klein zuerst Text markieren. Mit Ctrl + A wählst du den gesamten Text. Symbole kannst du direkt an der Cursorposition einfügen.</p>
 </div>
 <div class="member-address-fields">
 <div class="field"><label for="member-address-company">Firmenname für Adresse <span class="optional">Optional</span></label><input id="member-address-company" type="text" placeholder="Firmenname inkl. GmbH oder AG"><p class="help">Unabhängig vom Profilnamen. Du kannst den Firmennamen jederzeit selbst ändern.</p></div>
