@@ -242,6 +242,9 @@ function editMember(memberId){
  $('member-description').value=m.description||'';$('member-public').checked=m.public!==false;
  $('member-description-align').value=m.descriptionAlign||'left';
  $('member-description-line').value=m.descriptionLineHeight||'1.6';
+ $('member-font-family').options[0].textContent='Inter';
+ $('member-color-glyph').style.borderBottomColor=MEMBER_TEXT_COLORS.gold;
+ $('member-symbol-current').textContent='✓';
 
  memberMediaStatus('photo',m.photo?'Gespeichertes Foto vorhanden.':'Noch kein Foto hochgeladen.');
  memberMediaStatus('logo','Das bestehende Logo wird nur bei einem neuen Upload ersetzt.');
@@ -299,12 +302,16 @@ const MEMBER_TEXT_FONTS={
 const MEMBER_TEXT_COLORS={
  gold:'#b8945f',
  lightgold:'#d4b483',
+ darkgold:'#94724b',
+ bronze:'#a77d57',
  anthracite:'#30332f',
- slate:'#74776f'
+ slate:'#74776f',
+ sage:'#60766b',
+ wine:'#875a67'
 };
 function renderMemberInline(parent,plain){
  // Render only approved styles as DOM nodes. Never interpret arbitrary HTML.
- const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\[pt=(10|11|12|14|16|18|20|24)\]([\s\S]*?)\[\/pt\]|\[font=(inter|cormorant|georgia)\]([\s\S]*?)\[\/font\]|\[color=(gold|lightgold|anthracite|slate)\]([\s\S]*?)\[\/color\]|\*\*\*([\s\S]+?)\*\*\*|\*\*([\s\S]+?)\*\*|\*([\s\S]+?)\*/g;
+ const re=/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\[pt=(10|11|12|14|16|18|20|24)\]([\s\S]*?)\[\/pt\]|\[font=(inter|cormorant|georgia)\]([\s\S]*?)\[\/font\]|\[color=(gold|lightgold|darkgold|bronze|anthracite|slate|sage|wine)\]([\s\S]*?)\[\/color\]|\*\*\*([\s\S]+?)\*\*\*|\*\*([\s\S]+?)\*\*|\*([\s\S]+?)\*/g;
  let from=0,match;
  while((match=re.exec(plain))!==null){
   if(match.index>from)parent.append(document.createTextNode(plain.slice(from,match.index)));
@@ -413,7 +420,7 @@ function changeMemberTextSelection(replacement){
 }
 function transformMemberCase(text,toUpper){
  // Preserve formatting markers and links when converting selected text.
- const untouched=/https?:\/\/[^\s)]+|\[\/?(?:pt(?:=(?:10|11|12|14|16|18|20|24))?|font(?:=(?:inter|cormorant|georgia))?|color(?:=(?:gold|lightgold|anthracite|slate))?)\]/gi;
+ const untouched=/https?:\/\/[^\s)]+|\[\/?(?:pt(?:=(?:10|11|12|14|16|18|20|24))?|font(?:=(?:inter|cormorant|georgia))?|color(?:=(?:gold|lightgold|darkgold|bronze|anthracite|slate|sage|wine))?)\]/gi;
  let out='',last=0,m;
  while((m=untouched.exec(text))!==null){
   const segment=text.slice(last,m.index);
@@ -463,39 +470,64 @@ $('member-font-size').addEventListener('change',applyMemberFontSize);
 function applyMemberStyle(kind,value){
  const options={
   font:{inter:true,cormorant:true,georgia:true},
-  color:{gold:true,lightgold:true,anthracite:true,slate:true}
+  color:{gold:true,lightgold:true,darkgold:true,bronze:true,anthracite:true,slate:true,sage:true,wine:true}
  };
- if(!options[kind]?.[value])return;
+ if(!options[kind]?.[value])return false;
  const field=$('member-description'),start=field.selectionStart,end=field.selectionEnd;
- if(start===end){api.toast('Bitte zuerst den Text markieren.');field.focus();return;}
+ if(start===end){api.toast('Bitte zuerst den Text markieren.');field.focus();return false;}
  const selection=field.value.slice(start,end);
  // One formatted wrapper per line preserves existing paragraph and line spacing.
  const changed=selection.split('\n').map(line=>{
   if(!line.trim())return line;
   const re=kind==='font'
    ?/^\[font=(?:inter|cormorant|georgia)\]([\s\S]*)\[\/font\]$/
-   :/^\[color=(?:gold|lightgold|anthracite|slate)\]([\s\S]*)\[\/color\]$/;
+   :/^\[color=(?:gold|lightgold|darkgold|bronze|anthracite|slate|sage|wine)\]([\s\S]*)\[\/color\]$/;
   const previous=line.match(re);
   return '['+kind+'='+value+']'+(previous?previous[1]:line)+'[/'+kind+']';
  }).join('\n');
  changeMemberTextSelection(changed);
+ return true;
 }
+const MEMBER_FONT_LABELS={inter:'Inter',cormorant:'Cormorant Garamond',georgia:'Georgia'};
 $('member-font-family').addEventListener('change',()=>{
  const el=$('member-font-family'),value=el.value;el.value='';
- if(value)applyMemberStyle('font',value);
+ if(value&&applyMemberStyle('font',value))el.options[0].textContent=MEMBER_FONT_LABELS[value];
 });
-$('member-text-color').addEventListener('change',()=>{
- const el=$('member-text-color'),value=el.value;el.value='';
- if(value)applyMemberStyle('color',value);
-});
-const MEMBER_SYMBOLS={check:'✓',bullet:'•',diamond:'◆',arrow:'→'};
-$('member-symbol').addEventListener('change',()=>{
- const el=$('member-symbol'),symbol=MEMBER_SYMBOLS[el.value];el.value='';
+const colorMenu=$('member-color-menu'),symbolMenu=$('member-symbol-menu');
+document.querySelectorAll('[data-member-color]').forEach(button=>button.addEventListener('click',()=>{
+ const value=button.dataset.memberColor;
+ if(applyMemberStyle('color',value)){
+  $('member-color-glyph').style.borderBottomColor=MEMBER_TEXT_COLORS[value];
+  colorMenu.open=false;
+ }
+}));
+const MEMBER_SYMBOLS={check:'✓',bullet:'•',diamond:'◆',arrow:'→',star:'★',circle:'○',square:'▪',up:'↗'};
+document.querySelectorAll('[data-member-symbol]').forEach(button=>button.addEventListener('click',()=>{
+ const symbol=MEMBER_SYMBOLS[button.dataset.memberSymbol];
  if(!symbol)return;
  const field=$('member-description'),start=field.selectionStart;
  field.setRangeText(symbol+' ',start,start,'end');
+ $('member-symbol-current').textContent=symbol;
+ symbolMenu.open=false;
  changeMember();field.focus();
+}));
+document.querySelectorAll('[data-member-align]').forEach(button=>button.addEventListener('click',()=>{
+ $('member-description-align').value=button.dataset.memberAlign;
+ changeMember();
+}));
+function reflectMemberAlignment(){
+ const current=$('member-description-align').value;
+ document.querySelectorAll('[data-member-align]').forEach(button=>{
+  button.setAttribute('aria-pressed',String(button.dataset.memberAlign===current));
+ });
+}
+document.addEventListener('pointerdown',ev=>{
+ for(const menu of [colorMenu,symbolMenu]){
+  if(menu.open&&!menu.contains(ev.target))menu.open=false;
+ }
 });
+colorMenu.addEventListener('toggle',()=>{if(colorMenu.open)symbolMenu.open=false;});
+symbolMenu.addEventListener('toggle',()=>{if(symbolMenu.open)colorMenu.open=false;});
 
 function addressCompanyName(member){
  // The postal address uses its own editable company name, independent from the member heading.
@@ -508,6 +540,7 @@ function addressCompanyName(member){
 function memberPreview(){
  const m=memberItem();if(!m)return;
  $('member-preview-name').textContent=m.name||'Firmenname';
+ reflectMemberAlignment();
  $('member-editor-title').textContent=m.name||'Neues Mitglied';
  renderMemberDescription(m);
  for(const elem of [$('member-preview-logo'),$('member-logo-thumb')]){elem.src=m.logo||'/admin/brand.svg';}
