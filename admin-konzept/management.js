@@ -29,6 +29,10 @@ let projects=getSaved('bk-demo-projects-v1',[]);
 let registrations=getSaved('bk-demo-registrations-v1',[]);
 let aboutPhotos=getSaved('bk-demo-about-photos-v1',['/mitglieder.jpg']);
 let chosenMember=null,chosenProject=null,chosenRegistration=null;
+let memberTextTargetId='member-description';
+const MEMBER_STYLED_FIELDS=['member-name','member-person','member-role','member-address-company','member-street','member-postal','member-city','member-country'];
+const MEMBER_FIELD_KEYS=Object.fromEntries(MEMBER_STYLED_FIELDS.map(id=>[id,id.replace('member-','').replace(/-([a-z])/g,(_,c)=>c.toUpperCase())]));
+function selectedMemberTextField(){return $(memberTextTargetId)||$('member-description')}
 const memberPhotoLocal=new Map();
 
 let dragAbout=null,temporaryUploads=false;
@@ -235,6 +239,7 @@ function newMember(){
 }
 function editMember(memberId){
  chosenMember=memberId;
+ memberTextTargetId='member-description';
  $('member-editor').dataset.historyKey='member:'+memberId;
  const m=memberItem();if(!m)return;
  $('member-editor-title').textContent=m.name||'Neues Mitglied';
@@ -408,8 +413,27 @@ function renderMemberDescription(member){
   root.append(row);
  });
 }
+function applyMemberInputAppearance(member,element,field){
+ const style=member.fieldStyles?.[field]||{};
+ element.style.color=MEMBER_TEXT_COLORS[style.color]||'';
+ element.style.fontFamily=MEMBER_TEXT_FONTS[style.font]||'';
+ element.style.fontSize=style.size?style.size+'pt':'';
+ element.style.fontWeight=style.bold?'700':'';
+ element.style.fontStyle=style.italic?'italic':'';
+ element.style.textAlign=style.align||'';
+}
+function setMemberFieldStyle(key,value){
+ const m=memberItem();if(!m)return false;
+ const field=MEMBER_FIELD_KEYS[selectedMemberTextField().id];
+ if(!field)return false;
+ if(!m.fieldStyles||typeof m.fieldStyles!=='object')m.fieldStyles={};
+ const old=m.fieldStyles[field]||{};
+ m.fieldStyles[field]={...old,[key]:value};
+ memberPreview();save(cloudKinds.members,members);selectedMemberTextField().focus();
+ return true;
+}
 function changeMemberTextSelection(replacement){
- const field=$('member-description'),start=field.selectionStart,end=field.selectionEnd;
+ const field=selectedMemberTextField(),start=field.selectionStart,end=field.selectionEnd;
  field.setRangeText(replacement,start,end,'select');
  field.setSelectionRange(start,start+replacement.length);
  changeMember();field.focus();
@@ -427,11 +451,18 @@ function transformMemberCase(text,toUpper){
  return out+(toUpper?rest.toLocaleUpperCase('de-CH'):rest.toLocaleLowerCase('de-CH'));
 }
 function formatMemberSelection(kind){
- const field=$('member-description'),start=field.selectionStart,end=field.selectionEnd;
+ const field=selectedMemberTextField(),start=field.selectionStart,end=field.selectionEnd;
  const selected=field.value.slice(start,end);
  if(kind==='uppercase'||kind==='lowercase'){
   if(!selected){api.toast('Bitte zuerst den Text markieren.');field.focus();return;}
   changeMemberTextSelection(transformMemberCase(selected,kind==='uppercase'));return;
+ }
+ if(field.id!=='member-description'){
+  if(kind==='bold'||kind==='italic'){
+   const name=MEMBER_FIELD_KEYS[field.id],current=memberItem()?.fieldStyles?.[name]?.[kind]===true;
+   setMemberFieldStyle(kind,!current);
+  }else api.toast('Links können in der Beschreibung eingefügt werden.');
+  return;
  }
  field.focus();
  let before='',after='',content=selected;
@@ -452,7 +483,8 @@ function applyMemberFontSize(){
  const selector=$('member-font-size'),size=selector.value;
  if(!size)return;
  selector.value='';
- const field=$('member-description'),start=field.selectionStart,end=field.selectionEnd;
+ const field=selectedMemberTextField(),start=field.selectionStart,end=field.selectionEnd;
+ if(field.id!=='member-description'){setMemberFieldStyle('size',size);return;}
  if(start===end){api.toast('Bitte zuerst den Text markieren.');field.focus();return;}
  const selected=field.value.slice(start,end);
  const changed=selected.split('\n').map(line=>{
@@ -469,10 +501,10 @@ function applyMemberStyle(kind,value){
   color:{gold:true,lightgold:true,darkgold:true,bronze:true,anthracite:true,slate:true,sage:true,wine:true}
  };
  if(!options[kind]?.[value])return false;
- const field=$('member-description'),start=field.selectionStart,end=field.selectionEnd;
+ const field=selectedMemberTextField(),start=field.selectionStart,end=field.selectionEnd;
+ if(field.id!=='member-description')return setMemberFieldStyle(kind,value);
  if(start===end){api.toast('Bitte zuerst den Text markieren.');field.focus();return false;}
  const selection=field.value.slice(start,end);
- // One formatted wrapper per line preserves existing paragraph and line spacing.
  const changed=selection.split('\n').map(line=>{
   if(!line.trim())return line;
   const re=kind==='font'
@@ -501,26 +533,31 @@ const MEMBER_SYMBOLS={check:'✓',bullet:'•',diamond:'◆',arrow:'→',star:'�
 document.querySelectorAll('[data-member-symbol]').forEach(button=>button.addEventListener('click',()=>{
  const symbol=MEMBER_SYMBOLS[button.dataset.memberSymbol];
  if(!symbol)return;
- const field=$('member-description'),start=field.selectionStart;
+ const field=selectedMemberTextField(),start=field.selectionStart;
  field.setRangeText(symbol+' ',start,start,'end');
  $('member-symbol-current').textContent=symbol;
  symbolMenu.open=false;
  changeMember();field.focus();
 }));
 document.querySelectorAll('[data-member-align]').forEach(button=>button.addEventListener('click',()=>{
- $('member-description-align').value=button.dataset.memberAlign;
- changeMember();
+ const align=button.dataset.memberAlign,field=selectedMemberTextField();
+ if(field.id==='member-description'){$('member-description-align').value=align;changeMember();}
+ else setMemberFieldStyle('align',align);
+ reflectMemberAlignment();
 }));
 function reflectMemberAlignment(){
- const current=$('member-description-align').value;
- document.querySelectorAll('[data-member-align]').forEach(button=>{
-  button.setAttribute('aria-pressed',String(button.dataset.memberAlign===current));
- });
+ const field=selectedMemberTextField();
+ const name=MEMBER_FIELD_KEYS[field.id];
+ const current=name?(memberItem()?.fieldStyles?.[name]?.align||'left'):$('member-description-align').value;
+ document.querySelectorAll('[data-member-align]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.memberAlign===current)));
+}
+for(const id of ['member-description',...MEMBER_STYLED_FIELDS]){
+ const field=$(id);
+ field.addEventListener('focus',()=>{memberTextTargetId=id;reflectMemberAlignment();});
+ field.addEventListener('mouseup',()=>{memberTextTargetId=id;});
 }
 document.addEventListener('pointerdown',ev=>{
- for(const menu of [colorMenu,symbolMenu]){
-  if(menu.open&&!menu.contains(ev.target))menu.open=false;
- }
+ for(const menu of [colorMenu,symbolMenu]){if(menu.open&&!menu.contains(ev.target))menu.open=false;}
 });
 colorMenu.addEventListener('toggle',()=>{if(colorMenu.open)symbolMenu.open=false;});
 symbolMenu.addEventListener('toggle',()=>{if(symbolMenu.open)colorMenu.open=false;});
