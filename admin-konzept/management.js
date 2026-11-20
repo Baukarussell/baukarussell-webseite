@@ -91,7 +91,7 @@ async function saveCloudCollection(kind){
  const list=kind==='members'?members:projects;
  const btns=kind==='members'?[$('member-save-cloud'),$('member-save-demo')]:[$('project-save-cloud'),$('project-save-demo')];
  const invalid=kind==='members'&&list.some(item=>[item.logo,item.photo].some(v=>typeof v==='string'&&v.startsWith('blob:')));
- if(invalid){cloudStatus(kind,'Fotos müssen zuerst über «Foto hochladen» oder einen gespeicherten GitHub Bildpfad hinterlegt werden.','error');return;}
+ if(invalid){cloudStatus(kind,'Fotos müssen zuerst über «Foto hochladen» oder einen gespeicherten GitHub Bildpfad hinterlegt werden.','error');return false;}
  const snapshot=JSON.parse(JSON.stringify(list));
  const fingerprint=JSON.stringify(snapshot);
  btns.forEach(btn=>{btn.disabled=true;});
@@ -111,8 +111,10 @@ async function saveCloudCollection(kind){
   cloudLoaded[kind]=true;
   if(unchanged)cloudStatus(kind,result.count+' '+(kind==='members'?'Mitglieder':'Projekte')+' privat gespeichert ('+new Date(result.savedAt).toLocaleString('de-CH')+'). Nicht veröffentlicht.','ok');
   else cloudStatus(kind,'Zwischenzeitlich weitere Änderungen gemacht. Bitte erneut speichern.','info');
+  return unchanged;
  }catch(error){
   cloudStatus(kind,error.message||'Speichern nicht möglich. Browserdaten bleiben erhalten.','error');
+  return false;
  }finally{btns.forEach(btn=>{btn.disabled=false;});}
 }
 function memberMediaStatus(field,message,kind='info'){
@@ -682,6 +684,34 @@ $('member-description').addEventListener('select',showMemberCurrentLineHeight);
 document.querySelectorAll('[data-member-format]').forEach(button=>button.onclick=()=>formatMemberSelection(button.dataset.memberFormat));
 $('member-save-demo').onclick=()=>{changeMember();renderMembers();saveCloudCollection('members');};
 $('member-save-cloud').onclick=()=>saveCloudCollection('members');
+async function publishMembersOnTest(){
+ const button=$('member-test-publish');
+ if(!members.length){cloudStatus('members','Bitte zuerst Mitglieder erfassen.','error');return;}
+ if(!window.confirm('Die aktuell sichtbaren Mitgliedsprofile mit Firmennamen, Adressen, Telefonnummern, E-Mail-Adressen und Fotos werden auf dem öffentlichen TESTBRANCH für die Website Vorschau bereitgestellt. Die LIVE Website bleibt unverändert. Fortfahren?'))return;
+ button.disabled=true;
+ button.textContent='Mitglieder werden vorbereitet ...';
+ try{
+  // Always save first, then transfer exactly that saved snapshot.
+  const saved=await saveCloudCollection('members');
+  if(!saved)throw Error('Privater Entwurf konnte nicht vollständig gespeichert werden. Keine Testveröffentlichung.');
+  const snapshot=JSON.parse(JSON.stringify(members));
+  const fingerprint=JSON.stringify(snapshot);
+  const csrf=await getCloudSession();
+  const response=await fetch('/admin-api/publish-members',{
+   method:'POST',credentials:'same-origin',cache:'no-store',
+   headers:{'Content-Type':'application/json','X-BK-CSRF':csrf},
+   body:JSON.stringify({items:snapshot,confirm:'test-members-only'})
+  });
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok||!data.success)throw Error(data.error||'Testveröffentlichung fehlgeschlagen.');
+  if(JSON.stringify(members)!==fingerprint)throw Error('Testversion bereitgestellt, aber es gab neue Bearbeitungen. Bitte erneut speichern und übertragen.');
+  cloudStatus('members',data.count+' Mitglieder für Website Test vorbereitet. GitHub Revision: '+data.commit.slice(0,8)+'. Danach Testseite prüfen. Noch nicht live.','ok');
+  window.open('/index.html#members','_blank','noopener,noreferrer');
+ }catch(error){cloudStatus('members',error.message||'Website Test konnte nicht aktualisiert werden.','error');}
+ finally{button.disabled=false;button.textContent='Mitglieder auf Testwebsite übernehmen';}
+}
+$('member-test-publish').onclick=publishMembersOnTest;
+
 $('member-social-add').onclick=()=>{
  const m=memberItem();if(!m)return;
  if(!Array.isArray(m.socials))m.socials=[];
